@@ -1,3 +1,4 @@
+import Banner from "@/Components/Pages/Home/Banner/Banner"
 
 export const metadata = {
   title: "Home | OdbhootStore"
@@ -6,7 +7,10 @@ export const metadata = {
 export default function Home() {
   return (
     <div className=''>
-      <h1>This is home</h1>
+
+      <Banner />
+
+
       <div>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. At alias quaerat labore consectetur blanditiis asperiores eum amet excepturi assumenda? Sequi!
       </div>
