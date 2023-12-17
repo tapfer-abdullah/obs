@@ -1,3 +1,5 @@
+import Footer from '@/Components/Shared-Pages/Footer'
+import NavBar from '@/Components/Shared-Pages/NavBar'
 import { Inter } from 'next/font/google'
 import './globals.css'
 
@@ -11,7 +13,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.className} min-h-screen`}>
+        <NavBar />
+        <div className='min-h-[80vh]'>
+          {children}
+        </div>
+        <Footer />
+      </body>
     </html>
   )
 }

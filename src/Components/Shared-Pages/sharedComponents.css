@@ -1,0 +1,16 @@
+.jewelryList,
+.clothingList {
+    position: absolute;
+    left: -20px;
+    top: -300px;
+
+
+}
+
+.jewelryOption:hover .jewelryList {
+    top: 10px;
+}
+
+.clothingOption:hover .clothingList {
+    top: 10px;
+}
