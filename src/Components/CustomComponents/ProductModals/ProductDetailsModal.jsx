@@ -72,7 +72,7 @@ const ProductDetailsModal = ({ details, isActiveModal, setActiveModal }) => {
                 <input type="radio" id="size-m" name="size" value="m" />
                 <label for="size-m">M</label>
               </div>
-              <div className="relative w-10 mr-3">
+              <div className="relative w-10 mr-5">
                 <input type="radio" id="size-l" name="size" value="l" />
                 <label for="size-l">L</label>
               </div>

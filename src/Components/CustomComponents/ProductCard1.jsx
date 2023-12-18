@@ -7,14 +7,13 @@ import { HiOutlineViewfinderCircle } from "react-icons/hi2";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 
 import "./CustomComponents.css";
-import ProductDetailsModal from "./ProductModals/ProductDetailsModal";
+import QuickAddToCartModal from "./ProductModals/QuickAddToCartModal";
 
 const ProductCard1 = ({ modalDetails, isActiveModal, setActiveModal }) => {
+  const [QuickShop, SetQuickShop] = useState("-top-[1000px]");
   const { img1, img2, price, name } = modalDetails;
-  // const [isActiveModal, setActiveModal] = useState(false);
   return (
     <div>
-      {/* {isActiveModal && <ProductDetailsModal isActiveModal={isActiveModal} setActiveModal={setActiveModal} />} */}
       <div className="product-card m-2 space-y-3">
         <div className="Image-cart overflow-hidden relative">
           <div className="image-container transition-all">
@@ -24,7 +23,13 @@ const ProductCard1 = ({ modalDetails, isActiveModal, setActiveModal }) => {
           <div className="flex justify-center">
             <div className="product-details transition-all duration-700">
               <div className="flex justify-center items-center gap-5">
-                <AiOutlineShopping title="Add to cart" className="text-3xl bg-white rounded-full p-1 cursor-pointer" />
+                <AiOutlineShopping
+                  onClick={() => {
+                    SetQuickShop("top-0");
+                  }}
+                  title="Add to cart"
+                  className="text-3xl bg-white rounded-full p-1 cursor-pointer"
+                />
                 <HiOutlineViewfinderCircle
                   onClick={() => {
                     setActiveModal(!isActiveModal);
@@ -34,6 +39,10 @@ const ProductCard1 = ({ modalDetails, isActiveModal, setActiveModal }) => {
                 />
               </div>
             </div>
+          </div>
+
+          <div className={`absolute z-30 ${QuickShop} transition-all duration-500 left-0 right-0 w-[300px] h-[420px]`}>
+            <QuickAddToCartModal QuickShop={QuickShop} SetQuickShop={SetQuickShop}></QuickAddToCartModal>
           </div>
         </div>
         <div className="text-center">
