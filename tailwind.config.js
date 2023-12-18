@@ -15,4 +15,8 @@ module.exports = {
     },
   },
   plugins: [],
+  purge: [
+    './src/**/*.js',
+    './pages/**/*.js',
+  ],
 }
