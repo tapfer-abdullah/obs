@@ -1,4 +1,5 @@
 import Banner from "@/Components/Pages/Home/Banner/Banner"
+import HomePolicy from "@/Components/Pages/Home/HomePolicy/HomePolicy"
 import NewArrival from "@/Components/Pages/Home/NewArrival/NewArrival"
 import Products from "@/Components/Pages/Home/Products/Products"
 
@@ -13,11 +14,8 @@ export default function Home() {
       <Banner />
       <NewArrival />
       <Products />
+      <HomePolicy />
 
-
-      <div>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. At alias quaerat labore consectetur blanditiis asperiores eum amet excepturi assumenda? Sequi!
-      </div>
     </div>
   )
 }

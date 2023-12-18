@@ -10,7 +10,7 @@ const NavBar = () => {
     <div>
       <div className="mobile lg:hidden">mobile</div>
       <div className="hidden md:block md:fixed top-0 left-0 z-50 w-screen">
-        <div className="bg-green-400 font-sans font-semibold flex justify-around py-4 text-xl">
+        <div className="bg-[#31a3a3] text-white font-sans font-semibold flex justify-around py-4 text-xl">
           <Link href="/" className="text-3xl font-semibold uppercase">
             OdbhootStore
           </Link>
@@ -22,7 +22,7 @@ const NavBar = () => {
                 Jewelry
               </Link>
               <div className="jewelryList transition-all duration-500 space-y-4 ">
-                <div className="flex flex-col space-y-4 bg-green-400 p-5 rounded-lg">
+                <div className="flex flex-col space-y-4 bg-[#31a3a3] p-5 rounded-lg">
                   <Link href="/bracelets" className="hover:text-red-500">
                     Bracelets
                   </Link>
@@ -41,7 +41,7 @@ const NavBar = () => {
                 clothing
               </Link>
               <div className="clothingList transition-all duration-500 space-y-4 ">
-                <div className="flex flex-col space-y-4 bg-green-400 p-5 rounded-lg">
+                <div className="flex flex-col space-y-4 bg-[#31a3a3] p-5 rounded-lg">
                   <Link href="/bracelets" className="hover:text-red-500">
                     Bikinies
                   </Link>

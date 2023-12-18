@@ -8,6 +8,7 @@
 }
 
 .jewelryOption:hover .jewelryList {
+    /* top: 35px; */
     top: 10px;
 }
 
