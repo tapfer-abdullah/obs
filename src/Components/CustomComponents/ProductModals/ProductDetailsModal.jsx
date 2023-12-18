@@ -9,7 +9,7 @@ import DetailsModalImage from "./DetailsModalImage";
 
 const ProductDetailsModal = ({ details, isActiveModal, setActiveModal }) => {
   // document.body.classList.add("show-modal");
-  const [selectedItems, setSelectedItems] = useState(0);
+  const [selectedItems, setSelectedItems] = useState(1);
   const imageData = [
     "https://i.ibb.co/g6z3QwZ/image.png",
     "https://i.ibb.co/JrjzHZN/image.png",

@@ -1,11 +1,13 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { AiOutlineShopping } from "react-icons/ai";
 import { IoIosSearch } from "react-icons/io";
+import ShoppingCart from "../CustomComponents/ShoppingCart/ShoppingCart";
 import "./sharedComponents.css";
 
 const NavBar = () => {
+  const [positionInfo, setPositionInfo] = useState({ right: "-right-[2000px]", customOpacity: 0 });
   return (
     <div>
       <div className="mobile lg:hidden">mobile</div>
@@ -60,7 +62,12 @@ const NavBar = () => {
           </div>
           <div className="flex gap-2">
             <Link href="">
-              <AiOutlineShopping className="text-3xl" />
+              <AiOutlineShopping
+                onClick={() => {
+                  setPositionInfo({ right: "right-0", customOpacity: 70 });
+                }}
+                className="text-3xl"
+              />
             </Link>
             <Link href="">
               <IoIosSearch className="text-4xl" />
@@ -68,6 +75,7 @@ const NavBar = () => {
           </div>
         </div>
       </div>
+      <ShoppingCart positionInfo={positionInfo} setPositionInfo={setPositionInfo} />
     </div>
   );
 };
