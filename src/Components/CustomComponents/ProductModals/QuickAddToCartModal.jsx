@@ -41,15 +41,15 @@ const QuickAddToCartModal = ({ details, QuickShop, SetQuickShop }) => {
           <div className=" relative flex gap-1 my-3">
             <div className="relative w-10 mr-5">
               <input type="radio" id="size-s" name="size" value="s" />
-              <label for="size-s">S</label>
+              <label htmlFor="size-s">S</label>
             </div>
             <div className="relative w-10 mr-3">
               <input type="radio" id="size-m" name="size" value="m" />
-              <label for="size-m">M</label>
+              <label htmlFor="size-m">M</label>
             </div>
             <div className="relative w-10 mr-5">
               <input type="radio" id="size-l" name="size" value="l" />
-              <label for="size-l">L</label>
+              <label htmlFor="size-l">L</label>
             </div>
           </div>
 

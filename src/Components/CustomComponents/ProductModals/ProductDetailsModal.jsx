@@ -32,6 +32,7 @@ const ProductDetailsModal = ({ details, isActiveModal, setActiveModal }) => {
               className="absolute top-2 right-2 text-xl font-bold cursor-pointer"
             />
           </div>
+
           <div className="details-modal-content space-y-5">
             <div>
               <Link href={"/"} className="uppercase font-medium">
@@ -66,15 +67,15 @@ const ProductDetailsModal = ({ details, isActiveModal, setActiveModal }) => {
               <p className="mt-2 text-lg font-semibold">Select Size:</p>
               <div className="relative w-10 mr-3">
                 <input type="radio" id="size-s" name="size" value="s" />
-                <label for="size-s">S</label>
+                <label htmlFor="size-s">S</label>
               </div>
               <div className="relative w-10 mr-3">
                 <input type="radio" id="size-m" name="size" value="m" />
-                <label for="size-m">M</label>
+                <label htmlFor="size-m">M</label>
               </div>
               <div className="relative w-10 mr-5">
                 <input type="radio" id="size-l" name="size" value="l" />
-                <label for="size-l">L</label>
+                <label htmlFor="size-l">L</label>
               </div>
             </div>
             <div>

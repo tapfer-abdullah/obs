@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-import "../CustomComponents.css";
+// import "../CustomComponents.css";
 
 // Import Swiper styles
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
@@ -14,11 +14,11 @@ import "swiper/css/thumbs";
 import Image from "next/image";
 import Link from "next/link";
 import { FreeMode, Navigation, Thumbs } from "swiper/modules";
-const DetailsModalImage = ({ imageData }) => {
+const IDWiseProduct = ({ imageData }) => {
   console.log(imageData);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   return (
-    <>
+    <div className="">
       <Swiper
         style={{
           "--swiper-navigation-color": "#fff",
@@ -34,7 +34,7 @@ const DetailsModalImage = ({ imageData }) => {
         {imageData.map((img, indx) => (
           <div key={indx}>
             <SwiperSlide className="my-2">
-              <img src={img} className="!h-[300px] !w-[466px]" />
+              <img src={img} className="!h-[300px] !w-full" />
             </SwiperSlide>
           </div>
         ))}
@@ -48,12 +48,8 @@ const DetailsModalImage = ({ imageData }) => {
           </div>
         ))}
       </Swiper>
-      <Link href={"/"} className="text-lg font-medium mt-8 flex justify-center items-center gap-2 hover:underline">
-        <p>View More Details</p>
-        <FaArrowUpRightFromSquare />
-      </Link>
-    </>
+    </div>
   );
 };
 
-export default DetailsModalImage;
+export default IDWiseProduct;
