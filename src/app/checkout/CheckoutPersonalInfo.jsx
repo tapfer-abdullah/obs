@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import "./checkout.css";
 
 const CheckoutPersonalInfo = () => {
   return (
@@ -45,13 +46,47 @@ const CheckoutPersonalInfo = () => {
       </div>
 
       <h4 className="text-xl font-semibold mt-7 mb-2 ">Add tip</h4>
-      <div className="border-2 border-[#f5f5f5] rounded-md ">
-        <p className="p-3 border-b-2 border-[#f5f5f5]">Show your support for the team at ODBHOOTSTORE</p>
+      <div className="border border-[#d0d0d0] rounded-md ">
+        <p className="p-3 border-b border-[#d0d0d0]">Show your support for the team at ODBHOOTSTORE</p>
         <div className="bg-[#f5f5f5] p-4 space-y-3">
-          <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptas, magni.</p>
+          <div className="relative grid grid-cols-4 gap-2 text-xl">
+            <div className="tip-container relative bg-white ">
+              <input type="radio" name="tip" id="tip5" className="opacity-0 absolute" />
+              <label className="w-full !h-full flex justify-center items-center  py-4 " htmlFor="tip5">
+                5%
+              </label>
+            </div>
+            <div className="tip-container relative bg-white">
+              <input type="radio" name="tip" id="tip10" className="opacity-0 absolute" />
+              <label htmlFor="tip10 " className="w-full !h-full flex justify-center items-center  py-4">
+                10%
+              </label>
+            </div>
+            <div className="tip-container relative bg-white">
+              <input type="radio" name="tip" id="tip15" className="opacity-0 absolute" />
+              <label htmlFor="tip15" className="w-full !h-full flex justify-center items-center  py-4 ">
+                15%
+              </label>
+            </div>
+            <div className="tip-container relative bg-white">
+              <input type="radio" name="tip" id="none" className="opacity-0 absolute" />
+              <label htmlFor="none" className="w-full !h-full flex justify-center items-center  py-4 ">
+                None
+              </label>
+            </div>
+          </div>
+
+          <form className="relative mt-7">
+            <input type="number" name="discount-code" id="" placeholder="Custom tip" className="border-2 border-[#e7e7e7] p-2 pr-20 w-full outline-[#e7e7e7] outline-4" />
+            <button type="submit" className="absolute top-0 right-0 bg-[#d0d0d0] hover:bg-opacity-90 transition-all duration-300 text-black font-semibold p-2 border-2 border-[#d0d0d0]">
+              Add tip
+            </button>
+          </form>
+
           <p>Thank you, we appreciate it.</p>
         </div>
       </div>
+      <button className="text-xl text-white font-semibold p-2 my-5 w-full bg-black rounded-md hover:bg-opacity-70 transition-all duration-300">Pay Now</button>
     </div>
   );
 };

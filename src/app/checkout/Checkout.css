@@ -1,0 +1,6 @@
+.tip-container input[type="radio"]:checked+label {
+    font-weight: bold;
+    color: black;
+    background-color: #d0d0d0;
+
+}
