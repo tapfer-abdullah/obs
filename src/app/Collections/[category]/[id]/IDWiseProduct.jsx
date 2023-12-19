@@ -20,10 +20,12 @@ const IDWiseProduct = ({ imageData }) => {
   return (
     <div className="">
       <Swiper
-        style={{
-          "--swiper-navigation-color": "#fff",
-          "--swiper-pagination-color": "#fff",
-        }}
+        style={
+          {
+            // "--swiper-navigation-color": "#fff",
+            // "--swiper-pagination-color": "#fff",
+          }
+        }
         loop={true}
         spaceBetween={10}
         navigation={true}

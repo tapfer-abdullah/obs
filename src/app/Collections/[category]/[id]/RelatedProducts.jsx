@@ -9,6 +9,7 @@ import "swiper/css/pagination";
 
 // import required modules
 import ProductCard1 from "@/Components/CustomComponents/ProductCard1";
+import ProductDetailsModal from "@/Components/CustomComponents/ProductModals/ProductDetailsModal";
 import SectionTitle from "@/Components/CustomComponents/SectionTitle/SectionTitle";
 import { FreeMode, Navigation, Pagination } from "swiper/modules";
 

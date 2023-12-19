@@ -79,7 +79,9 @@ const IDWiseDetails = () => {
         </div>
 
         <div className="space-y-2">
-          <button className="py-2 px-5 bg-[#FFC520] hover:bg-[#ffd558] transition-all duration-300 hover:shadow-md text-black mx-[1px] w-full font-bold uppercase">Checkout</button>
+          <Link href={"/checkout"} className="block text-center py-2 px-5 bg-[#FFC520] hover:bg-[#ffd558] transition-all duration-300 hover:shadow-md text-black mx-[1px] w-full font-bold uppercase">
+            Checkout
+          </Link>
         </div>
       </div>
     </div>

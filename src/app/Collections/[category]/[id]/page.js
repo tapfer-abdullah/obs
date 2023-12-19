@@ -40,7 +40,7 @@ const page = () => {
                 <h4>Name of the necklace</h4>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
                 <div className="w-full">
                     <IDWiseProduct imageData={imageData} />
                 </div>
