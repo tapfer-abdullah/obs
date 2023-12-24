@@ -1,0 +1,267 @@
+[
+    {
+        "title": "Product 1",
+        "description": "This is the first product",
+        "price": 29.99,
+        "category": "Electronics",
+        "stockQuantity": 50,
+        "imageUrl": "https://i.ibb.co/DwfmK4q/depositphotos-86009122-stock-photo-languages-signpost.webp",
+        "colors": [
+            {
+                "name": "Red",
+                "imageUrl": "https://i.ibb.co/Z11qV38/image.png"
+            },
+            {
+                "name": "Blue",
+                "imageUrl": "https://i.ibb.co/cvRQFF3/1260521.jpg"
+            }
+        ],
+        "size": [
+            "S",
+            "M",
+            "L"
+        ],
+        "createdAt": "2023-01-01T12:00:00.000Z",
+        "updatedAt": "2023-01-01T12:00:00.000Z",
+        "sku": "PRD001",
+        "type": "Electronics"
+    },
+    {
+        "title": "Product 2",
+        "description": "This is the second product",
+        "price": 39.99,
+        "category": "Clothing",
+        "stockQuantity": 30,
+        "imageUrl": "https://i.ibb.co/ZWgMyx4/arab-Desert.jpg",
+        "colors": [
+            {
+                "name": "Black",
+                "imageUrl": "https://i.ibb.co/Z11qV38/image.png"
+            },
+            {
+                "name": "White",
+                "imageUrl": "https://i.ibb.co/cvRQFF3/1260521.jpg"
+            }
+        ],
+        "size": [
+            "M",
+            "L",
+            "XL"
+        ],
+        "createdAt": "2023-01-02T12:00:00.000Z",
+        "updatedAt": "2023-01-02T12:00:00.000Z",
+        "sku": "PRD002",
+        "type": "Clothing"
+    },
+    {
+        "title": "Product 3",
+        "description": "This is the third product",
+        "price": 49.99,
+        "category": "Furniture",
+        "stockQuantity": 20,
+        "imageUrl": "https://i.ibb.co/tLQNdCz/Eiffel-Tower-Day-1200x834.jpg",
+        "colors": [
+            {
+                "name": "Brown",
+                "imageUrl": "https://i.ibb.co/Z11qV38/image.png"
+            },
+            {
+                "name": "Beige",
+                "imageUrl": "https://i.ibb.co/cvRQFF3/1260521.jpg"
+            }
+        ],
+        "size": [
+            "Single",
+            "Double",
+            "Queen"
+        ],
+        "createdAt": "2023-01-03T12:00:00.000Z",
+        "updatedAt": "2023-01-03T12:00:00.000Z",
+        "sku": "PRD003",
+        "type": "Furniture"
+    },
+    {
+        "title": "Product 4",
+        "description": "This is the fourth product",
+        "price": 19.99,
+        "category": "Accessories",
+        "stockQuantity": 100,
+        "imageUrl": "https://i.ibb.co/nnwLnM3/london-england-credit-tomas-marek-istock.jpg",
+        "colors": [
+            {
+                "name": "Silver",
+                "imageUrl": "https://i.ibb.co/Z11qV38/image.png"
+            },
+            {
+                "name": "Gold",
+                "imageUrl": "https://i.ibb.co/cvRQFF3/1260521.jpg"
+            }
+        ],
+        "size": [
+            "One Size"
+        ],
+        "createdAt": "2023-01-04T12:00:00.000Z",
+        "updatedAt": "2023-01-04T12:00:00.000Z",
+        "sku": "PRD004",
+        "type": "Accessories"
+    },
+    {
+        "title": "Product 5",
+        "description": "This is the fifth product",
+        "price": 59.99,
+        "category": "Electronics",
+        "stockQuantity": 15,
+        "imageUrl": "https://i.ibb.co/ynmFkJY/germanfood.jpg",
+        "colors": [
+            {
+                "name": "Green",
+                "imageUrl": "https://i.ibb.co/Z11qV38/image.png"
+            },
+            {
+                "name": "Black",
+                "imageUrl": "https://i.ibb.co/cvRQFF3/1260521.jpg"
+            }
+        ],
+        "size": [
+            "M",
+            "L"
+        ],
+        "createdAt": "2023-01-05T12:00:00.000Z",
+        "updatedAt": "2023-01-05T12:00:00.000Z",
+        "sku": "PRD005",
+        "type": "Electronics"
+    },
+    {
+        "title": "Product 6",
+        "description": "This is the sixth product",
+        "price": 34.99,
+        "category": "Clothing",
+        "stockQuantity": 40,
+        "imageUrl": "https://i.ibb.co/vhY7G1V/bullfighting-in-spain.jpg",
+        "colors": [
+            {
+                "name": "Blue",
+                "imageUrl": "https://i.ibb.co/Z11qV38/image.png"
+            },
+            {
+                "name": "Gray",
+                "imageUrl": "https://i.ibb.co/cvRQFF3/1260521.jpg"
+            }
+        ],
+        "size": [
+            "S",
+            "M",
+            "XL"
+        ],
+        "createdAt": "2023-01-06T12:00:00.000Z",
+        "updatedAt": "2023-01-06T12:00:00.000Z",
+        "sku": "PRD006",
+        "type": "Clothing"
+    },
+    {
+        "title": "Product 7",
+        "description": "This is the seventh product",
+        "price": 45.99,
+        "category": "Furniture",
+        "stockQuantity": 25,
+        "imageUrl": "https://i.ibb.co/w4R8X28/Great-Wall-Of-China.jpg",
+        "colors": [
+            {
+                "name": "Brown",
+                "imageUrl": "https://i.ibb.co/Z11qV38/image.png"
+            },
+            {
+                "name": "Beige",
+                "imageUrl": "https://i.ibb.co/cvRQFF3/1260521.jpg"
+            }
+        ],
+        "size": [
+            "Double",
+            "Queen",
+            "King"
+        ],
+        "createdAt": "2023-01-07T12:00:00.000Z",
+        "updatedAt": "2023-01-07T12:00:00.000Z",
+        "sku": "PRD007",
+        "type": "Furniture"
+    },
+    {
+        "title": "Product 8",
+        "description": "This is the eighth product",
+        "price": 25.99,
+        "category": "Accessories",
+        "stockQuantity": 60,
+        "imageUrl": "https://i.ibb.co/Fq1bhFr/image.png",
+        "colors": [
+            {
+                "name": "Silver",
+                "imageUrl": "https://i.ibb.co/Z11qV38/image.png"
+            },
+            {
+                "name": "Gold",
+                "imageUrl": "https://i.ibb.co/cvRQFF3/1260521.jpg"
+            }
+        ],
+        "size": [
+            "One Size"
+        ],
+        "createdAt": "2023-01-08T12:00:00.000Z",
+        "updatedAt": "2023-01-08T12:00:00.000Z",
+        "sku": "PRD008",
+        "type": "Accessories"
+    },
+    {
+        "title": "Product 9",
+        "description": "This is the ninth product",
+        "price": 29.99,
+        "category": "Electronics",
+        "stockQuantity": 35,
+        "imageUrl": "https://i.ibb.co/34KMXfv/image.png",
+        "colors": [
+            {
+                "name": "Red",
+                "imageUrl": "https://i.ibb.co/Z11qV38/image.png"
+            },
+            {
+                "name": "Black",
+                "imageUrl": "https://i.ibb.co/cvRQFF3/1260521.jpg"
+            }
+        ],
+        "size": [
+            "S",
+            "M",
+            "L"
+        ],
+        "createdAt": "2023-01-09T12:00:00.000Z",
+        "updatedAt": "2023-01-09T12:00:00.000Z",
+        "sku": "PRD009",
+        "type": "Electronics"
+    },
+    {
+        "title": "Product 10",
+        "description": "This is the tenth product",
+        "price": 49.99,
+        "category": "Clothing",
+        "stockQuantity": 22,
+        "imageUrl": "https://i.ibb.co/JrjzHZN/image.png",
+        "colors": [
+            {
+                "name": "White",
+                "imageUrl": "https://i.ibb.co/Z11qV38/image.png"
+            },
+            {
+                "name": "Gray",
+                "imageUrl": "https://i.ibb.co/cvRQFF3/1260521.jpg"
+            }
+        ],
+        "size": [
+            "M",
+            "L",
+            "XL"
+        ],
+        "createdAt": "2023-01-10T12:00:00.000Z",
+        "updatedAt": "2023-01-10T12:00:00.000Z",
+        "sku": "PRD010",
+        "type": "Clothing"
+    }
+]

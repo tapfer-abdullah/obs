@@ -1,14 +1,19 @@
 "use client";
-import Link from "next/link";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import * as React from "react";
 import { useState } from "react";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
-import demoImg from "../../../Assects/ux.png";
 import "../CustomComponents.css";
-import DetailsModalImage from "./DetailsModalImage";
 
 const QuickAddToCartModal = ({ details, QuickShop, SetQuickShop }) => {
   const [selectedItems, setSelectedItems] = useState(0);
+  const [size, setSize] = React.useState(0);
+
+  const handleSize = (event, newSize) => {
+    setSize(newSize);
+  };
 
   return (
     <div className="relative flex justify-center pt-10 items-center w-[300px] h-[420px] bg-white bg-opacity-80">
@@ -38,7 +43,7 @@ const QuickAddToCartModal = ({ details, QuickShop, SetQuickShop }) => {
 
         <div className="size-container">
           <p className="mt-2 text-center text-lg font-semibold">Select Size:</p>
-          <div className=" relative flex gap-1 my-3">
+          {/* <div className=" relative flex gap-1 my-3">
             <div className="relative w-10 mr-5">
               <input type="radio" id="size-s" name="size" value="s" />
               <label htmlFor="size-s">S</label>
@@ -51,7 +56,19 @@ const QuickAddToCartModal = ({ details, QuickShop, SetQuickShop }) => {
               <input type="radio" id="size-l" name="size" value="l" />
               <label htmlFor="size-l">L</label>
             </div>
-          </div>
+          </div> */}
+
+          <ToggleButtonGroup value={size} exclusive onChange={handleSize} aria-label="tips" className="w-full flex-wrap justify-center gap-2">
+            <ToggleButton className="bg-white text-xl font-medium text-black" value="s" aria-label="S">
+              S
+            </ToggleButton>
+            <ToggleButton className="bg-white text-xl font-medium text-black" value="M" aria-label="M">
+              M
+            </ToggleButton>
+            <ToggleButton className="bg-white text-xl font-medium text-black" value="xl" aria-label="xl">
+              XL
+            </ToggleButton>
+          </ToggleButtonGroup>
 
           <div className="my-20">
             <div className="flex-grow">

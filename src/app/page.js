@@ -1,21 +1,17 @@
-import Banner from "@/Components/Pages/Home/Banner/Banner"
-import HomePolicy from "@/Components/Pages/Home/HomePolicy/HomePolicy"
-import NewArrival from "@/Components/Pages/Home/NewArrival/NewArrival"
-import Products from "@/Components/Pages/Home/Products/Products"
 
-export const metadata = {
-  title: "Home | OdbhootStore"
-}
+import Banner from '@/Components/Pages/Home/Banner/Banner';
+import HomePolicy from '@/Components/Pages/Home/HomePolicy/HomePolicy';
+import NewArrival from '@/Components/Pages/Home/NewArrival/NewArrival';
+import Products from '@/Components/Pages/Home/Products/Products';
+
 
 export default function Home() {
   return (
     <div className=''>
-
       <Banner />
       <NewArrival />
       <Products />
       <HomePolicy />
-
     </div>
-  )
+  );
 }
