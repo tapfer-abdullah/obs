@@ -1,9 +1,11 @@
 "use client"
 import ProductCard1 from '@/Components/CustomComponents/ProductCard1';
 import ProductDetailsModal from '@/Components/CustomComponents/ProductModals/ProductDetailsModal';
+import Loader from '@/Hooks/Loader/Loader';
+import { axiosHttp } from '@/app/helper/axiosHttp';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BsFilterLeft } from "react-icons/bs";
 import { IoIosArrowForward } from "react-icons/io";
 
@@ -12,21 +14,34 @@ const page = () => {
 
     const pathname = usePathname()
     const category = pathname.replace('/Collections/', '');
-    const [isActiveModal, setActiveModal] = useState(false);
-    const [modalDetails, setModalDetails] = useState({ price: 50, name: "Luminary Luxe", img1: "https://i.ibb.co/g6z3QwZ/image.png", img2: "https://i.ibb.co/tLQNdCz/Eiffel-Tower-Day-1200x834.jpg" });
+    // const [isActiveModal, setActiveModal] = useState(false);
+    // const [modalDetails, setModalDetails] = useState({ price: 50, name: "Luminary Luxe", img1: "https://i.ibb.co/g6z3QwZ/image.png", img2: "https://i.ibb.co/tLQNdCz/Eiffel-Tower-Day-1200x834.jpg" });
 
+    const [allProductsData, setAllProductsData] = useState([]);
+    const [isLoading, setLoading] = useState(false);
 
+    useEffect(() => {
+        setLoading(true);
+        axiosHttp.get("/products").then((res) => {
+            setAllProductsData(res.data);
+            setLoading(false);
+        });
+    }, []);
+
+    if (isLoading) {
+        return <div className="pt-[68px] mt-20">
+            <Loader />
+        </div>
+    }
 
     return (
         <div className='pt-[68px]'>
-
             <div className='h-[25vh] w-full overflow-hidden flex items-center justify-center relative' >
                 <img src="https://i.ibb.co/ZWgMyx4/arab-Desert.jpg" alt="" className='h-auto w-full' />
                 <div className='absolute top-0 bottom-0 left-0 right-0 w-full h-full bg-black opacity-40'>
                 </div>
                 <h3 className='absolute font-bold text-2xl text-white'>{category}</h3>
             </div>
-            {isActiveModal && <ProductDetailsModal isActiveModal={isActiveModal} setActiveModal={setActiveModal} />}
 
             <div className="max-w-7xl mx-auto grid grid-cols-4 gap-4 my-10">
 
@@ -68,22 +83,12 @@ const page = () => {
                         </div>
 
                     </div>
-
                 </div>
-                <div className='col-span-3 grid grid-cols-3 gap-4'>
-                    <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-                    <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-                    <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-                    <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-                    <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-                    <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-                    <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-                    <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-                    <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-                    <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-                    <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-                    <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
 
+                <div className='col-span-3 grid grid-cols-3 gap-4'>
+                    {allProductsData?.map((singleProduct) => (
+                        <ProductCard1 key={singleProduct?._id} singleProduct={singleProduct}></ProductCard1>
+                    ))}
 
                 </div>
 

@@ -1,5 +1,21 @@
 import mongoose, { Schema } from "mongoose";
 
+// const variantSchema = new mongoose.Schema({
+//     color: {
+//         type: String,
+//     },
+//     imageUrl: {
+//         type: String,
+//     },
+//     sku: {
+//         type: String,
+//     },
+//     size: {
+//         type: String,
+//     }
+
+// });
+
 
 const colorsSchema = new mongoose.Schema({
     name: {
@@ -34,7 +50,7 @@ const productsSchema = new Schema({
         min: 0,
     },
     imageUrl: {
-        type: String,
+        type: [String],
         required: true,
     },
     colors: {
@@ -64,4 +80,4 @@ const productsSchema = new Schema({
 })
 
 
-export const Products = mongoose.models.allProduct || mongoose.model("allProduct", productsSchema);
+export const Products = mongoose.models.allproducts || mongoose.model("allproducts", productsSchema);

@@ -1,9 +1,21 @@
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import Link from "next/link";
 import React, { useState } from "react";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 
-const IDWiseDetails = () => {
+const IDWiseDetails = ({ singleProduct }) => {
+  const { title, price, type, size, sku, colors } = singleProduct;
+  const [sizes, setSize] = React.useState(0);
+  const [selectedColor, setSelectedColor] = useState(singleProduct?.colors ? singleProduct?.colors[0]?.name : "");
+
+  const handleColorClick = (colorName) => {
+    setSelectedColor(colorName);
+  };
+  const handleSize = (event, newSize) => {
+    setSize(newSize);
+  };
   const [selectedItems, setSelectedItems] = useState(1);
+
   return (
     <div>
       <div className="details-modal-content space-y-5 p-3">
@@ -11,17 +23,17 @@ const IDWiseDetails = () => {
           <Link href={"/"} className="uppercase font-medium">
             Odbhootstore
           </Link>
-          <h3 className="text-xl font-semibold">Seamless Fitness Yoga Wear Shorts Set</h3>
+          <h3 className="text-xl font-semibold">{title}</h3>
         </div>
         <div className="flex justify-between items-center">
-          <span>In Stock</span>
-          <span>Type: GYM</span>
-          <span>SKU: CJNS102226001AZ</span>
+          <span className="text-green-500">In Stock</span>
+          <span>Type: {type}</span>
+          <span>SKU: {sku}</span>
         </div>
         <div className="flex justify-between items-center">
           <div className="text-2xl font-bold flex items-center justify-start gap-1">
             <MdOutlineEuroSymbol />
-            <span>50.00</span>
+            <span>{price}</span>
           </div>
           <div className="text-2xl font-bold flex items-center justify-start gap-1">
             <span>Colors: </span>
@@ -33,24 +45,38 @@ const IDWiseDetails = () => {
           </div>
         </div>
 
+        <div className="space-y-1">
+          <p className="text-lg font-semibold w-full">Select Size:</p>
+
+          <ToggleButtonGroup value={sizes} exclusive onChange={handleSize} aria-label="sizes" className="w-full flex-wrap">
+            {size?.map((s, index) => (
+              <ToggleButton key={index} className="bg-white text-xl font-medium !text-black w-auto border border-2" value={s} aria-label={s}>
+                {s}
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
+        </div>
+
         <div>
-          <p className="mt-2 text-lg font-semibold">Select Size:</p>
-          <div className="size-container relative flex gap-1 mb-3">
-            <p className="my-2 text-lg font-semibold"></p>
-            <div className="relative w-10 mr-3">
-              <input type="radio" id="size-s" name="size" value="s" />
-              <label htmlFor="size-s">S</label>
+          <div className="space-y-2">
+            <div className="flex items-center justify-center text-lg text-black font-medium gap-2">
+              <h2>Colors:</h2>
+              <h2>{selectedColor}</h2>
             </div>
-            <div className="relative w-10 mr-3">
-              <input type="radio" id="size-m" name="size" value="m" />
-              <label htmlFor="size-m">M</label>
-            </div>
-            <div className="relative w-10 mr-5">
-              <input type="radio" id="size-l" name="size" value="l" />
-              <label htmlFor="size-l">L</label>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {singleProduct?.colors?.map((color) => (
+                <div key={color._id} onClick={() => handleColorClick(color.name)}>
+                  <img src={color?.imageUrl} className="w-10 h-10" alt="" />
+                </div>
+              ))}
             </div>
           </div>
+
+          <div>
+            <img src={singleProduct?.colors?.find((color) => color.name === selectedColor)?.imageUrl} style={{ width: "50px" }} />
+          </div>
         </div>
+
         <div>
           <div className="flex items-center gap-2 text-xl font-bold mt-10">
             <div className="text-xl font-bold">

@@ -14,8 +14,9 @@ import "swiper/css/thumbs";
 import Image from "next/image";
 import Link from "next/link";
 import { FreeMode, Navigation, Thumbs } from "swiper/modules";
-const DetailsModalImage = ({ imageData }) => {
-  console.log(imageData);
+const DetailsModalImage = ({ singleProduct, selectedColor }) => {
+  // console.log(imageData);
+  const imageData = [...singleProduct.imageUrl];
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   return (
     <>
@@ -31,13 +32,15 @@ const DetailsModalImage = ({ imageData }) => {
         modules={[FreeMode, Navigation, Thumbs]}
         className="mySwiper2"
       >
-        {imageData.map((img, indx) => (
+        {/* {imageData.map((img, indx) => (
           <div key={indx}>
             <SwiperSlide className="my-2">
               <img src={img} className="!h-[300px] !w-[466px]" />
             </SwiperSlide>
           </div>
-        ))}
+        ))} */}
+
+        <img src={singleProduct.colors.find((color) => color.name === selectedColor)?.imageUrl} alt="" />
       </Swiper>
       <Swiper onSwiper={setThumbsSwiper} loop={true} spaceBetween={10} slidesPerView={4} freeMode={true} watchSlidesProgress={true} modules={[FreeMode, Navigation, Thumbs]} className="mySwiper">
         {imageData?.map((img, indx) => (

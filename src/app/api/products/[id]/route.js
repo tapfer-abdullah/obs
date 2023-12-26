@@ -3,15 +3,14 @@ import { NextResponse } from "next/server";
 
 const { connectDB } = require("@/app/helper/db");
 
-
 connectDB();
 
 export const GET = async (request, { params }) => {
+    const id = params?.id;
 
     try {
-        const allProducts = await Products.find();
-        // console.log("dfa", allProducts)
-        return NextResponse.json(allProducts);
+        const product = await Products.findById(id);
+        return NextResponse.json(product);
 
     }
     catch (error) {

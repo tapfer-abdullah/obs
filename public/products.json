@@ -5,7 +5,10 @@
         "price": 29.99,
         "category": "Electronics",
         "stockQuantity": 50,
-        "imageUrl": "https://i.ibb.co/DwfmK4q/depositphotos-86009122-stock-photo-languages-signpost.webp",
+        "imageUrl": [
+            "https://i.ibb.co/DwfmK4q/depositphotos-86009122-stock-photo-languages-signpost.webp",
+            "https://i.ibb.co/7SBxdWB/image.png"
+        ],
         "colors": [
             {
                 "name": "Red",
@@ -32,7 +35,10 @@
         "price": 39.99,
         "category": "Clothing",
         "stockQuantity": 30,
-        "imageUrl": "https://i.ibb.co/ZWgMyx4/arab-Desert.jpg",
+        "imageUrl": [
+            "https://i.ibb.co/ZWgMyx4/arab-Desert.jpg",
+            "https://i.ibb.co/7SBxdWB/image.png"
+        ],
         "colors": [
             {
                 "name": "Black",
@@ -59,7 +65,10 @@
         "price": 49.99,
         "category": "Furniture",
         "stockQuantity": 20,
-        "imageUrl": "https://i.ibb.co/tLQNdCz/Eiffel-Tower-Day-1200x834.jpg",
+        "imageUrl": [
+            "https://i.ibb.co/tLQNdCz/Eiffel-Tower-Day-1200x834.jpg",
+            "https://i.ibb.co/7SBxdWB/image.png"
+        ],
         "colors": [
             {
                 "name": "Brown",
@@ -86,7 +95,10 @@
         "price": 19.99,
         "category": "Accessories",
         "stockQuantity": 100,
-        "imageUrl": "https://i.ibb.co/nnwLnM3/london-england-credit-tomas-marek-istock.jpg",
+        "imageUrl": [
+            "https://i.ibb.co/nnwLnM3/london-england-credit-tomas-marek-istock.jpg",
+            "https://i.ibb.co/7SBxdWB/image.png"
+        ],
         "colors": [
             {
                 "name": "Silver",
@@ -111,7 +123,10 @@
         "price": 59.99,
         "category": "Electronics",
         "stockQuantity": 15,
-        "imageUrl": "https://i.ibb.co/ynmFkJY/germanfood.jpg",
+        "imageUrl": [
+            "https://i.ibb.co/ynmFkJY/germanfood.jpg",
+            "https://i.ibb.co/7SBxdWB/image.png"
+        ],
         "colors": [
             {
                 "name": "Green",
@@ -137,7 +152,10 @@
         "price": 34.99,
         "category": "Clothing",
         "stockQuantity": 40,
-        "imageUrl": "https://i.ibb.co/vhY7G1V/bullfighting-in-spain.jpg",
+        "imageUrl": [
+            "https://i.ibb.co/vhY7G1V/bullfighting-in-spain.jpg",
+            "https://i.ibb.co/7SBxdWB/image.png"
+        ],
         "colors": [
             {
                 "name": "Blue",
@@ -164,7 +182,10 @@
         "price": 45.99,
         "category": "Furniture",
         "stockQuantity": 25,
-        "imageUrl": "https://i.ibb.co/w4R8X28/Great-Wall-Of-China.jpg",
+        "imageUrl": [
+            "https://i.ibb.co/w4R8X28/Great-Wall-Of-China.jpg",
+            "https://i.ibb.co/7SBxdWB/image.png"
+        ],
         "colors": [
             {
                 "name": "Brown",
@@ -191,7 +212,10 @@
         "price": 25.99,
         "category": "Accessories",
         "stockQuantity": 60,
-        "imageUrl": "https://i.ibb.co/Fq1bhFr/image.png",
+        "imageUrl": [
+            "https://i.ibb.co/Fq1bhFr/image.png",
+            "https://i.ibb.co/7SBxdWB/image.png"
+        ],
         "colors": [
             {
                 "name": "Silver",
@@ -216,7 +240,10 @@
         "price": 29.99,
         "category": "Electronics",
         "stockQuantity": 35,
-        "imageUrl": "https://i.ibb.co/34KMXfv/image.png",
+        "imageUrl": [
+            "https://i.ibb.co/34KMXfv/image.png",
+            "https://i.ibb.co/7SBxdWB/image.png"
+        ],
         "colors": [
             {
                 "name": "Red",
@@ -243,7 +270,10 @@
         "price": 49.99,
         "category": "Clothing",
         "stockQuantity": 22,
-        "imageUrl": "https://i.ibb.co/JrjzHZN/image.png",
+        "imageUrl": [
+            "https://i.ibb.co/JrjzHZN/image.png",
+            "https://i.ibb.co/7SBxdWB/image.png"
+        ],
         "colors": [
             {
                 "name": "White",

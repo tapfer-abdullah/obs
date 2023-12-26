@@ -1,7 +1,9 @@
 "use client"
+import Loader from '@/Hooks/Loader/Loader';
+import { axiosHttp } from '@/app/helper/axiosHttp';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 import IDWIseDescriptions from './IDWIseDescriptions';
 import IDWiseDetails from './IDWiseDetails';
@@ -13,21 +15,23 @@ const page = () => {
     const pathname = usePathname()
     const resultArray = pathname.split("/").filter(Boolean);
 
-    const [isActiveModal, setActiveModal] = useState(false);
-    const [modalDetails, setModalDetails] = useState({ price: 50, name: "Luminary Luxe", img1: "https://i.ibb.co/g6z3QwZ/image.png", img2: "https://i.ibb.co/tLQNdCz/Eiffel-Tower-Day-1200x834.jpg" });
+    const [singleProduct, setSingleProduct] = useState({});
+    const [isLoading, setLoading] = useState(false);
 
+    useEffect(() => {
+        setLoading(true);
+        axiosHttp.get(`/products/${resultArray[2]}`).then(res => {
+            setSingleProduct(res.data);
+            setLoading(false);
+        })
+    }, [])
 
-    const imageData = [
-        "https://i.ibb.co/g6z3QwZ/image.png",
-        "https://i.ibb.co/JrjzHZN/image.png",
-        "https://i.ibb.co/cvRQFF3/1260521.jpg",
-        "https://i.ibb.co/34KMXfv/image.png",
-        "https://i.ibb.co/g6z3QwZ/image.png",
-        "https://i.ibb.co/JrjzHZN/image.png",
-        "https://i.ibb.co/cvRQFF3/1260521.jpg",
-    ];
+    if (isLoading) {
+        return <div className='pt-[68px] mt-20'>
+            <Loader />
+        </div>
+    }
 
-    console.log(resultArray);
     return (
         <div className='pt-20 max-w-7xl mx-auto'>
             <div className="text-lg font-semibold flex items-center space-x-1 my-2 p-2 bg-[#e9e9e9]">
@@ -42,16 +46,16 @@ const page = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
                 <div className="w-full">
-                    <IDWiseProduct imageData={imageData} />
+                    <IDWiseProduct imageData={singleProduct?.colors} />
                 </div>
                 <div className="">
-                    <IDWiseDetails />
+                    <IDWiseDetails singleProduct={singleProduct} />
                 </div>
             </div>
 
-            <IDWIseDescriptions />
-            <RelatedProducts title={"Related Products"} isActiveModal={isActiveModal} setActiveModal={setActiveModal} modalDetails={modalDetails} setModalDetails={setModalDetails} />
-            <RelatedProducts title={"Recommended Products"} isActiveModal={isActiveModal} setActiveModal={setActiveModal} modalDetails={modalDetails} setModalDetails={setModalDetails} />
+            <IDWIseDescriptions description={singleProduct?.description} />
+            {/* <RelatedProducts title={"Related Products"} isActiveModal={isActiveModal} setActiveModal={setActiveModal} modalDetails={modalDetails} setModalDetails={setModalDetails} />
+            <RelatedProducts title={"Recommended Products"} isActiveModal={isActiveModal} setActiveModal={setActiveModal} modalDetails={modalDetails} setModalDetails={setModalDetails} /> */}
         </div>
     );
 };

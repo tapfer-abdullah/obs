@@ -7,12 +7,20 @@ import { MdOutlineEuroSymbol } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import "../CustomComponents.css";
 
-const QuickAddToCartModal = ({ details, QuickShop, SetQuickShop }) => {
+const QuickAddToCartModal = ({ singleProduct, QuickShop, SetQuickShop }) => {
   const [selectedItems, setSelectedItems] = useState(0);
-  const [size, setSize] = React.useState(0);
+  const [sizes, setSize] = React.useState(0);
+
+  const { price, size, colors } = singleProduct;
 
   const handleSize = (event, newSize) => {
     setSize(newSize);
+  };
+
+  const [selectedColor, setSelectedColor] = useState(singleProduct.colors[0].name);
+
+  const handleColorClick = (colorName) => {
+    setSelectedColor(colorName);
   };
 
   return (
@@ -29,48 +37,41 @@ const QuickAddToCartModal = ({ details, QuickShop, SetQuickShop }) => {
         <div className="flex flex-col justify-between items-center gap-4">
           <div className="text-2xl font-bold flex items-center justify-start gap-1">
             <MdOutlineEuroSymbol />
-            <span>50.00</span>
+            <span>{price}</span>
           </div>
-          <div className="text-2xl font-bold flex items-center justify-start gap-1">
-            <span>Colors: </span>
-            <select name="colors" id="" className="border border-2 border-gray-900 rounded-md text-lg ">
-              <option value="Red">Red</option>
-              <option value="Black">Black</option>
-              <option value="White">White</option>
-            </select>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-center text-lg text-black font-medium gap-2">
+              <h2>Colors:</h2>
+              <h2>{selectedColor}</h2>
+            </div>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {singleProduct.colors.map((color) => (
+                <div key={color._id} onClick={() => handleColorClick(color.name)}>
+                  <img src={color?.imageUrl} className="w-10 h-10" alt="" />
+                </div>
+              ))}
+            </div>
           </div>
+
+          {/* <div>
+              <h2>Selected Color:</h2>
+              <p>{selectedColor}</p>
+              <img src={singleProduct.colors.find((color) => color.name === selectedColor)?.imageUrl} style={{ width: "50px" }} />
+            </div> */}
         </div>
 
         <div className="size-container">
           <p className="mt-2 text-center text-lg font-semibold">Select Size:</p>
-          {/* <div className=" relative flex gap-1 my-3">
-            <div className="relative w-10 mr-5">
-              <input type="radio" id="size-s" name="size" value="s" />
-              <label htmlFor="size-s">S</label>
-            </div>
-            <div className="relative w-10 mr-3">
-              <input type="radio" id="size-m" name="size" value="m" />
-              <label htmlFor="size-m">M</label>
-            </div>
-            <div className="relative w-10 mr-5">
-              <input type="radio" id="size-l" name="size" value="l" />
-              <label htmlFor="size-l">L</label>
-            </div>
-          </div> */}
-
-          <ToggleButtonGroup value={size} exclusive onChange={handleSize} aria-label="tips" className="w-full flex-wrap justify-center gap-2">
-            <ToggleButton className="bg-white text-xl font-medium text-black" value="s" aria-label="S">
-              S
-            </ToggleButton>
-            <ToggleButton className="bg-white text-xl font-medium text-black" value="M" aria-label="M">
-              M
-            </ToggleButton>
-            <ToggleButton className="bg-white text-xl font-medium text-black" value="xl" aria-label="xl">
-              XL
-            </ToggleButton>
+          <ToggleButtonGroup value={sizes} exclusive onChange={handleSize} aria-label="tips" className="w-full flex-wrap justify-center gap-2">
+            {size?.map((s, index) => (
+              <ToggleButton key={index} className="bg-white text-xl font-medium !text-black" value={s} aria-label={s}>
+                {s}
+              </ToggleButton>
+            ))}
           </ToggleButtonGroup>
 
-          <div className="my-20">
+          <div className="my-5">
             <div className="flex-grow">
               <button className="py-2 px-5 bg-black text-white mx-[1px] uppercase w-full">Add to Cart</button>
             </div>
