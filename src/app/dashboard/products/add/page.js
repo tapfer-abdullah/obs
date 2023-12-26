@@ -2,7 +2,7 @@
 import { TextField } from '@mui/material';
 import ReactHtmlParser from 'react-html-parser';
 
-import JoditEditor from 'jodit-react';
+// import JoditEditor from 'jodit-react';
 import React, { useMemo, useRef, useState } from 'react';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
@@ -115,7 +115,7 @@ const page = () => {
 
 
                 <div>
-                    {ReactHtmlParser(content)}
+                    {/* {ReactHtmlParser(content)} */}
                 </div>
 
 
