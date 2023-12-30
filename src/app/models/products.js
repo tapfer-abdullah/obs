@@ -1,30 +1,30 @@
 import mongoose, { Schema } from "mongoose";
 
-// const variantSchema = new mongoose.Schema({
-//     color: {
-//         type: String,
-//     },
-//     imageUrl: {
-//         type: String,
-//     },
-//     sku: {
-//         type: String,
-//     },
-//     size: {
-//         type: String,
-//     }
-
-// });
-
 
 const colorsSchema = new mongoose.Schema({
     name: {
+        type: String,
+    },
+    label: {
         type: String,
     },
     imageUrl: {
         type: String,
     }
 });
+
+const sizeSchema = new mongoose.Schema({
+    value: String,
+    label: String
+})
+const typeSchema = new mongoose.Schema({
+    value: String,
+    label: String
+})
+const categorySchema = new mongoose.Schema({
+    value: String,
+    label: String
+})
 
 const productsSchema = new Schema({
     title: {
@@ -40,13 +40,20 @@ const productsSchema = new Schema({
         required: true,
         min: 0,
     },
+    comparePrice: {
+        type: Number,
+        min: 0,
+    },
     category: {
-        type: String,
+        type: [categorySchema],
         required: true,
     },
     stockQuantity: {
         type: Number,
-        required: true,
+        min: 0,
+    },
+    sellQuantity: {
+        type: Number,
         min: 0,
     },
     imageUrl: {
@@ -58,7 +65,7 @@ const productsSchema = new Schema({
         default: [],
     },
     size: {
-        type: [String],
+        type: [sizeSchema],
         required: true
     },
     createdAt: {
@@ -74,7 +81,7 @@ const productsSchema = new Schema({
         required: true
     },
     type: {
-        type: String,
+        type: [typeSchema],
         require: true
     }
 })

@@ -48,25 +48,19 @@ const QuickAddToCartModal = ({ singleProduct, QuickShop, SetQuickShop }) => {
             <div className="flex flex-wrap gap-2 justify-center">
               {singleProduct.colors.map((color) => (
                 <div key={color._id} onClick={() => handleColorClick(color.name)}>
-                  <img src={color?.imageUrl} className="w-10 h-10" alt="" />
+                  <img src={color?.imageUrl} className="w-10 h-10 cursor-pointer" alt="color-wise-img" />
                 </div>
               ))}
             </div>
           </div>
-
-          {/* <div>
-              <h2>Selected Color:</h2>
-              <p>{selectedColor}</p>
-              <img src={singleProduct.colors.find((color) => color.name === selectedColor)?.imageUrl} style={{ width: "50px" }} />
-            </div> */}
         </div>
 
         <div className="size-container">
           <p className="mt-2 text-center text-lg font-semibold">Select Size:</p>
           <ToggleButtonGroup value={sizes} exclusive onChange={handleSize} aria-label="tips" className="w-full flex-wrap justify-center gap-2">
-            {size?.map((s, index) => (
-              <ToggleButton key={index} className="bg-white text-xl font-medium !text-black" value={s} aria-label={s}>
-                {s}
+            {size?.map((s) => (
+              <ToggleButton key={s?._id} className="bg-white text-xl font-medium !text-black" value={s?.label} aria-label={s?.label}>
+                {s?.label}
               </ToggleButton>
             ))}
           </ToggleButtonGroup>

@@ -3,6 +3,7 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import Link from "next/link";
 import * as React from "react";
 import { useState } from "react";
+import ReactHtmlParser from "react-html-parser";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import "../CustomComponents.css";
@@ -12,6 +13,7 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
   const { _id, title, description, price, type, size, sku, colors } = singleProduct;
   const [sizes, setSize] = React.useState(0);
   const [selectedColor, setSelectedColor] = useState(singleProduct.colors[0].name);
+  const [imgIndex, setImgIndex] = useState(0);
 
   const handleColorClick = (colorName) => {
     setSelectedColor(colorName);
@@ -20,12 +22,30 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
     setSize(newSize);
   };
 
+  // left btn
+  const leftSlider = () => {
+    if (imgIndex - 1 < 0) {
+      setImgIndex(singleProduct?.colors?.length - 1);
+    } else {
+      setImgIndex(imgIndex - 1);
+    }
+  };
+
+  // right btn
+  const rightSlider = () => {
+    if (imgIndex + 1 == singleProduct?.colors?.length) {
+      setImgIndex(0);
+    } else {
+      setImgIndex(imgIndex + 1);
+    }
+  };
+
   const [selectedItems, setSelectedItems] = useState(1);
 
   return (
     <div className="relative w-full mt-[7%] bg-white grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
       <div className="">
-        <DetailsModalImage selectedColor={selectedColor} singleProduct={singleProduct} id={_id} />
+        <DetailsModalImage setImgIndex={setImgIndex} rightSlider={rightSlider} leftSlider={leftSlider} imgIndex={imgIndex} singleProduct={singleProduct} id={_id} />
         <RxCross2 onClick={handleClose} className="absolute top-2 right-2 text-xl font-bold cursor-pointer" />
       </div>
 
@@ -38,7 +58,7 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-green-500">In Stock</span>
-          <span>Type: {type}</span>
+          <span>Type: {type[0]?.label}</span>
           <span>SKU: {sku}</span>
         </div>
         <div className="flex justify-between items-center">
@@ -46,45 +66,28 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
             <MdOutlineEuroSymbol />
             <span>{price}</span>
           </div>
-          <div className="text-2xl font-bold flex items-center justify-start gap-1">
-            <span>Colors: </span>
-            <select name="colors" id="" className="border border-2 border-gray-900 rounded-md text-lg ">
-              <option value="Red">Red</option>
-              <option value="Black">Black</option>
-              <option value="White">White</option>
-            </select>
-          </div>
 
-          <div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-center text-lg text-black font-medium gap-2">
-                <h2>Colors:</h2>
-                <h2>{selectedColor}</h2>
-              </div>
-              <div className="flex flex-wrap gap-2 justify-center">
-                {singleProduct.colors.map((color) => (
-                  <div key={color._id} onClick={() => handleColorClick(color.name)}>
-                    <img src={color?.imageUrl} className="w-10 h-10" alt="" />
-                  </div>
-                ))}
-              </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-center text-lg text-black font-medium gap-2">
+              <h2>Colors:</h2>
+              <h2>{singleProduct?.colors?.[imgIndex]?.name}</h2>
             </div>
-
-            {/* <div>
-              <h2>Selected Color:</h2>
-              <p>{selectedColor}</p>
-              <img src={singleProduct.colors.find((color) => color.name === selectedColor)?.imageUrl} style={{ width: "50px" }} />
-            </div> */}
+            <div className="flex flex-wrap gap-2 justify-center">
+              {singleProduct?.colors?.map((color, index) => (
+                <div key={color._id} onClick={() => setImgIndex(index)} className={`border-[3px] p-[1px] ${index == imgIndex ? " border-black" : "border-white"}`}>
+                  <img src={color?.imageUrl} className="w-10 h-10 cursor-pointer" alt="" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        <p>{description > 250 ? <span>{description.substring(0, 250)}...</span> : description}</p>
         <div className="space-y-1">
           <p className="text-lg font-semibold w-full">Select Size:</p>
 
           <ToggleButtonGroup value={sizes} exclusive onChange={handleSize} aria-label="sizes" className="w-full flex-wrap gap-2">
-            {size?.map((s, index) => (
-              <ToggleButton key={index} className="bg-white text-xl font-medium !text-black w-auto" value={s} aria-label={s}>
-                {s}
+            {size?.map((s) => (
+              <ToggleButton key={s?._id} className="bg-white text-xl font-medium !text-black w-auto" value={s?.label} aria-label={s?.label}>
+                {s?.label}
               </ToggleButton>
             ))}
           </ToggleButtonGroup>

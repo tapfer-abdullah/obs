@@ -5,22 +5,48 @@ import "../CustomComponents.css";
 
 // Import Swiper styles
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
-import "swiper/css";
-import "swiper/css/free-mode";
-import "swiper/css/navigation";
-import "swiper/css/thumbs";
 
-// import required modules
-import Image from "next/image";
 import Link from "next/link";
-import { FreeMode, Navigation, Thumbs } from "swiper/modules";
-const DetailsModalImage = ({ singleProduct, selectedColor }) => {
-  // console.log(imageData);
-  const imageData = [...singleProduct.imageUrl];
-  const [thumbsSwiper, setThumbsSwiper] = useState(null);
+import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
+
+const DetailsModalImage = ({ singleProduct, rightSlider, leftSlider, imgIndex, setImgIndex }) => {
+  console.log(singleProduct);
+  const imageData = singleProduct?.colors;
+
   return (
     <>
-      <Swiper
+      <div className="space-y-2">
+        <div className="relative">
+          <div className="absolute left-2 top-[50%]">
+            <IoIosArrowDropleft
+              className={`${imageData?.length < 2 ? "hidden" : ""} text-white font-semibold text-4xl cursor-pointer hover:text-black hover:bg-white rounded-full transition-all duration-300`}
+              onClick={leftSlider}
+            />
+          </div>
+          <div>
+            <img src={imageData?.[imgIndex]?.imageUrl} alt="img" className="!max-h-[50vh] !w-full" />
+          </div>
+          <div className="absolute right-2 top-[50%]">
+            <IoIosArrowDropright
+              className={`${imageData?.length < 2 ? "hidden" : ""} text-white font-semibold text-4xl cursor-pointer hover:text-black hover:bg-white rounded-full transition-all duration-300`}
+              onClick={rightSlider}
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap">
+          {imageData?.map((i, index) => (
+            <img
+              onClick={() => setImgIndex(index)}
+              src={i?.imageUrl}
+              alt="slide img"
+              className={`w-20 h-20 cursor-pointer border-[3px] p-[1px] ${index == imgIndex ? " border-black" : "border-white"}`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* <Swiper
         style={{
           "--swiper-navigation-color": "#fff",
           "--swiper-pagination-color": "#fff",
@@ -32,15 +58,8 @@ const DetailsModalImage = ({ singleProduct, selectedColor }) => {
         modules={[FreeMode, Navigation, Thumbs]}
         className="mySwiper2"
       >
-        {/* {imageData.map((img, indx) => (
-          <div key={indx}>
-            <SwiperSlide className="my-2">
-              <img src={img} className="!h-[300px] !w-[466px]" />
-            </SwiperSlide>
-          </div>
-        ))} */}
 
-        <img src={singleProduct.colors.find((color) => color.name === selectedColor)?.imageUrl} alt="" />
+        <img src={singleProduct.colors.find((color) => color.name === selectedColor)?.imageUrl} alt="img" className="!max-h-[50vh] my-2" />
       </Swiper>
       <Swiper onSwiper={setThumbsSwiper} loop={true} spaceBetween={10} slidesPerView={4} freeMode={true} watchSlidesProgress={true} modules={[FreeMode, Navigation, Thumbs]} className="mySwiper">
         {imageData?.map((img, indx) => (
@@ -50,8 +69,8 @@ const DetailsModalImage = ({ singleProduct, selectedColor }) => {
             </SwiperSlide>
           </div>
         ))}
-      </Swiper>
-      <Link href={"/"} className="text-lg font-medium mt-8 flex justify-center items-center gap-2 hover:underline">
+      </Swiper> */}
+      <Link href={`/Collections/${singleProduct?.category?.[0]?.label}/${singleProduct?._id}`} className="text-lg font-medium mt-8 flex justify-center items-center gap-2 hover:underline">
         <p>View More Details</p>
         <FaArrowUpRightFromSquare />
       </Link>

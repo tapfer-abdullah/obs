@@ -1,4 +1,5 @@
 import React from "react";
+import ReactHtmlParser from "react-html-parser";
 
 const IDWIseDescriptions = ({ description }) => {
   return (
@@ -8,7 +9,7 @@ const IDWIseDescriptions = ({ description }) => {
         <div className="border-b-2 flex-grow"></div>
       </div>
 
-      <p>{description} </p>
+      <p>{ReactHtmlParser(description)} </p>
     </div>
   );
 };

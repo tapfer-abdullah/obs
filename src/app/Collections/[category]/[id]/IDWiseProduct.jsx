@@ -1,38 +1,36 @@
-import { useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
+import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
 
-import { FaArrowUpRightFromSquare } from "react-icons/fa6";
-import "swiper/css";
-import "swiper/css/free-mode";
-import "swiper/css/navigation";
-import "swiper/css/thumbs";
-
-import { FreeMode, Navigation, Thumbs } from "swiper/modules";
-const IDWiseProduct = ({ imageData }) => {
-  const [thumbsSwiper, setThumbsSwiper] = useState(null);
-  console.log("thumb", thumbsSwiper);
+const IDWiseProduct = ({ imageData, rightSlider, leftSlider, imgIndex, setImgIndex }) => {
   return (
-    <div className="">
-      <Swiper loop={true} spaceBetween={10} navigation={true} thumbs={{ swiper: thumbsSwiper }} modules={[FreeMode, Navigation, Thumbs]} className="mySwiper2">
-        {imageData?.map((img, indx) => (
-          <div key={indx}>
-            <SwiperSlide className="my-2">
-              <p>{img?.name}</p>
-              <img src={img?.imageUrl} className="!h-[300px] !w-full" />
-            </SwiperSlide>
-          </div>
+    <div className="space-y-2">
+      <div className="relative">
+        <div className="absolute left-2 top-[50%]">
+          <IoIosArrowDropleft
+            className={`${imageData?.length < 2 ? "hidden" : ""} text-white font-semibold text-4xl cursor-pointer hover:text-black hover:bg-white rounded-full transition-all duration-300`}
+            onClick={leftSlider}
+          />
+        </div>
+        <div>
+          <img src={imageData?.[imgIndex]?.imageUrl} alt="img" className="!h-[400px] !w-full" />
+        </div>
+        <div className="absolute right-2 top-[50%]">
+          <IoIosArrowDropright
+            className={`${imageData?.length < 2 ? "hidden" : ""} text-white font-semibold text-4xl cursor-pointer hover:text-black hover:bg-white rounded-full transition-all duration-300`}
+            onClick={rightSlider}
+          />
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2 flex-wrap">
+        {imageData?.map((i, index) => (
+          <img
+            onClick={() => setImgIndex(index)}
+            src={i?.imageUrl}
+            alt="slide img"
+            className={`w-20 h-20 cursor-pointer border-[3px] p-[1px] ${index == imgIndex ? " border-black" : "border-white"}`}
+          />
         ))}
-      </Swiper>
-      <Swiper onSwiper={setThumbsSwiper} loop={true} spaceBetween={10} slidesPerView={4} freeMode={true} watchSlidesProgress={true} modules={[FreeMode, Navigation, Thumbs]} className="mySwiper">
-        {imageData?.map((img, indx) => (
-          <div key={indx}>
-            <SwiperSlide>
-              <p>{img?.name}</p>
-              <img src={img?.imageUrl} className="!h-[70px] !w-full" />
-            </SwiperSlide>
-          </div>
-        ))}
-      </Swiper>
+      </div>
     </div>
   );
 };

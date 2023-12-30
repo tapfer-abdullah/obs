@@ -18,6 +18,10 @@ const page = () => {
     const [singleProduct, setSingleProduct] = useState({});
     const [isLoading, setLoading] = useState(false);
 
+    const [imgIndex, setImgIndex] = useState(0);
+
+    console.log(resultArray[2])
+
     useEffect(() => {
         setLoading(true);
         axiosHttp.get(`/products/${resultArray[2]}`).then(res => {
@@ -25,6 +29,28 @@ const page = () => {
             setLoading(false);
         })
     }, [])
+
+    // left btn 
+    const leftSlider = () => {
+
+        if (imgIndex - 1 < 0) {
+            setImgIndex(singleProduct?.colors?.length - 1);
+        }
+        else {
+            setImgIndex(imgIndex - 1);
+        }
+    }
+
+    // right btn 
+    const rightSlider = () => {
+
+        if (imgIndex + 1 == singleProduct?.colors?.length) {
+            setImgIndex(0);
+        }
+        else {
+            setImgIndex(imgIndex + 1);
+        }
+    }
 
     if (isLoading) {
         return <div className='pt-[68px] mt-20'>
@@ -41,15 +67,15 @@ const page = () => {
                 <IoIosArrowForward />
                 <Link href={`/Collections/${resultArray[1]}`}>{resultArray[1]}</Link>
                 <IoIosArrowForward />
-                <h4>Name of the necklace</h4>
+                <h4>{singleProduct?.title}</h4>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
                 <div className="w-full">
-                    <IDWiseProduct imageData={singleProduct?.colors} />
+                    <IDWiseProduct imageData={singleProduct?.colors} setImgIndex={setImgIndex} rightSlider={rightSlider} leftSlider={leftSlider} imgIndex={imgIndex} />
                 </div>
                 <div className="">
-                    <IDWiseDetails singleProduct={singleProduct} />
+                    <IDWiseDetails singleProduct={singleProduct} setImgIndex={setImgIndex} imgIndex={imgIndex} />
                 </div>
             </div>
 

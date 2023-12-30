@@ -2,11 +2,13 @@
 import { TextField } from '@mui/material';
 // import ReactHtmlParser from 'react-html-parser';
 
+import { axiosHttp } from '@/app/helper/axiosHttp';
 import axios from 'axios';
 import JoditEditor from 'jodit-react';
 import React, { useMemo, useRef, useState } from 'react';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
+import { toast } from 'react-toastify';
 import "./AddProduct.css";
 
 const category = [
@@ -197,6 +199,26 @@ const page = () => {
     const handleAddProduct = () => {
         let productData = { title: title, price: price, comparePrice: comparePrice, sku: SKU, colors: imageURL, type: selectedType, category: selectedCategory, size: selectedSizes, description: content, imageUrl: [img1, img2] };
         console.log(productData)
+
+        try {
+            axiosHttp.post("/products", productData).then((res) => {
+                console.log(res.data)
+                if (res.data.status) {
+                    toast.success(res?.data?.message);
+                    // setTask({
+                    //   description: "",
+                    //   title: "",
+                    //   status: "none",
+                    // });
+                    // router.push("/tasks");
+                } else {
+                    toast.error(res?.data?.message);
+                }
+            });
+        } catch (error) {
+            console.log(error);
+            toast.error("Error ocurred!");
+        }
     }
 
     return (
@@ -246,6 +268,7 @@ const page = () => {
 
                 <div>
                     <JoditEditor
+                        className='max-h-[400px] overflow-y-auto'
                         ref={editor}
                         value={content}
                         // config={config}

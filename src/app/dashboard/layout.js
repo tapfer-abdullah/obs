@@ -1,5 +1,6 @@
 import DashboardNavbar from "@/Components/Pages/Dashboard/DashboardNavbar/DashboardNavbar";
 import DashboardSidebar from "@/Components/Pages/Dashboard/DashboardSidebar/DashboardSidebar";
+import { ToastContainer } from "react-toastify";
 
 export default function layout({ children }) {
     return <div>
@@ -10,6 +11,7 @@ export default function layout({ children }) {
                     <DashboardNavbar />
                     <div className=" pt-20 bg-[#F1F1F1] h-full">
                         {children}
+                        <ToastContainer />
                     </div>
                 </div>
             </div>

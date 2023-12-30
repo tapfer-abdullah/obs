@@ -19,3 +19,19 @@ export const GET = async (request, { params }) => {
         return NextResponse.json({ message: "Failed to fetch data!", status: false });
     }
 }
+
+
+export const POST = async (request) => {
+    const productData = await request.json();
+    console.log(productData)
+
+    try {
+        const newProduct = new Products(productData);
+        const result = await newProduct.save();
+        return NextResponse.json({ message: "Product added successfully", statue: true, data: result })
+    }
+    catch (error) {
+        console.log(error)
+        return NextResponse.json({ message: "Failed to add product!", status: false });
+    }
+}
