@@ -1,8 +1,9 @@
 "use client"
 import { TextField } from '@mui/material';
-import ReactHtmlParser from 'react-html-parser';
+// import ReactHtmlParser from 'react-html-parser';
 
-// import JoditEditor from 'jodit-react';
+import axios from 'axios';
+import JoditEditor from 'jodit-react';
 import React, { useMemo, useRef, useState } from 'react';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
@@ -36,6 +37,7 @@ const sizes = [
 ]
 
 const colors = [
+    { value: "Default-color", label: "Default-color" },
     { value: "red", label: "Red" },
     { value: "Rose-Gold", label: "Rose-Gold" },
     { value: "Silver", label: "Silver" },
@@ -46,6 +48,156 @@ const colors = [
 const page = () => {
     const editor = useRef(null);
     const [content, setContent] = useState('');
+    const [title, setTitle] = useState("");
+    const [price, setPrice] = useState("");
+    const [comparePrice, setComparePrice] = useState("");
+    const [SKU, setSKU] = useState("");
+    const [selectedType, setSelectedType] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState([]);
+    const [selectedSizes, setSelectedSizes] = useState([]);
+    const [img1, setImg1] = useState("https://i.ibb.co/KFjt6Mg/gallery-img.png");
+    const [img2, setImg2] = useState("https://i.ibb.co/KFjt6Mg/gallery-img.png");
+
+
+    const [images, setImages] = useState([]);
+    const [imageURL, setImageURL] = useState([]);
+    // const [imageURL, setImageURL] = useState([
+    //     { name: '', label: "pppppppppp", imageUrl: 'https://i.ibb.co/sFPTyB5/odbhoot-store-logo-jpeg-1-01-removebg-preview.png' },
+    //     { name: '', label: "llllllllllllllllllll", imageUrl: 'https://i.ibb.co/SwcmvtV/odbhoot-store-logo-jpeg-1-01.jpg' },
+    //     { name: '', label: "", imageUrl: 'https://i.ibb.co/SwcmvtV/odbhoot-store-logo-jpeg-1-01.jpg' },
+    //     { name: '', label: "", imageUrl: 'https://i.ibb.co/SwcmvtV/odbhoot-store-logo-jpeg-1-01.jpg' },
+    //     { name: '', label: "", imageUrl: 'https://i.ibb.co/SwcmvtV/odbhoot-store-logo-jpeg-1-01.jpg' },
+    //     { name: '', label: "", imageUrl: 'https://i.ibb.co/SwcmvtV/odbhoot-store-logo-jpeg-1-01.jpg' },
+    // ]);
+
+
+
+    const [isDragging, setDragging] = useState(false);
+    const fileInputRef = useRef(null);
+
+    const selectFiles = () => {
+        fileInputRef.current.click();
+    }
+    const onFileSelect = (e) => {
+        const files = e.target.files;
+        if (files.length === 0) return;
+        for (let i = 0; i < files.length; i++) {
+            if (files[i].type.split('/')[0] !== "image") continue;
+            if (!images.some((event) => event.name === files[i].name)) {
+                setImages((prevImages) => [
+                    ...prevImages,
+                    {
+                        name: files[i].name,
+                        url: URL.createObjectURL(files[i]),
+                    },
+                ]);
+            }
+        }
+    }
+
+    const deleteImage = (index) => {
+        setImages(prevImages => {
+            return prevImages.filter((_, i) => i !== index)
+        });
+    }
+
+    const onDragOver = (e) => {
+        e.preventDefault();
+        setDragging(false);
+        e.dataTransfer.dropEffect = "copy";
+    }
+
+    const onDragLeave = e => {
+        setDragging(false);
+    }
+    const onDrop = e => {
+        e.preventDefault();
+        setDragging(false);
+        const files = e.dataTransfer.files;
+
+        for (let i = 0; i < files.length; i++) {
+            if (files[i].type.split('/')[0] !== 'image') continue;
+            if (!images.some((event) => event.name === files[i].name)) {
+                setImages((prevImages) => [
+                    ...prevImages,
+                    {
+                        name: files[i].name,
+                        url: URL.createObjectURL(files[i]),
+                    },
+                ]);
+            }
+        }
+    }
+
+
+
+    const CustomOption = ({ innerProps, label, data }) => (
+        <div {...innerProps}>
+            <div className="flex items-center gap-1">
+                <img src={data.imageUrl} alt={name} style={{ marginRight: '8px', width: '24px', height: '24px' }} />
+                <p>{label?.length < 15 ? label : <>{label?.substring(0, 15)}..</>}</p>
+            </div>
+        </div>
+    );
+
+
+    const handleUploadPhoto = async () => {
+        const apiKey = process.env.NEXT_PUBLIC_IMAGEBB_KEY;
+        const apiUrl = 'https://api.imgbb.com/1/upload';
+
+        try {
+
+            const formData = new FormData();
+            let imgURL = [];
+
+            for (let i = 0; i < images.length; i++) {
+                const response = await fetch(images[i].url);
+                const blob = await response.blob();
+
+                formData.append('image', blob, images[i].name);
+
+
+                const response2 = await axios.post(`${apiUrl}?key=${apiKey}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+
+                // console.log('Image uploaded successfully:', response2.data);
+                // console.log(response2.data)
+                imgURL.push({ name: "Default-color", label: response2.data?.data?.title, imageUrl: response2.data?.data?.url });
+            }
+
+            setImageURL(imgURL)
+            setImages([]);
+
+        } catch (error) {
+            console.error('Error uploading images to ImageBB:', error);
+            console.log('Error response:', error.response.data);
+        }
+    }
+
+    const handleColor = (index, image, color) => {
+        console.log(index, image, color)
+        let updateColorArray = [];
+
+        for (let i = 0; i < imageURL.length; i++) {
+            if (i == index) {
+                updateColorArray.push({ name: color?.value, label: image?.label, imageUrl: image?.imageUrl })
+            }
+            else {
+                updateColorArray.push(imageURL[i]);
+            }
+        }
+
+        setImageURL(updateColorArray);
+    }
+
+
+    const handleAddProduct = () => {
+        let productData = { title: title, price: price, comparePrice: comparePrice, sku: SKU, colors: imageURL, type: selectedType, category: selectedCategory, size: selectedSizes, description: content, imageUrl: [img1, img2] };
+        console.log(productData)
+    }
 
     return (
         <div className='my-5'>
@@ -53,14 +205,15 @@ const page = () => {
                 <img src="https://i.ibb.co/jW9MTfv/image.png" alt="" className='w-20 mx-auto' />
                 <h4 className="text-xl font-semibold text-center">Add a product</h4>
 
-                <TextField required type="text" name="name" id="name" className="rounded-md w-full border-2" label="Name" />
                 <div className="flex items-center gap-2">
-                    <TextField required type="text" name="imgURL1" id="imgURL1" className="rounded-md w-full border-2 " label="First IMG URL" />
-                    <TextField required type="text" name="imgURL2" id="imgURL2" className="rounded-md w-full border-2 " label="Second IMG URL" />
+                    <TextField value={title} onChange={(e) => setTitle(e.target.value)} required type="text" name="name" id="name" className="rounded-md w-full border-2" label="Name" />
+
+                    <TextField value={SKU} onChange={(e) => setSKU(e.target.value)} required type="text" name="price" id="sku" className="rounded-md w-full border-2 " label="SKU" />
                 </div>
                 <div className="flex items-center gap-2">
-                    <TextField required type="number" name="price" id="price" className="rounded-md w-full border-2 " label="Price" />
-                    <TextField required type="text" name="price" id="sku" className="rounded-md w-full border-2 " label="SKU" />
+                    <TextField value={price} onChange={(e) => setPrice(e.target.value)} required type="number" name="price" id="price" className="rounded-md w-full border-2 " label="Price" />
+                    <TextField value={comparePrice} onChange={(e) => setComparePrice(e.target.value)} required type="number" name="price" id="price" className="rounded-md w-full border-2 " label="Compare price" />
+
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -68,13 +221,13 @@ const page = () => {
                         <span>
                             Type * <small>(Jewelry, Clothing etc)</small>
                         </span>
-                        <CreatableSelect required options={types} isMulti placeholder="Select type" className='z-20' />
+                        <CreatableSelect value={selectedType} onChange={(selectedOptions) => setSelectedType(selectedOptions)} required options={types} isMulti placeholder="Select type" className='z-20' />
                     </div>
                     <div className="w-full space-y-1 md:max-w-full lg:max-w-md">
                         <span>
                             Category * <small>(choose category)</small>
                         </span>
-                        <Select
+                        <Select value={selectedCategory} onChange={(selectedOptions) => setSelectedCategory(selectedOptions)}
                             isMulti
                             name="category"
                             options={category}
@@ -86,19 +239,10 @@ const page = () => {
                         <span>
                             Sizes * <small>(choose sizes)</small>
                         </span>
-                        <CreatableSelect required options={sizes} isMulti placeholder="Select sizes" className='z-20' />
+                        <CreatableSelect value={selectedSizes} onChange={(selectedOptions) => setSelectedSizes(selectedOptions)} required options={sizes} isMulti placeholder="Select sizes" className='z-20' />
                     </div>
                 </div>
 
-                <div>
-                    <p>
-                        Colors & Color wise images * <small>(choose sizes)</small>
-                    </p>
-                    <div className='flex gap-2 w-full items-end'>
-                        <CreatableSelect required options={colors} isMulti placeholder="Select colors" className='z-20 w-full' />
-                        <TextField required type="text" name="imgURLx" id="imgURLx" className="rounded-md w-full border-2 " label="IMG URL" />
-                    </div>
-                </div>
 
                 <div>
                     <JoditEditor
@@ -110,16 +254,105 @@ const page = () => {
                         onChange={newContent => { }}
                     />
                 </div>
-
-
-
-
                 <div>
                     {/* {ReactHtmlParser(content)} */}
                 </div>
 
+                {/* DRAG AND DROP IMAGE */}
+                <div className='grid grid-cols-2 gap-3'>
+                    <div className="card">
+                        <div className="top text-center">
+                            <p>Media</p>
+                        </div>
+                        <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
+                            {
+                                isDragging ? <span className="select">
+                                    Drop images here
+                                </span> : (
+                                    <>Drag & Drop image here or {" "}
+                                        <span className="select" role='button' onClick={selectFiles}>Browse</span></>)
+                            }
+
+                            <input type="file" name="file" id="" className='file' multiple ref={fileInputRef} onChange={onFileSelect} />
+                        </div>
+                        <div className="container">
+                            {images?.map((image, index) => (
+                                <div className="image" key={index}>
+                                    <span
+                                        className="delete"
+                                        onClick={() => deleteImage(index)}
+                                    >
+                                        x
+                                    </span>
+                                    <img src={image.url} alt={image.name} />
+                                </div>
+                            ))}
+
+                        </div>
+                        <button disabled={images?.length == 0} onClick={handleUploadPhoto}>Upload</button>
+                    </div>
+                    <div className='card2'>
+                        {imageURL.length != 0 ? <h4 className='text-center text-lg font-semibold text-[#0086fe]'>Enter photo wise color:</h4>
+                            : <h4 className='text-center text-lg font-semibold text-red-400'>No photo uploaded yet</h4>}
+                        {
+                            imageURL.length == 0 && <img src='https://i.ibb.co/52VHTDD/folder.png' alt="no image uploaded yet" className='h-60 w-60 mx-auto' />
+                        }
+                        {imageURL?.map((i, index) => <div key={index} className="flex gap-2 items-center my-1">
+                            <img src={i?.imageUrl} alt="img" className='w-12 h-12' />
+                            <CreatableSelect isMulti={false} onChange={(selectedOptions) => handleColor(index, i, selectedOptions)} required options={colors} placeholder="Enter color" className=' w-full' />
+                        </div>)}
+
+                    </div>
+                </div>
+                <div className="flex items-center gap-2 pt-5">
+                    <div className='relative w-full space-y-2'>
+                        <p>
+                            Product Img-1 * <small>(Default card img)</small>
+                        </p>
+                        <Select className='w-full'
+                            required
+                            styles={{
+                                control: (provided) => ({
+                                    ...provided,
+                                    paddingLeft: '40px',
+                                }),
+                            }}
+                            options={imageURL}
+                            components={{ Option: CustomOption }}
+                            isMulti={false}
+                            onChange={(selectedOptions) => setImg1(selectedOptions?.imageUrl)}
+                            placeholder="Select Card img-1"
+                        />
+                        <img src={img1} alt="selected img-1" className="w-8 h-8 absolute bottom-[2px] left-[2px]" />
+                    </div>
+                    <div className='relative w-full space-y-2'>
+                        <p>
+                            Product Img-2 * <small>(Hover card img)</small>
+                        </p>
+                        <Select className='w-full'
+                            required
+                            styles={{
+                                control: (provided) => ({
+                                    ...provided,
+                                    paddingLeft: '40px',
+                                }),
+                            }}
+                            options={imageURL}
+                            components={{ Option: CustomOption }}
+                            isMulti={false}
+                            onChange={(selectedOptions) => setImg2(selectedOptions?.imageUrl)}
+                            placeholder="Select Card img-2"
+                        />
+                        <img src={img2} alt="selected img-2" className="w-8 h-8 absolute bottom-[2px] left-[2px]" />
+                    </div>
+
+
+                </div>
+                <button onClick={handleAddProduct} className='bg-yellow-400 border py-2 w-full text-center'>Add Product</button>
 
             </div>
+
+
         </div>
     );
 };
