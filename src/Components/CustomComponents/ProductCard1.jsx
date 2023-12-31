@@ -35,7 +35,6 @@ const ProductCard1 = ({ singleProduct }) => {
       <div className="product-card m-2 space-y-3">
         <div className="Image-cart overflow-hidden relative">
           <Link href={`/Collections/${category[0]?.label}/${_id}`} className="image-container transition-all">
-            {/* <button className="image-container transition-all"> */}
             <img src={imageUrl[0]} alt="Product Image1" className="default-image transition-all duration-300" />
             <img src={imageUrl[1]} alt="Product Image2" className="hover-image transition-all duration-700" />
           </Link>

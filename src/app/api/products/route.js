@@ -23,7 +23,6 @@ export const GET = async (request, { params }) => {
 
 export const POST = async (request) => {
     const productData = await request.json();
-    console.log(productData)
 
     try {
         const newProduct = new Products(productData);

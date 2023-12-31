@@ -1,6 +1,6 @@
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
 
-const IDWiseProduct = ({ imageData, rightSlider, leftSlider, imgIndex, setImgIndex }) => {
+const IDWiseProduct = ({ imageData, rightSlider, leftSlider, imgIndex, setImgIndex, handleSku, selectedSize }) => {
   return (
     <div className="space-y-2">
       <div className="relative">
@@ -24,7 +24,10 @@ const IDWiseProduct = ({ imageData, rightSlider, leftSlider, imgIndex, setImgInd
       <div className="flex items-center gap-2 flex-wrap">
         {imageData?.map((i, index) => (
           <img
-            onClick={() => setImgIndex(index)}
+            onClick={() => {
+              setImgIndex(index);
+              handleSku(selectedSize, index);
+            }}
             src={i?.imageUrl}
             alt="slide img"
             className={`w-20 h-20 cursor-pointer border-[3px] p-[1px] ${index == imgIndex ? " border-black" : "border-white"}`}

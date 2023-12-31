@@ -1,5 +1,9 @@
 import mongoose, { Schema } from "mongoose";
 
+const skuSchema = new mongoose.Schema({
+    size: String,
+    sku: String
+})
 
 const colorsSchema = new mongoose.Schema({
     name: {
@@ -10,9 +14,14 @@ const colorsSchema = new mongoose.Schema({
     },
     imageUrl: {
         type: String,
-    }
+    },
+    allSKU: [skuSchema]
 });
 
+const statusSchema = new mongoose.Schema({
+    value: String,
+    label: String
+})
 const sizeSchema = new mongoose.Schema({
     value: String,
     label: String
@@ -76,9 +85,10 @@ const productsSchema = new Schema({
         type: Date,
         default: Date.now,
     },
-    sku: {
-        type: String,
-        required: true
+    status: {
+        type: statusSchema,
+        required: true,
+        default: "Draft"
     },
     type: {
         type: [typeSchema],

@@ -16,11 +16,9 @@ const page = () => {
     const resultArray = pathname.split("/").filter(Boolean);
 
     const [singleProduct, setSingleProduct] = useState({});
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(true);
 
     const [imgIndex, setImgIndex] = useState(0);
-
-    console.log(resultArray[2])
 
     useEffect(() => {
         setLoading(true);
@@ -30,27 +28,44 @@ const page = () => {
         })
     }, [])
 
+    const [selectedSize, setSelectedSize] = useState("S");
+    const [selectedSKU, setSelectedSKU] = useState(singleProduct?.colors?.[imgIndex]?.allSKU?.[0]?.sku);
+    const handleSku = (size, imgIndex) => {
+        console.log(size, imgIndex)
+        const sku = singleProduct?.colors?.[imgIndex]?.allSKU?.find((s) => s?.size == size);
+        setSelectedSKU(sku?.sku);
+
+    };
+
     // left btn 
     const leftSlider = () => {
 
         if (imgIndex - 1 < 0) {
+            handleSku("S", singleProduct?.colors?.length - 1);
             setImgIndex(singleProduct?.colors?.length - 1);
         }
         else {
+            handleSku("S", imgIndex - 1);
             setImgIndex(imgIndex - 1);
         }
+
     }
 
     // right btn 
     const rightSlider = () => {
 
         if (imgIndex + 1 == singleProduct?.colors?.length) {
+            handleSku("S", imgIndex + 1);
             setImgIndex(0);
         }
         else {
+            handleSku("S", imgIndex + 1);
             setImgIndex(imgIndex + 1);
         }
+
     }
+
+
 
     if (isLoading) {
         return <div className='pt-[68px] mt-20'>
@@ -72,10 +87,10 @@ const page = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
                 <div className="w-full">
-                    <IDWiseProduct imageData={singleProduct?.colors} setImgIndex={setImgIndex} rightSlider={rightSlider} leftSlider={leftSlider} imgIndex={imgIndex} />
+                    <IDWiseProduct imageData={singleProduct?.colors} handleSku={handleSku} selectedSize={selectedSize} setImgIndex={setImgIndex} rightSlider={rightSlider} leftSlider={leftSlider} imgIndex={imgIndex} />
                 </div>
                 <div className="">
-                    <IDWiseDetails singleProduct={singleProduct} setImgIndex={setImgIndex} imgIndex={imgIndex} />
+                    <IDWiseDetails selectedSize={selectedSize} setSelectedSize={setSelectedSize} handleSku={handleSku} selectedSKU={selectedSKU} singleProduct={singleProduct} setImgIndex={setImgIndex} imgIndex={imgIndex} />
                 </div>
             </div>
 

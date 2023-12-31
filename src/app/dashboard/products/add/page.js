@@ -1,5 +1,5 @@
 "use client"
-import { TextField } from '@mui/material';
+import { TextField, accordionSummaryClasses } from '@mui/material';
 // import ReactHtmlParser from 'react-html-parser';
 
 import { axiosHttp } from '@/app/helper/axiosHttp';
@@ -47,32 +47,25 @@ const colors = [
     { value: "Black", label: "Black" }
 ]
 
+const status = [
+    { value: "Active", label: "Active" },
+    { value: "Draft", label: "Draft" }
+]
+
 const page = () => {
     const editor = useRef(null);
     const [content, setContent] = useState('');
     const [title, setTitle] = useState("");
     const [price, setPrice] = useState("");
     const [comparePrice, setComparePrice] = useState("");
-    const [SKU, setSKU] = useState("");
     const [selectedType, setSelectedType] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState([]);
     const [selectedSizes, setSelectedSizes] = useState([]);
     const [img1, setImg1] = useState("https://i.ibb.co/KFjt6Mg/gallery-img.png");
     const [img2, setImg2] = useState("https://i.ibb.co/KFjt6Mg/gallery-img.png");
-
-
+    const [selectedStatus, setSelectedStatus] = useState({});
     const [images, setImages] = useState([]);
     const [imageURL, setImageURL] = useState([]);
-    // const [imageURL, setImageURL] = useState([
-    //     { name: '', label: "pppppppppp", imageUrl: 'https://i.ibb.co/sFPTyB5/odbhoot-store-logo-jpeg-1-01-removebg-preview.png' },
-    //     { name: '', label: "llllllllllllllllllll", imageUrl: 'https://i.ibb.co/SwcmvtV/odbhoot-store-logo-jpeg-1-01.jpg' },
-    //     { name: '', label: "", imageUrl: 'https://i.ibb.co/SwcmvtV/odbhoot-store-logo-jpeg-1-01.jpg' },
-    //     { name: '', label: "", imageUrl: 'https://i.ibb.co/SwcmvtV/odbhoot-store-logo-jpeg-1-01.jpg' },
-    //     { name: '', label: "", imageUrl: 'https://i.ibb.co/SwcmvtV/odbhoot-store-logo-jpeg-1-01.jpg' },
-    //     { name: '', label: "", imageUrl: 'https://i.ibb.co/SwcmvtV/odbhoot-store-logo-jpeg-1-01.jpg' },
-    // ]);
-
-
 
     const [isDragging, setDragging] = useState(false);
     const fileInputRef = useRef(null);
@@ -180,12 +173,13 @@ const page = () => {
     }
 
     const handleColor = (index, image, color) => {
-        console.log(index, image, color)
+
         let updateColorArray = [];
 
         for (let i = 0; i < imageURL.length; i++) {
             if (i == index) {
-                updateColorArray.push({ name: color?.value, label: image?.label, imageUrl: image?.imageUrl })
+                const allSKU = imageURL?.[index]?.allSKU || [];
+                updateColorArray.push({ name: color?.value, label: image?.label, imageUrl: image?.imageUrl, allSKU })
             }
             else {
                 updateColorArray.push(imageURL[i]);
@@ -195,9 +189,37 @@ const page = () => {
         setImageURL(updateColorArray);
     }
 
+    const handleSKU = (sku, sizeIndex, photoIndex) => {
+        const size = selectedSizes?.[sizeIndex]?.value;
+        let updateColorArray = [...imageURL];
+
+        const length = imageURL?.[photoIndex]?.allSKU?.length;
+        let oldData = { ...imageURL?.[photoIndex] };
+
+
+        let count = 0;
+        for (let i = 0; i < length; i++) {
+
+            if (oldData?.allSKU?.[i]?.size == size) {
+
+                oldData.allSKU[i].sku = sku;
+                count++;
+                break;
+            }
+        }
+
+        if (count == 0) {
+            oldData.allSKU.push({ size, sku });
+        }
+
+        updateColorArray[photoIndex] = oldData;
+        setImageURL(updateColorArray);
+
+    }
+
 
     const handleAddProduct = () => {
-        let productData = { title: title, price: price, comparePrice: comparePrice, sku: SKU, colors: imageURL, type: selectedType, category: selectedCategory, size: selectedSizes, description: content, imageUrl: [img1, img2] };
+        let productData = { title: title, price: price, comparePrice: comparePrice, status: selectedStatus, colors: imageURL, type: selectedType, category: selectedCategory, size: selectedSizes, description: content, imageUrl: [img1, img2] };
         console.log(productData)
 
         try {
@@ -230,8 +252,13 @@ const page = () => {
                 <div className="flex items-center gap-2">
                     <TextField value={title} onChange={(e) => setTitle(e.target.value)} required type="text" name="name" id="name" className="rounded-md w-full border-2" label="Name" />
 
-                    <TextField value={SKU} onChange={(e) => setSKU(e.target.value)} required type="text" name="price" id="sku" className="rounded-md w-full border-2 " label="SKU" />
-                </div>
+                    <div className="w-full space-y-1 md:max-w-full lg:max-w-md">
+                        <span>
+                            Status * <small>(Active, Draft)</small>
+                        </span>
+                        <Select value={selectedStatus} onChange={(selectedOptions) => setSelectedStatus(selectedOptions)} required options={status} isMulti={false}
+                            isClearable={false} placeholder="Select type" className='z-20' />
+                    </div></div>
                 <div className="flex items-center gap-2">
                     <TextField value={price} onChange={(e) => setPrice(e.target.value)} required type="number" name="price" id="price" className="rounded-md w-full border-2 " label="Price" />
                     <TextField value={comparePrice} onChange={(e) => setComparePrice(e.target.value)} required type="number" name="price" id="price" className="rounded-md w-full border-2 " label="Compare price" />
@@ -243,7 +270,8 @@ const page = () => {
                         <span>
                             Type * <small>(Jewelry, Clothing etc)</small>
                         </span>
-                        <CreatableSelect value={selectedType} onChange={(selectedOptions) => setSelectedType(selectedOptions)} required options={types} isMulti placeholder="Select type" className='z-20' />
+                        <Select value={selectedType} onChange={(selectedOptions) => setSelectedType(selectedOptions)} required options={types} isMulti
+                            isClearable={false} placeholder="Select type" className='z-20' />
                     </div>
                     <div className="w-full space-y-1 md:max-w-full lg:max-w-md">
                         <span>
@@ -251,6 +279,7 @@ const page = () => {
                         </span>
                         <Select value={selectedCategory} onChange={(selectedOptions) => setSelectedCategory(selectedOptions)}
                             isMulti
+                            isClearable={false}
                             name="category"
                             options={category}
                             className="basic-multi-select z-30"
@@ -282,7 +311,7 @@ const page = () => {
                 </div>
 
                 {/* DRAG AND DROP IMAGE */}
-                <div className='grid grid-cols-2 gap-3'>
+                <div className='grid grid-cols-1 gap-3'>
                     <div className="card">
                         <div className="top text-center">
                             <p>Media</p>
@@ -314,19 +343,35 @@ const page = () => {
                         </div>
                         <button disabled={images?.length == 0} onClick={handleUploadPhoto}>Upload</button>
                     </div>
-                    <div className='card2'>
-                        {imageURL.length != 0 ? <h4 className='text-center text-lg font-semibold text-[#0086fe]'>Enter photo wise color:</h4>
+
+                    {/* varient / colors  */}
+                    <div className='card2 max-h-[400px] overflow-y-auto'>
+                        {imageURL.length != 0 ? <h4 className='text-center text-lg font-semibold text-[#0086fe]'>Enter photo wise color & size wise SKU:</h4>
                             : <h4 className='text-center text-lg font-semibold text-red-400'>No photo uploaded yet</h4>}
                         {
                             imageURL.length == 0 && <img src='https://i.ibb.co/52VHTDD/folder.png' alt="no image uploaded yet" className='h-60 w-60 mx-auto' />
                         }
-                        {imageURL?.map((i, index) => <div key={index} className="flex gap-2 items-center my-1">
-                            <img src={i?.imageUrl} alt="img" className='w-12 h-12' />
-                            <CreatableSelect isMulti={false} onChange={(selectedOptions) => handleColor(index, i, selectedOptions)} required options={colors} placeholder="Enter color" className=' w-full' />
+                        {imageURL?.map((i, index) => <div key={index} className="grid grid-cols-4 gap-2 items-start justify-center my-3 bg-[#f4f3f9] p-2 rounded-md">
+                            <div className='flex flex-col gap-2 justify-center items-center'>
+                                <img src={i?.imageUrl} alt="img" className='w-full h-40 rounded-md' />
+                                <CreatableSelect isMulti={false} onChange={(selectedOptions) => handleColor(index, i, selectedOptions)} required options={colors} placeholder="Enter color" className=' !w-full' />
+                            </div>
+                            <div className="col-span-3 start-1 w-full grid grid-cols-3 gap-2 justify-center items-start my-3">
+                                {
+                                    selectedSizes?.map((ss, indexS) => <div key={indexS} className='w-full'>
+                                        <TextField onBlur={(e) => handleSKU(e.target.value, indexS, index)} type="text" name="color-wise-sku" id={ss?.value} className="rounded-md w-full border-2 my-2" label={`SKU for ${ss?.value}`} />
+
+                                    </div>)
+                                }
+
+                            </div>
+
                         </div>)}
 
                     </div>
                 </div>
+
+                {/* Card images  */}
                 <div className="flex items-center gap-2 pt-5">
                     <div className='relative w-full space-y-2'>
                         <p>

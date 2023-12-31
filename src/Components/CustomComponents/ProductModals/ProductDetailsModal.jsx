@@ -10,23 +10,29 @@ import "../CustomComponents.css";
 import DetailsModalImage from "./DetailsModalImage";
 
 const ProductDetailsModal = ({ singleProduct, handleClose }) => {
-  const { _id, title, description, price, type, size, sku, colors } = singleProduct;
+  const { _id, title, description, price, comparePrice, type, size, colors } = singleProduct;
   const [sizes, setSize] = React.useState(0);
-  const [selectedColor, setSelectedColor] = useState(singleProduct.colors[0].name);
   const [imgIndex, setImgIndex] = useState(0);
 
-  const handleColorClick = (colorName) => {
-    setSelectedColor(colorName);
-  };
   const handleSize = (event, newSize) => {
     setSize(newSize);
+  };
+
+  const [selectedSize, setSelectedSize] = useState("S");
+  const [selectedSKU, setSelectedSKU] = useState(singleProduct?.colors?.[imgIndex]?.allSKU?.[0]?.sku);
+  const handleSku = (size, imgIndex) => {
+    console.log(size, imgIndex);
+    const sku = singleProduct?.colors?.[imgIndex]?.allSKU?.find((s) => s?.size == size);
+    setSelectedSKU(sku?.sku);
   };
 
   // left btn
   const leftSlider = () => {
     if (imgIndex - 1 < 0) {
+      handleSku("S", singleProduct?.colors?.length - 1);
       setImgIndex(singleProduct?.colors?.length - 1);
     } else {
+      handleSku("S", imgIndex - 1);
       setImgIndex(imgIndex - 1);
     }
   };
@@ -34,8 +40,10 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
   // right btn
   const rightSlider = () => {
     if (imgIndex + 1 == singleProduct?.colors?.length) {
+      handleSku("S", imgIndex + 1);
       setImgIndex(0);
     } else {
+      handleSku("S", imgIndex + 1);
       setImgIndex(imgIndex + 1);
     }
   };
@@ -45,7 +53,16 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
   return (
     <div className="relative w-full mt-[7%] bg-white grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
       <div className="">
-        <DetailsModalImage setImgIndex={setImgIndex} rightSlider={rightSlider} leftSlider={leftSlider} imgIndex={imgIndex} singleProduct={singleProduct} id={_id} />
+        <DetailsModalImage
+          handleSku={handleSku}
+          selectedSize={selectedSize}
+          setImgIndex={setImgIndex}
+          rightSlider={rightSlider}
+          leftSlider={leftSlider}
+          imgIndex={imgIndex}
+          singleProduct={singleProduct}
+          id={_id}
+        />
         <RxCross2 onClick={handleClose} className="absolute top-2 right-2 text-xl font-bold cursor-pointer" />
       </div>
 
@@ -56,25 +73,35 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
           </Link>
           <h3 className="text-xl font-semibold">{title}</h3>
         </div>
+
         <div className="flex justify-between items-center">
           <span className="text-green-500">In Stock</span>
-          <span>Type: {type[0]?.label}</span>
-          <span>SKU: {sku}</span>
+          <span>Type: {singleProduct?.type ? singleProduct?.type[0]?.label : ""}</span>
+          <span>SKU: {selectedSKU || singleProduct?.colors?.[0]?.allSKU?.[0]?.sku}</span>
         </div>
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center"> */}
+        <div className="space-y-3">
           <div className="text-2xl font-bold flex items-center justify-start gap-1">
             <MdOutlineEuroSymbol />
             <span>{price}</span>
+            <small className=" line-through">{comparePrice}</small>
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-center text-lg text-black font-medium gap-2">
+            <div className="flex items-center justify-start text-lg text-black font-medium gap-2">
               <h2>Colors:</h2>
               <h2>{singleProduct?.colors?.[imgIndex]?.name}</h2>
             </div>
-            <div className="flex flex-wrap gap-2 justify-center">
+            <div className="flex flex-wrap gap-2 justify-start">
               {singleProduct?.colors?.map((color, index) => (
-                <div key={color._id} onClick={() => setImgIndex(index)} className={`border-[3px] p-[1px] ${index == imgIndex ? " border-black" : "border-white"}`}>
+                <div
+                  key={color._id}
+                  onClick={() => {
+                    setImgIndex(index);
+                    handleSku(selectedSize, index);
+                  }}
+                  className={`border-[3px] p-[1px] ${index == imgIndex ? " border-black" : "border-white"}`}
+                >
                   <img src={color?.imageUrl} className="w-10 h-10 cursor-pointer" alt="" />
                 </div>
               ))}
@@ -82,11 +109,28 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
           </div>
         </div>
         <div className="space-y-1">
-          <p className="text-lg font-semibold w-full">Select Size:</p>
+          <p className="text-lg font-semibold w-full">Size: {selectedSize}</p>
 
-          <ToggleButtonGroup value={sizes} exclusive onChange={handleSize} aria-label="sizes" className="w-full flex-wrap gap-2">
+          <ToggleButtonGroup
+            value={sizes}
+            exclusive
+            onChange={() => {
+              handleSize();
+            }}
+            aria-label="sizes"
+            className="w-full flex-wrap"
+          >
             {size?.map((s) => (
-              <ToggleButton key={s?._id} className="bg-white text-xl font-medium !text-black w-auto" value={s?.label} aria-label={s?.label}>
+              <ToggleButton
+                key={s?._id}
+                onClick={(e) => {
+                  setSelectedSize(e.target.value);
+                  handleSku(e.target.value, imgIndex);
+                }}
+                className={`${s?.label === selectedSize ? "!bg-black !text-white" : "!bg-white !text-black"} !px-4   !text-lg !font-medium !w-auto border !border-2`}
+                value={s?.label}
+                aria-label={s?.label}
+              >
                 {s?.label}
               </ToggleButton>
             ))}

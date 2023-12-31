@@ -3,10 +3,9 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 
-const IDWiseDetails = ({ singleProduct, imgIndex, setImgIndex }) => {
-  const { title, price, type, size, sku, colors } = singleProduct;
+const IDWiseDetails = ({ singleProduct, selectedSKU, imgIndex, setImgIndex, handleSku, selectedSize, setSelectedSize }) => {
+  const { title, price, comparePrice, size } = singleProduct;
   const [sizes, setSize] = React.useState(0);
-  const [selectedColor, setSelectedColor] = useState(singleProduct?.colors ? singleProduct?.colors[0]?.name : "");
 
   const handleSize = (event, newSize) => {
     setSize(newSize);
@@ -25,22 +24,31 @@ const IDWiseDetails = ({ singleProduct, imgIndex, setImgIndex }) => {
         <div className="flex justify-between items-center">
           <span className="text-green-500">In Stock</span>
           <span>Type: {singleProduct?.type ? singleProduct?.type[0]?.label : ""}</span>
-          <span>SKU: {sku}</span>
+          <span>SKU: {selectedSKU || singleProduct?.colors?.[0]?.allSKU?.[0]?.sku}</span>
         </div>
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center"> */}
+        <div className="space-y-3">
           <div className="text-2xl font-bold flex items-center justify-start gap-1">
             <MdOutlineEuroSymbol />
             <span>{price}</span>
+            <small className=" line-through">{comparePrice}</small>
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-center text-lg text-black font-medium gap-2">
+            <div className="flex items-center justify-start text-lg text-black font-medium gap-2">
               <h2>Colors:</h2>
               <h2>{singleProduct?.colors?.[imgIndex]?.name}</h2>
             </div>
-            <div className="flex flex-wrap gap-2 justify-center">
+            <div className="flex flex-wrap gap-2 justify-start">
               {singleProduct?.colors?.map((color, index) => (
-                <div key={color._id} onClick={() => setImgIndex(index)} className={`border-[3px] p-[1px] ${index == imgIndex ? " border-black" : "border-white"}`}>
+                <div
+                  key={color._id}
+                  onClick={() => {
+                    setImgIndex(index);
+                    handleSku(selectedSize, index);
+                  }}
+                  className={`border-[3px] p-[1px] ${index == imgIndex ? " border-black" : "border-white"}`}
+                >
                   <img src={color?.imageUrl} className="w-10 h-10 cursor-pointer" alt="" />
                 </div>
               ))}
@@ -49,11 +57,28 @@ const IDWiseDetails = ({ singleProduct, imgIndex, setImgIndex }) => {
         </div>
 
         <div className="space-y-1">
-          <p className="text-lg font-semibold w-full">Select Size:</p>
+          <p className="text-lg font-semibold w-full">Size: {selectedSize}</p>
 
-          <ToggleButtonGroup value={sizes} exclusive onChange={handleSize} aria-label="sizes" className="w-full flex-wrap">
+          <ToggleButtonGroup
+            value={sizes}
+            exclusive
+            onChange={() => {
+              handleSize();
+            }}
+            aria-label="sizes"
+            className="w-full flex-wrap"
+          >
             {size?.map((s) => (
-              <ToggleButton key={s?._id} className="bg-white text-xl font-medium !text-black w-auto border border-2" value={s?.label} aria-label={s?.label}>
+              <ToggleButton
+                key={s?._id}
+                onClick={(e) => {
+                  setSelectedSize(e.target.value);
+                  handleSku(e.target.value, imgIndex);
+                }}
+                className={`${s?.label === selectedSize ? "!bg-black !text-white" : "!bg-white !text-black"} !px-4   !text-lg !font-medium !w-auto border !border-2`}
+                value={s?.label}
+                aria-label={s?.label}
+              >
                 {s?.label}
               </ToggleButton>
             ))}
