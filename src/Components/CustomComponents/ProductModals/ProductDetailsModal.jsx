@@ -127,7 +127,7 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
                   setSelectedSize(e.target.value);
                   handleSku(e.target.value, imgIndex);
                 }}
-                className={`${s?.label === selectedSize ? "!bg-black !text-white" : "!bg-white !text-black"} !px-4   !text-lg !font-medium !w-auto border !border-2`}
+                className={`${s?.label === selectedSize ? "!bg-black !text-white" : "!bg-white !text-black"} !px-4 !py-2   !text-lg !font-medium !w-auto border !border-2`}
                 value={s?.label}
                 aria-label={s?.label}
               >

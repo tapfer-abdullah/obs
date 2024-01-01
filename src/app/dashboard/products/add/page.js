@@ -256,8 +256,9 @@ const page = () => {
                         <span>
                             Status * <small>(Active, Draft)</small>
                         </span>
-                        <Select value={selectedStatus} onChange={(selectedOptions) => setSelectedStatus(selectedOptions)} required options={status} isMulti={false}
-                            isClearable={false} placeholder="Select type" className='z-20' />
+                        <Select value={selectedStatus} onChange={(selectedOptions) => setSelectedStatus(selectedOptions)}
+                            required options={status} isMulti={false}
+                            isClearable={false} placeholder="Select status" className='z-20' />
                     </div></div>
                 <div className="flex items-center gap-2">
                     <TextField value={price} onChange={(e) => setPrice(e.target.value)} required type="number" name="price" id="price" className="rounded-md w-full border-2 " label="Price" />

@@ -40,8 +40,18 @@ const DashboardSidebar = () => {
             </Link>
             <ul className={`${productBtn ? "block" : "hidden"} text-xl font-semibold text-white pl-8 space-y-1`}>
               <li>
+                <Link href="/dashboard/products/types" className="">
+                  Types
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard/products/collections" className="">
+                  Collections
+                </Link>
+              </li>
+              <li>
                 <Link href="/dashboard/products" className="">
-                  All Products
+                  Inventory
                 </Link>
               </li>
               <li>

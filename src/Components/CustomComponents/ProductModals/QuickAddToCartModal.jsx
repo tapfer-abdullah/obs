@@ -8,7 +8,7 @@ import { RxCross2 } from "react-icons/rx";
 import "../CustomComponents.css";
 
 const QuickAddToCartModal = ({ singleProduct, QuickShop, SetQuickShop }) => {
-  const [selectedItems, setSelectedItems] = useState(0);
+  const [selectedSize, setSelectedSize] = useState("S");
   const [sizes, setSize] = React.useState(0);
 
   const { price, size, colors } = singleProduct;
@@ -17,7 +17,7 @@ const QuickAddToCartModal = ({ singleProduct, QuickShop, SetQuickShop }) => {
     setSize(newSize);
   };
 
-  const [selectedColor, setSelectedColor] = useState(singleProduct.colors[0].name);
+  const [selectedColor, setSelectedColor] = useState(singleProduct?.colors?.[0]?.name);
 
   const handleColorClick = (colorName) => {
     setSelectedColor(colorName);
@@ -57,9 +57,25 @@ const QuickAddToCartModal = ({ singleProduct, QuickShop, SetQuickShop }) => {
 
         <div className="size-container">
           <p className="mt-2 text-center text-lg font-semibold">Select Size:</p>
-          <ToggleButtonGroup value={sizes} exclusive onChange={handleSize} aria-label="tips" className="w-full flex-wrap justify-center gap-2">
+          <ToggleButtonGroup
+            value={sizes}
+            exclusive
+            onChange={() => {
+              handleSize();
+            }}
+            aria-label="sizes"
+            className="w-full flex justify-center flex-wrap"
+          >
             {size?.map((s) => (
-              <ToggleButton key={s?._id} className="bg-white text-xl font-medium !text-black" value={s?.label} aria-label={s?.label}>
+              <ToggleButton
+                key={s?._id}
+                onClick={(e) => {
+                  setSelectedSize(e.target.value);
+                }}
+                className={`${s?.label === selectedSize ? "!bg-black !text-white" : "!bg-white !text-black"} !px-3 !py-1   !text-lg !font-medium !w-auto border !border-2`}
+                value={s?.label}
+                aria-label={s?.label}
+              >
                 {s?.label}
               </ToggleButton>
             ))}

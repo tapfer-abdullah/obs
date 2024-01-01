@@ -5,7 +5,7 @@ const { connectDB } = require("@/app/helper/db");
 
 connectDB();
 
-export const GET = async (request, { params }) => {
+export const GET = async ({ params }) => {
     const id = params?.id;
 
     try {
