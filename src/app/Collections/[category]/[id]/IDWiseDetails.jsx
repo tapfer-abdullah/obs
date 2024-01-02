@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 
 const IDWiseDetails = ({ singleProduct, selectedSKU, imgIndex, setImgIndex, handleSku, selectedSize, setSelectedSize }) => {
-  const { title, price, comparePrice, size } = singleProduct;
+  const { title, price, comparePrice, size } = singleProduct || {};
   const [sizes, setSize] = React.useState(0);
 
   const handleSize = (event, newSize) => {

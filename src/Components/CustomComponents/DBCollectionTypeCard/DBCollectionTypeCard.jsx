@@ -26,6 +26,7 @@ const DBCollectionTypeCard = ({ handleOpen, setLoading, setInfo, data, activeTyp
       >
         <h2 className="text-lg font-semibold">
           {data?.title} {data?.type && <small className="text-sm ml-1 text-blue-600">({data.type})</small>}
+          {data?.visibility && <small className="text-sm ml-1 text-blue-600">(Visibility: {data?.visibility})</small>}
         </h2>
         <p>{data?.description}</p>
         <p className="flex gap-1 items-center">

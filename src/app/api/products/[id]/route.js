@@ -5,8 +5,12 @@ const { connectDB } = require("@/app/helper/db");
 
 connectDB();
 
-export const GET = async ({ params }) => {
+export const GET = async (request, { params }) => {
     const id = params?.id;
+
+    if (!id) {
+        return NextResponse.json({ message: "Id not found!", status: false });
+    }
 
     try {
         const product = await Products.findById(id);

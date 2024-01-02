@@ -1,13 +1,26 @@
 import { CollectionsSchema } from "@/app/models/collections";
 import { TypesSchema } from "@/app/models/types";
 import { NextResponse } from "next/server";
+import { parse } from 'url';
 const { connectDB } = require("@/app/helper/db");
 
 
 connectDB();
 
-export const GET = async () => {
+export const GET = async (request) => {
+    const url = request?.url;
+    const { query } = parse(url, true);
+
+    const searchParams = new URLSearchParams(query);
+    const type = searchParams.get('type');
+
     try {
+
+        if (type) {
+            const collections = await CollectionsSchema.find({ type: type });
+            return NextResponse.json(collections)
+        }
+
         const collections = await CollectionsSchema.find();
         return NextResponse.json(collections)
     }

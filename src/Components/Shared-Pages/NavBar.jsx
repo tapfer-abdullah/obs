@@ -1,4 +1,5 @@
 "use client";
+import { axiosHttp } from "@/app/helper/axiosHttp";
 import Link from "next/link";
 import React, { useState } from "react";
 import { AiOutlineShopping } from "react-icons/ai";
@@ -8,6 +9,14 @@ import "./sharedComponents.css";
 
 const NavBar = () => {
   const [positionInfo, setPositionInfo] = useState({ right: "-right-[2000px]", customOpacity: 0 });
+  const [type, setType] = useState([]);
+
+  useState(() => {
+    axiosHttp.get("/types").then((res) => {
+      console.log(res.data);
+    });
+  }, []);
+
   return (
     <div>
       <div className="mobile lg:hidden">mobile</div>

@@ -2,10 +2,12 @@
 import DBCollectionTypeCard from "@/Components/CustomComponents/DBCollectionTypeCard/DBCollectionTypeCard";
 import DBModal from "@/Components/CustomComponents/Modals/DBModal";
 import { axiosHttp } from "@/app/helper/axiosHttp";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { AiOutlineLink } from "react-icons/ai";
+import { FaChevronCircleRight } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import Swal from "sweetalert2";
-import DBFilteredProductCard from "../DBCards/DBFilteredProductCard";
 import DBTypesForm from "./DBTypesForm";
 
 const DBTypes = () => {
@@ -15,11 +17,11 @@ const DBTypes = () => {
   const [productsData, setProductsData] = useState([]);
   const [isReset, setReset] = useState("");
   const [imgUrl, setImgUrl] = useState("https://i.ibb.co/NSYqCtV/image.png");
-  const [allTypes, setAllTypes] = useState([]);
   const [refetch, setRefetch] = useState(0);
   const [collectionInfo, setCollectionInfo] = useState({});
   const [collectionOldData, setCollectionOldData] = useState({});
   const [isLoading, setLoading] = useState(true);
+  const [autoURL, setAutoURL] = useState("");
 
   const [open, setOpen] = React.useState(false);
   const handleClose = () => setOpen(false);
@@ -43,7 +45,7 @@ const DBTypes = () => {
 
   useEffect(() => {
     axiosHttp
-      .get(`/products?category=${activeType}`)
+      .get(`/collections?type=${activeType}`)
       .then((res) => {
         setProductsData(res.data);
       })
@@ -105,31 +107,30 @@ const DBTypes = () => {
     }
 
     const title = form.title.value;
-    const type = form.type.value;
+    const visibility = form.visibility.value;
     const img = form.img.value;
     const url = form.url.value;
     const description = form.description.value;
 
-    const typeData = { title, type, img, url, description };
-    console.log(typeData);
+    const typeData = { title, visibility, img, url, description };
 
     axiosHttp
-      .put(`collections/${collectionInfo?.id}`, typeData)
+      .put(`types/${collectionInfo?.id}`, typeData)
       .then((res) => {
+        form.reset();
+        setRefetch(refetch + 1);
+        setReset("");
+        handleCloseUpdate();
         if (res.data?.status) {
-          form.reset();
-          setRefetch(refetch + 1);
-          setReset("");
-          handleCloseUpdate();
           Swal.fire({
             title: "Updated!",
-            text: "Collection has been updated.",
+            text: "Type has been updated.",
             icon: "success",
           });
         } else {
           Swal.fire({
             title: "Unable!",
-            text: "Unable to update collection.",
+            text: "Unable to update type.",
             icon: "error",
           });
         }
@@ -150,18 +151,18 @@ const DBTypes = () => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        axiosHttp.delete(`collections/${id}`).then((res) => {
+        axiosHttp.delete(`types/${id}`).then((res) => {
           if (res.data?.status) {
             setRefetch(refetch + 1);
             Swal.fire({
               title: "Deleted!",
-              text: "Collection has been deleted.",
+              text: "Type has been deleted.",
               icon: "success",
             });
           } else {
             Swal.fire({
               title: "Unable!",
-              text: "Unable to delete collection.",
+              text: "Unable to delete Type.",
               icon: "error",
             });
           }
@@ -171,25 +172,23 @@ const DBTypes = () => {
   };
 
   useEffect(() => {
-    const field = collectionInfo?.id;
+    const { id } = collectionInfo;
 
-    if (field && field != "Types") {
-      axiosHttp
-        .get(`/collections/${collectionInfo?.id}`)
-        .then((res) => {
-          setCollectionOldData(res.data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
-    }
+    axiosHttp
+      .get(`/types/${id}`)
+      .then((res) => {
+        setCollectionOldData(res.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
   }, [collectionInfo, imgUrl]);
 
   return (
     <div>
       <DBModal open={open} handleClose={handleClose}>
-        <DBTypesForm imgUrl={imgUrl} setReset={setReset} setImgUrl={setImgUrl} handleSubmit={handleCreateType}>
+        <DBTypesForm autoURL={autoURL} setAutoURL={setAutoURL} imgUrl={imgUrl} setReset={setReset} setImgUrl={setImgUrl} handleSubmit={handleCreateType}>
           Create
         </DBTypesForm>
       </DBModal>
@@ -228,7 +227,34 @@ const DBTypes = () => {
           <h3 className="text-xl font-semibold py-2 text-center">
             Collections of {activeType} type ({productsData.length})
           </h3>
-          <DBFilteredProductCard productsData={productsData} />
+          {productsData.length == 0 && (
+            <div className="flex flex-col justify-center items-center">
+              <img src="https://i.ibb.co/Nmm2QxV/empty-cart.png" alt="no-product-img" className="w-72 h-auto" />
+              <p className="text-md font-semibold text-red-500">The type is empty!</p>
+            </div>
+          )}
+
+          <div className="px-5">
+            {productsData?.map((c) => (
+              <div key={c?._id} className="">
+                <div className="flex gap-3 items-center border-dashed border-2 border-gray-400 my-2 p-2 rounded-lg drop-shadow-2xl">
+                  <img src={c?.img} alt="img" className="w-20 h20" />
+                  <div className="w-full pl-2 pr-5 flex justify-between items-center">
+                    <div className="space-y-1">
+                      <h3 className="text-lg font-semibold">Title: {c?.title}</h3>
+                      <p className="text-blue-700 flex items-center gap-1">
+                        <AiOutlineLink className="text-lg font-semibold text-gray-600" />
+                        <span>{c?.url}</span>
+                      </p>
+                    </div>
+                    <Link href={"/dashboard/products/collections"}>
+                      <FaChevronCircleRight className="text-3xl font-semibold" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

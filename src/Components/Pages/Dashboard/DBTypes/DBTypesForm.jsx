@@ -2,7 +2,7 @@
 import Loader from "@/Hooks/Loader/Loader";
 import React from "react";
 
-const DBTypesForm = ({ children, isLoading, data, setReset, imgUrl, setImgUrl, handleSubmit }) => {
+const DBTypesForm = ({ children, autoURL, setAutoURL, isLoading, data, setReset, imgUrl, setImgUrl, handleSubmit }) => {
   if (isLoading) {
     return <Loader />;
   }
@@ -16,9 +16,21 @@ const DBTypesForm = ({ children, isLoading, data, setReset, imgUrl, setImgUrl, h
       <div className="grid grid-cols-2 gap-3 items-center">
         <div className="space-y-1">
           <label htmlFor="newCategory">
-            Type * <small className="text-sm text-gray-600">(Title)</small>
+            Type * <small className="text-sm text-gray-600">(Title {children == "Update" && <>is unchangeable</>})</small>
           </label>
-          <input type="text" required defaultValue={data?.title} name="title" id="newCategory" placeholder="Enter title.." className="border border-black w-full px-2 py-1 outline-1" />
+          <input
+            onBlur={(e) => {
+              setAutoURL(`/${e.target.value}`);
+            }}
+            disabled={children == "Update"}
+            type="text"
+            required
+            defaultValue={data?.title}
+            name="title"
+            id="newCategory"
+            placeholder="Enter title.."
+            className="border border-black w-full px-2 py-1 outline-1"
+          />
         </div>
         <div className="space-y-1">
           <label htmlFor="newType">
@@ -51,9 +63,17 @@ const DBTypesForm = ({ children, isLoading, data, setReset, imgUrl, setImgUrl, h
         </div>
         <div className="space-y-1">
           <label htmlFor="typeURL">
-            Category URL * <small className="text-sm text-gray-600">(Add "/" with category)</small>
+            Type URL * <small className="text-sm text-gray-600">(Auto generated link)</small>
           </label>
-          <input type="text" required defaultValue={data?.url} name="url" id="typeURL" placeholder="Enter category URL.." className="border border-black w-full px-2 py-1 outline-1" />
+          <input
+            type="text"
+            required
+            value={data?.url.toLowerCase() || autoURL.toLowerCase()}
+            name="url"
+            id="typeURL"
+            placeholder="Enter category URL.."
+            className="border border-black w-full px-2 py-1 outline-1"
+          />
         </div>
         <div className="space-y-1 col-span-2">
           <label htmlFor="categoryDescription">

@@ -20,6 +20,7 @@ const DBCollections = () => {
   const [collectionInfo, setCollectionInfo] = useState({});
   const [collectionOldData, setCollectionOldData] = useState({});
   const [isLoading, setLoading] = useState(true);
+  const [autoURL, setAutoURL] = useState("");
 
   const [open, setOpen] = React.useState(false);
   const handleClose = () => setOpen(false);
@@ -200,7 +201,7 @@ const DBCollections = () => {
   return (
     <div>
       <DBModal open={open} handleClose={handleClose}>
-        <DBCollectionForm imgUrl={imgUrl} setReset={setReset} setImgUrl={setImgUrl} allTypes={allTypes} handleSubmit={handleCreateCollection}>
+        <DBCollectionForm autoURL={autoURL} setAutoURL={setAutoURL} imgUrl={imgUrl} setReset={setReset} setImgUrl={setImgUrl} allTypes={allTypes} handleSubmit={handleCreateCollection}>
           Create
         </DBCollectionForm>
       </DBModal>

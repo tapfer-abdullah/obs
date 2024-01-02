@@ -2,7 +2,7 @@
 import Loader from "@/Hooks/Loader/Loader";
 import React from "react";
 
-const DBCollectionForm = ({ children, isLoading, data, setReset, imgUrl, setImgUrl, allTypes, handleSubmit }) => {
+const DBCollectionForm = ({ children, autoURL, setAutoURL, isLoading, data, setReset, imgUrl, setImgUrl, allTypes, handleSubmit }) => {
   if (isLoading) {
     return <Loader />;
   }
@@ -19,6 +19,9 @@ const DBCollectionForm = ({ children, isLoading, data, setReset, imgUrl, setImgU
             Category * <small className="text-sm text-gray-600">(Title {children == "Update" && <>is unchangeable</>})</small>
           </label>
           <input
+            onBlur={(e) => {
+              setAutoURL(`/${e.target.value}`);
+            }}
             disabled={children == "Update"}
             type="text"
             required
@@ -61,9 +64,17 @@ const DBCollectionForm = ({ children, isLoading, data, setReset, imgUrl, setImgU
         </div>
         <div className="space-y-1">
           <label htmlFor="categoryURL">
-            Category URL * <small className="text-sm text-gray-600">(Add "/" with category)</small>
+            Category URL * <small className="text-sm text-gray-600">(Auto generated link)</small>
           </label>
-          <input type="text" required defaultValue={data?.url} name="url" id="categoryURL" placeholder="Enter category URL.." className="border border-black w-full px-2 py-1 outline-1" />
+          <input
+            value={data?.url.toLowerCase() || autoURL.toLowerCase()}
+            type="text"
+            required
+            name="url"
+            id="categoryURL"
+            placeholder="Enter category URL.."
+            className="border border-black w-full px-2 py-1 outline-1"
+          />
         </div>
         <div className="space-y-1 col-span-2">
           <label htmlFor="categoryDescription">

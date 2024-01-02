@@ -70,6 +70,6 @@ export const DELETE = async (request, { params }) => {
     }
     catch (error) {
         console.log(error);
-        return NextResponse.json({ message: "Failed delete!", status: false });
+        return NextResponse.json({ message: "Failed to delete!", status: false });
     }
 }
