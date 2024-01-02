@@ -43,11 +43,12 @@ const NewArrival = () => {
           modules={[FreeMode, Pagination, Navigation]}
           className="mySwiper"
         >
-          {allProductsData?.map((singleProduct) => (
-            <SwiperSlide key={singleProduct?._id}>
-              <ProductCard1 singleProduct={singleProduct}></ProductCard1>
-            </SwiperSlide>
-          ))}
+          {allProductsData.length > 0 &&
+            allProductsData?.map((singleProduct) => (
+              <SwiperSlide key={singleProduct?._id}>
+                <ProductCard1 singleProduct={singleProduct}></ProductCard1>
+              </SwiperSlide>
+            ))}
         </Swiper>
       </div>
     </div>

@@ -5,6 +5,10 @@ export const typesSchema = new Schema({
         type: String,
         required: true,
     },
+    visibility: {
+        type: String,
+        required: true,
+    },
     img: {
         type: String,
         required: true,

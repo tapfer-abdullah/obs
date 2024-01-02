@@ -3,7 +3,7 @@ import { AiOutlineLink } from "react-icons/ai";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
-const DBCollectionTypeCard = ({ handleOpen, setInfo, data, activeType, setActiveType, handleDelete }) => {
+const DBCollectionTypeCard = ({ handleOpen, setLoading, setInfo, data, activeType, setActiveType, handleDelete }) => {
   return (
     <div
       className={`flex gap-3 items-center justify-between text-[#333333] shadow-lg my-3 rounded-md cursor-pointer transition-all duration-300 ${
@@ -36,8 +36,9 @@ const DBCollectionTypeCard = ({ handleOpen, setInfo, data, activeType, setActive
       <div className="p-2 flex flex-col justify-center items-center gap-3">
         <FaEdit
           onClick={() => {
-            handleOpen();
+            setLoading(true);
             setInfo({ id: data?._id, field: data?.type || "types" });
+            handleOpen();
           }}
           className="text-xl cursor-pointer"
         />

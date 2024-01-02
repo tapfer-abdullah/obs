@@ -19,6 +19,7 @@ const DBCollections = () => {
   const [refetch, setRefetch] = useState(0);
   const [collectionInfo, setCollectionInfo] = useState({});
   const [collectionOldData, setCollectionOldData] = useState({});
+  const [isLoading, setLoading] = useState(true);
 
   const [open, setOpen] = React.useState(false);
   const handleClose = () => setOpen(false);
@@ -82,11 +83,23 @@ const DBCollections = () => {
     axiosHttp
       .post("/collections", typeData)
       .then((res) => {
-        console.log(res.data);
         form.reset();
         setRefetch(refetch + 1);
         setReset("");
         handleClose();
+        if (res.data?.status) {
+          Swal.fire({
+            title: "Created!",
+            text: "Collection has been created.",
+            icon: "success",
+          });
+        } else {
+          Swal.fire({
+            title: "Unable!",
+            text: res?.data?.message,
+            icon: "error",
+          });
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -118,6 +131,19 @@ const DBCollections = () => {
         setRefetch(refetch + 1);
         setReset("");
         handleCloseUpdate();
+        if (res.data?.status) {
+          Swal.fire({
+            title: "Updated!",
+            text: "Collection has been updated.",
+            icon: "success",
+          });
+        } else {
+          Swal.fire({
+            title: "Unable!",
+            text: "Unable to update collection.",
+            icon: "error",
+          });
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -145,9 +171,9 @@ const DBCollections = () => {
             });
           } else {
             Swal.fire({
-              title: "Deleted!",
-              text: "Collection has been deleted.",
-              icon: "warning",
+              title: "Unable!",
+              text: "Unable to delete collection.",
+              icon: "error",
             });
           }
         });
@@ -163,12 +189,13 @@ const DBCollections = () => {
         .get(`/collections/${collectionInfo?.id}`)
         .then((res) => {
           setCollectionOldData(res.data);
+          setLoading(false);
         })
         .catch((error) => {
           console.log(error.message);
         });
     }
-  }, [collectionInfo]);
+  }, [collectionInfo, imgUrl]);
 
   return (
     <div>
@@ -178,7 +205,7 @@ const DBCollections = () => {
         </DBCollectionForm>
       </DBModal>
       <DBModal open={openUpdate} handleClose={handleCloseUpdate}>
-        <DBCollectionForm data={collectionOldData} imgUrl={imgUrl} setReset={setReset} setImgUrl={setImgUrl} allTypes={allTypes} handleSubmit={handleUpdateCollection}>
+        <DBCollectionForm isLoading={isLoading} data={collectionOldData} imgUrl={imgUrl} setReset={setReset} setImgUrl={setImgUrl} allTypes={allTypes} handleSubmit={handleUpdateCollection}>
           Update
         </DBCollectionForm>
       </DBModal>
@@ -210,17 +237,19 @@ const DBCollections = () => {
 
       <div className="grid grid-cols-2 gap-5">
         <div>
-          {collectionData?.map((d) => (
-            <DBCollectionTypeCard
-              key={d?._id}
-              setInfo={setCollectionInfo}
-              handleOpen={handleOpenUpdate}
-              handleDelete={handleDeleteCollection}
-              activeType={activeType}
-              setActiveType={setActiveType}
-              data={d}
-            />
-          ))}
+          {collectionData.length > 0 &&
+            collectionData?.map((d) => (
+              <DBCollectionTypeCard
+                setLoading={setLoading}
+                key={d?._id}
+                setInfo={setCollectionInfo}
+                handleOpen={handleOpenUpdate}
+                handleDelete={handleDeleteCollection}
+                activeType={activeType}
+                setActiveType={setActiveType}
+                data={d}
+              />
+            ))}
         </div>
 
         <div className="m-2 rounded-lg bg-[#def1e7]">
