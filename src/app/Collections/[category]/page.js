@@ -1,12 +1,10 @@
 "use client"
 import ProductCard1 from '@/Components/CustomComponents/ProductCard1';
-import ProductDetailsModal from '@/Components/CustomComponents/ProductModals/ProductDetailsModal';
 import Loader from '@/Hooks/Loader/Loader';
 import { axiosHttp } from '@/app/helper/axiosHttp';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { BsFilterLeft } from "react-icons/bs";
 import { IoIosArrowForward } from "react-icons/io";
 
 
@@ -14,19 +12,26 @@ const page = () => {
 
     const pathname = usePathname()
     const category = pathname.replace('/Collections/', '');
-    // const [isActiveModal, setActiveModal] = useState(false);
-    // const [modalDetails, setModalDetails] = useState({ price: 50, name: "Luminary Luxe", img1: "https://i.ibb.co/g6z3QwZ/image.png", img2: "https://i.ibb.co/tLQNdCz/Eiffel-Tower-Day-1200x834.jpg" });
-
     const [allProductsData, setAllProductsData] = useState([]);
     const [isLoading, setLoading] = useState(false);
+    const [isImgURL, setImgURL] = useState({});
 
     useEffect(() => {
         setLoading(true);
-        axiosHttp.get("/products").then((res) => {
+        axiosHttp.get(`/collections?imgUrl=${category}`).then((res) => {
+            setImgURL(res.data);
+        });
+    }, []);
+
+    useEffect(() => {
+        setLoading(true);
+        axiosHttp.get(`/products?category=${category}&status=Active`).then((res) => {
             setAllProductsData(res.data);
             setLoading(false);
         });
     }, []);
+
+
 
     if (isLoading) {
         return <div className="pt-[68px] mt-20">
@@ -36,11 +41,11 @@ const page = () => {
 
     return (
         <div className='pt-[68px]'>
-            <div className='h-[25vh] w-full overflow-hidden flex items-center justify-center relative' >
-                <img src="https://i.ibb.co/ZWgMyx4/arab-Desert.jpg" alt="" className='h-auto w-full' />
+            <div className='h-[30vh] w-full overflow-hidden flex items-center justify-center relative' >
+                <img src={isImgURL?.[0]?.img} alt="" className='h-auto w-full' />
                 <div className='absolute top-0 bottom-0 left-0 right-0 w-full h-full bg-black opacity-40'>
                 </div>
-                <h3 className='absolute font-bold text-2xl text-white'>{category}</h3>
+                <h3 className='absolute font-bold text-2xl text-white'>{category.toUpperCase()}</h3>
             </div>
 
             <div className="max-w-7xl mx-auto grid grid-cols-4 gap-4 my-10">
@@ -51,7 +56,7 @@ const page = () => {
                         <IoIosArrowForward />
                         <Link href={"/Collections"}>Collections</Link>
                         <IoIosArrowForward />
-                        <Link href={`/Collections/${category}`}>{category}</Link>
+                        <Link href={`/Collections/${category.toLowerCase()}`}>{category.toUpperCase()}</Link>
                     </div>
 
                     <div className='space-y-2 px-5'>
@@ -86,6 +91,12 @@ const page = () => {
                 </div>
 
                 <div className='col-span-3 grid grid-cols-3 gap-4'>
+                    {
+                        allProductsData.length == 0 && <div className='col-span-3 flex flex-col justify-center items-center'>
+                            <img src="https://i.ibb.co/Nmm2QxV/empty-cart.png" alt="no product" className='w-64 h-64' />
+                            <p className='text-red-600 font-semibold'>No product found in this category</p>
+                        </div>
+                    }
                     {allProductsData?.map((singleProduct) => (
                         <ProductCard1 key={singleProduct?._id} singleProduct={singleProduct}></ProductCard1>
                     ))}

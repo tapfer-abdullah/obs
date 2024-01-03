@@ -12,10 +12,11 @@ import logo from "../../../../Assects/obs.png";
 
 const DashboardSidebar = () => {
   const [productBtn, setProductsBtn] = useState(false);
+  const [themeBtn, setThemeBtn] = useState(false);
   return (
     <div className="py-5 px-2 fixed">
       <div className="flex items-center justify-center gap-1 text-white">
-        <Image src={logo} width={50} height={50} className="bg-white rounded-full p-[1px]" />
+        <Image src={logo} alt="logo" width={50} height={50} className="bg-white rounded-full p-[1px]" />
         <Link href={"/"} className="text-lg font-semibold uppercase">
           ODBHOOTSTORE
         </Link>
@@ -70,6 +71,22 @@ const DashboardSidebar = () => {
             <TbDiscount2 className="text-3xl" />
             <p>Discounts</p>
           </Link>
+
+          <div>
+            <button onClick={() => setThemeBtn(!themeBtn)} className="flex items-center gap-1 text-xl font-semibold text-white">
+              <AiFillTags className="text-3xl" />
+              <p>Theme</p>
+              <FaCaretDown className={`${themeBtn ? "hidden" : "block"} dashboard-icon`} />
+              <FaCaretUp className={`${themeBtn ? "block" : "hidden"} dashboard-icon`} />
+            </button>
+            <ul className={`${themeBtn ? "block" : "hidden"} text-xl font-semibold text-white pl-8 space-y-1`}>
+              <li>
+                <Link href="/dashboard/theme/pages" className="">
+                  Pages
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

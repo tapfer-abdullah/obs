@@ -13,11 +13,9 @@ import ProductDetailsModal from "@/Components/CustomComponents/ProductModals/Pro
 import SectionTitle from "@/Components/CustomComponents/SectionTitle/SectionTitle";
 import { FreeMode, Navigation, Pagination } from "swiper/modules";
 
-const RelatedProducts = ({ title, subTitle, modalDetails, isActiveModal, setActiveModal }) => {
+const RelatedProducts = ({ title, subTitle, allProductsData }) => {
   return (
     <div className="mt-10">
-      {isActiveModal && <ProductDetailsModal isActiveModal={isActiveModal} setActiveModal={setActiveModal} />}
-
       <div className="max-w-7xl mx-auto my-6">
         <SectionTitle title={title} subTitle={subTitle}></SectionTitle>
 
@@ -33,30 +31,12 @@ const RelatedProducts = ({ title, subTitle, modalDetails, isActiveModal, setActi
             modules={[FreeMode, Pagination, Navigation]}
             className="mySwiper"
           >
-            <SwiperSlide>
-              <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-            </SwiperSlide>
-            <SwiperSlide>
-              <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-            </SwiperSlide>
-            <SwiperSlide>
-              <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-            </SwiperSlide>
-            <SwiperSlide>
-              <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-            </SwiperSlide>
-            <SwiperSlide>
-              <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-            </SwiperSlide>
-            <SwiperSlide>
-              <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-            </SwiperSlide>
-            <SwiperSlide>
-              <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-            </SwiperSlide>
-            <SwiperSlide>
-              <ProductCard1 modalDetails={modalDetails} isActiveModal={isActiveModal} setActiveModal={setActiveModal}></ProductCard1>
-            </SwiperSlide>
+            {allProductsData.length > 0 &&
+              allProductsData?.map((singleProduct) => (
+                <SwiperSlide key={singleProduct?._id}>
+                  <ProductCard1 singleProduct={singleProduct}></ProductCard1>
+                </SwiperSlide>
+              ))}
           </Swiper>
         </>
       </div>

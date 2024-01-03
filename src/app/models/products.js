@@ -60,10 +60,12 @@ const productsSchema = new Schema({
     stockQuantity: {
         type: Number,
         min: 0,
+        default: 0,
     },
     sellQuantity: {
         type: Number,
         min: 0,
+        default: 0,
     },
     imageUrl: {
         type: [String],

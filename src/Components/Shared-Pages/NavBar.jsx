@@ -3,9 +3,8 @@ import { axiosHttp } from "@/app/helper/axiosHttp";
 import Link from "next/link";
 import React, { useState } from "react";
 import { AiOutlineShopping } from "react-icons/ai";
-import { IoIosSearch } from "react-icons/io";
+import { IoIosArrowForward, IoIosSearch } from "react-icons/io";
 import ShoppingCart from "../CustomComponents/ShoppingCart/ShoppingCart";
-import "./sharedComponents.css";
 
 const NavBar = () => {
   const [positionInfo, setPositionInfo] = useState({ right: "-right-[2000px]", customOpacity: 0 });
@@ -13,7 +12,7 @@ const NavBar = () => {
 
   useState(() => {
     axiosHttp.get("/types").then((res) => {
-      console.log(res.data);
+      setType(res.data);
     });
   }, []);
 
@@ -25,46 +24,23 @@ const NavBar = () => {
           <Link href="/" className="text-3xl font-semibold uppercase">
             OdbhootStore
           </Link>
-          <div className="space-x-4 flex">
+          <div className="space-x-4 flex items-center">
             <Link href="/">Home</Link>
 
-            <div className="jewelryOption relative space-y-4">
-              <Link href="" className="hover:text-red-500">
-                Jewelry
-              </Link>
-              <div className="jewelryList transition-all duration-500 space-y-4 ">
-                <div className="flex flex-col space-y-4 bg-[#31a3a3] p-5 rounded-lg">
-                  <Link href="/bracelets" className="hover:text-red-500">
-                    Bracelets
-                  </Link>
-                  <Link href="/bracelets" className="hover:text-red-500">
-                    Earrings
-                  </Link>
-                  <Link href="/bracelets" className="hover:text-red-500">
-                    Necklace
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            <div className="clothingOption relative space-y-4">
-              <Link href="" className="hover:text-red-500">
-                clothing
-              </Link>
-              <div className="clothingList transition-all duration-500 space-y-4 ">
-                <div className="flex flex-col space-y-4 bg-[#31a3a3] p-5 rounded-lg">
-                  <Link href="/bracelets" className="hover:text-red-500">
-                    Bikinies
-                  </Link>
-                  <Link href="/bracelets" className="hover:text-red-500">
-                    Tops
-                  </Link>
-                  <Link href="/bracelets" className="hover:text-red-500">
-                    Gym
-                  </Link>
-                </div>
-              </div>
-            </div>
+            <ul className="flex space-x-4  items-center">
+              {type?.map((t) => (
+                <li key={t?._id} className="relative group">
+                  <Link href={`/Collections${t?.url}`}>{t?.title}</Link>
+                  <ul className="bg-[#31a3a3] z-40 absolute hidden mt-0 space-y-2 py-2 pl-1 pr-3 rounded group-hover:block">
+                    {t?.collections?.map((c, index) => (
+                      <li key={index} className="hover:text-pink-500 cursor-pointer flex items-center gap-1">
+                        <IoIosArrowForward /> <Link href={`/Collections/${c.toLowerCase()}`}>{c}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
 
             <Link href="/about">About</Link>
             <Link href="/contact">Contact</Link>

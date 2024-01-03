@@ -26,7 +26,7 @@ export const PUT = async (request, { params }) => {
     const newData = await request.json();
 
     try {
-        const type = await CollectionsSchema.findById(id).select({ type: 1, _id: 0 });
+        const type = await CollectionsSchema.findById(id)?.select({ type: 1, _id: 0 });
 
         if (type?.type == newData?.type) {
             const result = await CollectionsSchema.findByIdAndUpdate(id, newData, { new: true });
@@ -34,13 +34,13 @@ export const PUT = async (request, { params }) => {
         }
         else {
 
-            const collData = await TypesSchema.findOne({ title: { $regex: new RegExp(type?.type, 'i') } }).select({ collections: 1, _id: 0 });
+            const collData = await TypesSchema.findOne({ title: { $regex: new RegExp(type?.type, 'i') } })?.select({ collections: 1, _id: 0 });
             const newTypeArray = collData?.collections.filter(c => c != type?.type);
             //deleting from old type collections
             const resultOfType = await TypesSchema.updateOne({ title: type?.type }, { $set: { collections: newTypeArray } });
 
             // adding to new type 
-            const newCollData = await TypesSchema.findOne({ title: { $regex: new RegExp(newData?.type, 'i') } }).select({ collections: 1, _id: 0 });
+            const newCollData = await TypesSchema.findOne({ title: { $regex: new RegExp(newData?.type, 'i') } })?.select({ collections: 1, _id: 0 });
             if (!newCollData?.collections.includes(newData?.type)) {//checking if type is already exist
                 const resultOfType2 = await TypesSchema.updateOne({ title: newData?.type }, { $set: { collections: [...newCollData?.collections, newData?.type] } });
             }

@@ -17,24 +17,24 @@ export const GET = async (request) => {
 
     try {
         if (status == null && category == null) {
-            const allProducts = await Products.find();
+            const allProducts = await Products.find().select("-description");
             return NextResponse.json(allProducts);
         }
         else if (status == "All") {
-            const allProducts = await Products.find({ 'category.label': category });
+            const allProducts = await Products.find({ 'category.label': { $regex: new RegExp(category, 'i') } }).select("-description");
             return NextResponse.json(allProducts);
         }
         else if (status && category) {
             const allProducts = await Products.find({
                 $and: [
                     {
-                        'category.label': category
+                        'category.label': { $regex: new RegExp(category, 'i') }
                     },
                     {
-                        'status.label': status
+                        'status.label': { $regex: new RegExp(status, 'i') }
                     }
                 ]
-            });
+            }).select("-description");
             return NextResponse.json(allProducts);
 
         }

@@ -13,10 +13,15 @@ export const GET = async (request) => {
 
     const searchParams = new URLSearchParams(query);
     const type = searchParams.get('type');
+    const imgUrl = searchParams.get('imgUrl');
 
     try {
 
-        if (type) {
+        if (imgUrl) {
+            const collections = await CollectionsSchema.find({ title: { $regex: new RegExp(imgUrl, "i") } }).select({ title: 1, img: 1, _id: 0 });
+            return NextResponse.json(collections)
+        }
+        else if (type) {
             const collections = await CollectionsSchema.find({ type: type });
             return NextResponse.json(collections)
         }

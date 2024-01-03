@@ -16,6 +16,7 @@ const page = () => {
     const resultArray = pathname.split("/").filter(Boolean);
 
     const [singleProduct, setSingleProduct] = useState({});
+    const [relatedProducts, setRelatedProducts] = useState({});
     const [isLoading, setLoading] = useState(true);
 
     const [imgIndex, setImgIndex] = useState(0);
@@ -27,6 +28,13 @@ const page = () => {
             setLoading(false);
         })
     }, [])
+
+    useEffect(() => {
+        setLoading(true);
+        axiosHttp.get(`/products?category=${resultArray[1]}&status=Active`).then((res) => {
+            setRelatedProducts(res.data);
+        });
+    }, []);
 
     const [selectedSize, setSelectedSize] = useState("S");
     const [selectedSKU, setSelectedSKU] = useState(singleProduct?.colors?.[imgIndex]?.allSKU?.[0]?.sku);
@@ -80,7 +88,7 @@ const page = () => {
                 <IoIosArrowForward />
                 <Link href={"/Collections"}>Collections</Link>
                 <IoIosArrowForward />
-                <Link href={`/Collections/${resultArray[1]}`}>{resultArray[1]}</Link>
+                <Link href={`/Collections/${resultArray[1].toLowerCase()}`}>{resultArray[1].toUpperCase()}</Link>
                 <IoIosArrowForward />
                 <h4>{singleProduct?.title}</h4>
             </div>
@@ -95,8 +103,8 @@ const page = () => {
             </div>
 
             <IDWIseDescriptions description={singleProduct?.description} />
-            {/* <RelatedProducts title={"Related Products"} isActiveModal={isActiveModal} setActiveModal={setActiveModal} modalDetails={modalDetails} setModalDetails={setModalDetails} />
-            <RelatedProducts title={"Recommended Products"} isActiveModal={isActiveModal} setActiveModal={setActiveModal} modalDetails={modalDetails} setModalDetails={setModalDetails} /> */}
+            <RelatedProducts title={"Related Products"} allProductsData={relatedProducts} />
+            {/* <RelatedProducts title={"Recommended Products"} allProductsData={relatedProducts} /> */}
         </div>
     );
 };
