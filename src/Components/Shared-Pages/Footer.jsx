@@ -1,33 +1,62 @@
 "use client";
+import { axiosHttp } from "@/app/helper/axiosHttp";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaInstagram } from "react-icons/fa";
 import { FaCcMastercard, FaCcPaypal, FaCcVisa, FaLocationDot, FaPhone, FaRegCopyright } from "react-icons/fa6";
+import { MdEmail } from "react-icons/md";
 import { SiAmericanexpress } from "react-icons/si";
 
-import { MdEmail } from "react-icons/md";
-
 const Footer = () => {
+  const [footerLinks, setFooterLinks] = useState([]);
+
+  useEffect(() => {
+    axiosHttp.get("/footer-links").then((res) => {
+      setFooterLinks(res.data);
+    });
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto">
       <div className="px-10 xl:px-5 flex flex-col xl:flex-row justify-between gap-6 pt-10 pb-2">
         <div className="flex flex-col space-y-2 w-1/4">
           <h4 className="text-lg font-semibold">Quick Links</h4>
-          <Link href="">Shop</Link>
-          <Link href="">Affiliate Program</Link>
-          <Link href="">FAQ</Link>
+          {footerLinks.length > 0 &&
+            footerLinks?.map((l) => {
+              if (l?.column == "1") {
+                return (
+                  <Link key={l?._id} href={`${l?.url}`} className="hover:underline">
+                    {l?.title}
+                  </Link>
+                );
+              }
+            })}
         </div>
         <div className="flex flex-col space-y-2 w-1/4">
           <h4 className="text-lg font-semibold">Important Info</h4>
-          <Link href="">About Us</Link>
-          <Link href="">Privacy policy</Link>
-          <Link href="">Refound Policy</Link>
-          <Link href="">Shipping policy</Link>
-          <Link href="">Terms of service</Link>
+          {footerLinks.length > 0 &&
+            footerLinks?.map((l) => {
+              if (l?.column == "2") {
+                return (
+                  <Link key={l?._id} href={`${l?.url}`} className="hover:underline">
+                    {l?.title}
+                  </Link>
+                );
+              }
+            })}
         </div>
         <div className="flex flex-col space-y-2 w-1/4">
           <h1 className="text-lg font-semibold">Contact Info</h1>
-          <Link href="">Contact Us</Link>
+          {footerLinks.length > 0 &&
+            footerLinks?.map((l) => {
+              if (l?.column == "3") {
+                return (
+                  <Link key={l?._id} href={`${l?.url}`} className="hover:underline">
+                    {l?.title}
+                  </Link>
+                );
+              }
+            })}
           <p className="flex gap-2 items-start">
             <FaLocationDot className="mt-1" />
             <span>2 FREDERICK STREETKINGS CROSS, LONDON WC1X 0ND</span>

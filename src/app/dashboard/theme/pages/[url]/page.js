@@ -1,6 +1,7 @@
 "use client"
 import Loader from '@/Hooks/Loader/Loader';
 import { axiosHttp } from '@/app/helper/axiosHttp';
+import Switch from '@mui/material/Switch';
 import JoditEditor from 'jodit-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -26,6 +27,12 @@ const page = () => {
     const [position, setPosition] = useState(pageData?.position || "xx");
     const [column, setColumn] = useState(pageData?.column || "xx");
     const [error, setError] = useState("");
+    const [customURL, setCustomURL] = useState(pageData?.url || '');
+    const [checked, setChecked] = React.useState(false);
+
+    const handleChange = (event) => {
+        setChecked(event.target.checked);
+    }
 
     useEffect(() => {
         axiosHttp.get(`/theme/pages/${resultArray[3]}`).then(res => {
@@ -51,7 +58,13 @@ const page = () => {
             return;
         }
 
-        const url = "/" + title.replace(/\s+/g, '-').replace(/-$/, '');
+        let url;
+        if (checked) {
+            url = "/" + customURL.replace(/\s+/g, '-').replace(/-$/, '');
+        }
+        else {
+            url = "/pages/" + title.replace(/\s+/g, '-').replace(/-$/, '');
+        }
 
         const pageData = { title, url, visibility, position, column, content };
 
@@ -84,6 +97,7 @@ const page = () => {
         setVisibility(pageData?.visibility);
         setPosition(pageData?.position);
         setColumn(pageData?.column);
+        setChecked(false);
         setError("");
     }
 
@@ -188,6 +202,18 @@ const page = () => {
                                             </select>
                                         </div>
                                     }
+                                    <div className='w-full'>
+                                        <label>Custom URL</label>
+                                        <Switch
+                                            checked={checked}
+                                            onChange={handleChange}
+                                            inputProps={{ 'aria-label': 'controlled' }}
+                                        />
+                                        {checked && <p className='text-sm my-1'>( Don't add "/" starting of the link )</p>}
+                                        {
+                                            checked && <input value={customURL} onChange={(e) => { setCustomURL(e.target.value) }} placeholder='Enter custom Url..' type="text" name="customURL" id="customURL" className='w-full outline-1 outline-[#d5ddda] border-2 rounded-md px-2 py-1' />
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </form>

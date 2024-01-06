@@ -1,5 +1,6 @@
 "use client"
 import { axiosHttp } from '@/app/helper/axiosHttp';
+import Switch from '@mui/material/Switch';
 import JoditEditor from 'jodit-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -17,6 +18,12 @@ const page = () => {
     const [position, setPosition] = useState("xx");
     const [column, setColumn] = useState("xx");
     const [error, setError] = useState("");
+    const [customURL, setCustomURL] = useState('');
+    const [checked, setChecked] = React.useState(false);
+
+    const handleChange = (event) => {
+        setChecked(event.target.checked);
+    }
 
     const handleSave = () => {
 
@@ -25,7 +32,13 @@ const page = () => {
             return;
         }
 
-        const url = "/" + title.replace(/\s+/g, '-').replace(/-$/, '');
+        let url;
+        if (checked) {
+            url = "/" + customURL.replace(/\s+/g, '-').replace(/-$/, '');
+        }
+        else {
+            url = "/pages/" + title.replace(/\s+/g, '-').replace(/-$/, '');
+        }
 
         const pageData = { title, url, visibility, position, column, content };
 
@@ -59,6 +72,7 @@ const page = () => {
         setVisibility("xx");
         setPosition("xx");
         setColumn("xx");
+        setChecked(false);
         setError("");
     }
 
@@ -98,7 +112,7 @@ const page = () => {
                         <div className="flex flex-col items-center gap-1 space-y-2 rounded-lg bg-[#def1e7] p-5 mt-6">
                             <div className='w-full'>
                                 <label>Visibility *</label>
-                                <select value={visibility} onChange={(e) => { setVisibility(e.target.value); setError(""); }} defaultValue='xx' required name="visibility" id="visibility" className='w-full border-2 rounded-md px-2 py-[6px] outline-1 outline-[#d5ddda]'>
+                                <select value={visibility} onChange={(e) => { setVisibility(e.target.value); setError(""); }} required name="visibility" id="visibility" className='w-full border-2 rounded-md px-2 py-[6px] outline-1 outline-[#d5ddda]'>
                                     <option value="xx" disabled>Choose option..</option>
                                     <option value="Visible">Visible</option>
                                     <option value="Hide">Hide</option>
@@ -106,7 +120,7 @@ const page = () => {
                             </div>
                             <div className='w-full'>
                                 <label>Position * <small className='text-sm'>(Header or footer)</small></label>
-                                <select value={position} onChange={(e) => { setPosition(e.target.value); setError(""); }} defaultValue='xx' required name="Position" id="Position" className='w-full border-2 rounded-md px-2 py-[6px] outline-1 outline-[#d5ddda]'>
+                                <select value={position} onChange={(e) => { setPosition(e.target.value); setError(""); }} required name="Position" id="Position" className='w-full border-2 rounded-md px-2 py-[6px] outline-1 outline-[#d5ddda]'>
                                     <option value="xx" disabled>Choose option..</option>
                                     <option value="Header">Header</option>
                                     <option value="Footer">Footer</option>
@@ -115,7 +129,7 @@ const page = () => {
                             {
                                 position == "Footer" && <div className='w-full'>
                                     <label>Which column * <small className='text-sm'>(in footer)</small></label>
-                                    <select value={column} onChange={(e) => { setColumn(e.target.value); setError(""); }} defaultValue='xx' name="Position" id="Position" className='w-full border-2 rounded-md px-2 py-[6px] outline-1 outline-[#d5ddda]'>
+                                    <select value={column} onChange={(e) => { setColumn(e.target.value); setError(""); }} name="Position" id="Position" className='w-full border-2 rounded-md px-2 py-[6px] outline-1 outline-[#d5ddda]'>
                                         <option value="xx" disabled>Choose option..</option>
                                         <option value="1">Column-1</option>
                                         <option value="2">Column-2</option>
@@ -123,10 +137,21 @@ const page = () => {
                                     </select>
                                 </div>
                             }
+
+                            <div className='w-full'>
+                                <label>Custom URL</label>
+                                <Switch
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                                {checked && <p className='text-sm my-1'>( Don't add "/" starting of the link )</p>}
+                                {
+                                    checked && <input value={customURL} onChange={(e) => { setCustomURL(e.target.value) }} placeholder='Enter custom Url..' type="text" name="customURL" id="customURL" className='w-full outline-1 outline-[#d5ddda] border-2 rounded-md px-2 py-1' />
+                                }
+                            </div>
                         </div>
                     </div>
-
-
                 </form>
             </div>
 

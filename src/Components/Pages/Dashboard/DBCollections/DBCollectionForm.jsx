@@ -20,7 +20,7 @@ const DBCollectionForm = ({ children, autoURL, setAutoURL, isLoading, data, setR
           </label>
           <input
             onBlur={(e) => {
-              setAutoURL(`/${e.target.value}`);
+              setAutoURL(`/${e.target.value.replace(/\s+/g, "-").replace(/-$/, "")}`);
             }}
             disabled={children == "Update"}
             type="text"
