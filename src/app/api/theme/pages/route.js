@@ -6,9 +6,8 @@ const { connectDB } = require("@/app/helper/db");
 connectDB();
 
 export const GET = async (request) => {
-    console.log("pages get calling..");
     try {
-        const result = await PagesSchema.find();
+        const result = await PagesSchema.find().select("-content");
         return NextResponse.json(result)
     }
     catch (error) {

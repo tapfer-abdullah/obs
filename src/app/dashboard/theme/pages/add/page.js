@@ -13,9 +13,9 @@ const page = () => {
     const editor = useRef(null);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState('');
-    const [visibility, setVisibility] = useState("");
-    const [position, setPosition] = useState("");
-    const [column, setColumn] = useState("none");
+    const [visibility, setVisibility] = useState("xx");
+    const [position, setPosition] = useState("xx");
+    const [column, setColumn] = useState("xx");
     const [error, setError] = useState("");
 
     const handleSave = () => {
@@ -56,9 +56,9 @@ const page = () => {
     const handleDiscard = () => {
         setTitle("");
         setContent("");
-        setVisibility("");
-        setPosition("");
-        setColumn("");
+        setVisibility("xx");
+        setPosition("xx");
+        setColumn("xx");
         setError("");
     }
 
@@ -82,7 +82,7 @@ const page = () => {
                         <div className="col-span-2 space-y-2">
                             <div>
                                 <label htmlFor="title">Title * </label> {error && <span className='ml-10 text-red-600 font-semibold'>{error}</span>}
-                                <input onChange={(e) => { setTitle(e.target.value); setError(""); }} required placeholder='Enter title..' type="text" name="title" id="title" className='w-full outline-1 outline-[#d5ddda] border-2 rounded-md px-2 py-1' />
+                                <input value={title} onChange={(e) => { setTitle(e.target.value); setError(""); }} required placeholder='Enter title..' type="text" name="title" id="title" className='w-full outline-1 outline-[#d5ddda] border-2 rounded-md px-2 py-1' />
                             </div>
                             <div>
                                 <p>Content</p>
@@ -98,7 +98,7 @@ const page = () => {
                         <div className="flex flex-col items-center gap-1 space-y-2 rounded-lg bg-[#def1e7] p-5 mt-6">
                             <div className='w-full'>
                                 <label>Visibility *</label>
-                                <select onChange={(e) => { setVisibility(e.target.value); setError(""); }} defaultValue='xx' required name="visibility" id="visibility" className='w-full border-2 rounded-md px-2 py-[6px] outline-1 outline-[#d5ddda]'>
+                                <select value={visibility} onChange={(e) => { setVisibility(e.target.value); setError(""); }} defaultValue='xx' required name="visibility" id="visibility" className='w-full border-2 rounded-md px-2 py-[6px] outline-1 outline-[#d5ddda]'>
                                     <option value="xx" disabled>Choose option..</option>
                                     <option value="Visible">Visible</option>
                                     <option value="Hide">Hide</option>
@@ -106,7 +106,7 @@ const page = () => {
                             </div>
                             <div className='w-full'>
                                 <label>Position * <small className='text-sm'>(Header or footer)</small></label>
-                                <select onChange={(e) => { setPosition(e.target.value); setError(""); }} defaultValue='xx' required name="Position" id="Position" className='w-full border-2 rounded-md px-2 py-[6px] outline-1 outline-[#d5ddda]'>
+                                <select value={position} onChange={(e) => { setPosition(e.target.value); setError(""); }} defaultValue='xx' required name="Position" id="Position" className='w-full border-2 rounded-md px-2 py-[6px] outline-1 outline-[#d5ddda]'>
                                     <option value="xx" disabled>Choose option..</option>
                                     <option value="Header">Header</option>
                                     <option value="Footer">Footer</option>
@@ -115,7 +115,7 @@ const page = () => {
                             {
                                 position == "Footer" && <div className='w-full'>
                                     <label>Which column * <small className='text-sm'>(in footer)</small></label>
-                                    <select onChange={(e) => { setColumn(e.target.value); setError(""); }} defaultValue='xx' name="Position" id="Position" className='w-full border-2 rounded-md px-2 py-[6px] outline-1 outline-[#d5ddda]'>
+                                    <select value={column} onChange={(e) => { setColumn(e.target.value); setError(""); }} defaultValue='xx' name="Position" id="Position" className='w-full border-2 rounded-md px-2 py-[6px] outline-1 outline-[#d5ddda]'>
                                         <option value="xx" disabled>Choose option..</option>
                                         <option value="1">Column-1</option>
                                         <option value="2">Column-2</option>
