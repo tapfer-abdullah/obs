@@ -7,14 +7,14 @@ import { axiosHttp } from '@/app/helper/axiosHttp';
 import axios from 'axios';
 import JoditEditor from 'jodit-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
-import "./AddProduct.css";
+import "./../add/AddProduct.css";
 
 
 const sizes = [
@@ -43,13 +43,14 @@ const status = [
 
 const page = () => {
     const editor = useRef(null);
+    const [singleProductData, setSingleProductData] = useState({});
     const [content, setContent] = useState('');
     const [title, setTitle] = useState("");
     const [price, setPrice] = useState("");
     const [comparePrice, setComparePrice] = useState("");
     const [selectedType, setSelectedType] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState([]);
-    const [selectedSizes, setSelectedSizes] = useState([]);
+    const [selectedSizes, setSelectedSizes] = useState(singleProductData?.selectedSizes || []);
     const [img1, setImg1] = useState("https://i.ibb.co/KFjt6Mg/gallery-img.png");
     const [img2, setImg2] = useState("https://i.ibb.co/KFjt6Mg/gallery-img.png");
     const [selectedStatus, setSelectedStatus] = useState({});
@@ -59,9 +60,21 @@ const page = () => {
     const [types, setTypes] = useState([]);
     const [isLoading, setLoading] = useState(true);
 
+
     const [isDragging, setDragging] = useState(false);
     const fileInputRef = useRef(null);
     const router = useRouter();
+    const pathname = usePathname()
+    const resultArray = pathname.split("/").filter(Boolean);
+
+    console.log(resultArray?.[2]);
+    console.log(singleProductData)
+
+    useEffect(() => {
+        axiosHttp.get(`/products/${resultArray[2]}`).then(res => {
+            setSingleProductData(res.data);
+        })
+    }, [])
 
     useEffect(() => {
         let typ = [];
@@ -84,60 +97,6 @@ const page = () => {
             setLoading(false);
         })
     }, []);
-
-    const selectFiles = () => {
-        fileInputRef.current.click();
-    }
-    const onFileSelect = (e) => {
-        const files = e.target.files;
-        if (files.length === 0) return;
-        for (let i = 0; i < files.length; i++) {
-            if (files[i].type.split('/')[0] !== "image") continue;
-            if (!images.some((event) => event.name === files[i].name)) {
-                setImages((prevImages) => [
-                    ...prevImages,
-                    {
-                        name: files[i].name,
-                        url: URL.createObjectURL(files[i]),
-                    },
-                ]);
-            }
-        }
-    }
-
-    const deleteImage = (index) => {
-        setImages(prevImages => {
-            return prevImages.filter((_, i) => i !== index)
-        });
-    }
-
-    const onDragOver = (e) => {
-        e.preventDefault();
-        setDragging(false);
-        e.dataTransfer.dropEffect = "copy";
-    }
-
-    const onDragLeave = e => {
-        setDragging(false);
-    }
-    const onDrop = e => {
-        e.preventDefault();
-        setDragging(false);
-        const files = e.dataTransfer.files;
-
-        for (let i = 0; i < files.length; i++) {
-            if (files[i].type.split('/')[0] !== 'image') continue;
-            if (!images.some((event) => event.name === files[i].name)) {
-                setImages((prevImages) => [
-                    ...prevImages,
-                    {
-                        name: files[i].name,
-                        url: URL.createObjectURL(files[i]),
-                    },
-                ]);
-            }
-        }
-    }
 
 
 
@@ -304,15 +263,15 @@ const page = () => {
                         </div>
 
                         <div className="space-y-3 w-4/5 mx-auto bg-white p-5 rounded-xl shadow-xl">
-                            <img src="https://i.ibb.co/jW9MTfv/image.png" alt="" className='w-20 mx-auto' />
-                            <h4 className="text-xl font-semibold text-center">Add a product</h4>
+                            <img src="https://i.ibb.co/jW9MTfv/image.png" alt="box img" className='w-20 mx-auto' />
+                            <h4 className="text-xl font-semibold text-center">Update Product</h4>
 
                             <div className="flex items-center gap-2">
                                 <div className="w-full space-y-1 md:max-w-full lg:max-w-md">
                                     <span>
                                         Title * <small>( name )</small>
                                     </span>
-                                    <input value={title} onChange={(e) => setTitle(e.target.value)} required type="text" name="name" id="name"
+                                    <input value={singleProductData?.title || title} onChange={(e) => setTitle(e.target.value)} required type="text" name="name" id="name"
                                         className="rounded-md w-full border border-gray-300 px-2 py-[5px] outline-1 outline-[#0086fe]" placeholder='Enter title..' />
 
                                 </div>
@@ -320,7 +279,7 @@ const page = () => {
                                     <span>
                                         Status * <small>(Active, Draft)</small>
                                     </span>
-                                    <Select value={selectedStatus} onChange={(selectedOptions) => setSelectedStatus(selectedOptions)} required options={status} isMulti={false}
+                                    <Select value={singleProductData?.status || selectedStatus} onChange={(selectedOptions) => setSelectedStatus(selectedOptions)} required options={status} isMulti={false}
                                         isClearable={false} placeholder="Select status" className='z-20' />
                                 </div>
                             </div>
@@ -329,13 +288,13 @@ const page = () => {
                                     <span>
                                         Price * <small>( sell price )</small>
                                     </span>
-                                    <input value={price} min={0} onChange={(e) => setPrice(e.target.value)} required type="number" name="price" id="price" className="rounded-md w-full border border-gray-300 px-2 py-[5px] outline-1 outline-[#0086fe]" placeholder="Price" />
+                                    <input value={singleProductData?.price || price} min={0} onChange={(e) => setPrice(e.target.value)} required type="number" name="price" id="price" className="rounded-md w-full border border-gray-300 px-2 py-[5px] outline-1 outline-[#0086fe]" placeholder="Price" />
                                 </div>
                                 <div className="w-full space-y-1 md:max-w-full lg:max-w-md">
                                     <span>
                                         Compare price
                                     </span>
-                                    <input value={comparePrice} min={0} onChange={(e) => setComparePrice(e.target.value)} type="number" name="price" id="price" className="rounded-md w-full border border-gray-300 px-2 py-[5px] outline-1 outline-[#0086fe]" placeholder="Compare price" />
+                                    <input value={singleProductData?.comparePrice || comparePrice} min={0} onChange={(e) => setComparePrice(e.target.value)} type="number" name="price" id="price" className="rounded-md w-full border border-gray-300 px-2 py-[5px] outline-1 outline-[#0086fe]" placeholder="Compare price" />
                                 </div>
                             </div>
 
@@ -344,14 +303,14 @@ const page = () => {
                                     <span>
                                         Type <small>(Jewelry, Clothing etc)</small>
                                     </span>
-                                    <Select value={selectedType} onChange={(selectedOptions) => setSelectedType(selectedOptions)} required options={types} isMulti={false}
+                                    <Select value={singleProductData?.type || selectedType} onChange={(selectedOptions) => setSelectedType(selectedOptions)} required options={types} isMulti={false}
                                         isClearable={false} placeholder="Select type" className='z-20' />
                                 </div>
                                 <div className="w-full space-y-1 md:max-w-full lg:max-w-md">
                                     <span>
                                         Category <small>(choose category)</small>
                                     </span>
-                                    <Select value={selectedCategory} onChange={(selectedOptions) => setSelectedCategory(selectedOptions)}
+                                    <Select value={singleProductData?.category || selectedCategory} onChange={(selectedOptions) => setSelectedCategory(selectedOptions)}
                                         isMulti
                                         isClearable={false}
                                         name="category"
@@ -364,7 +323,7 @@ const page = () => {
                                     <span>
                                         Sizes * <small>(choose sizes)</small>
                                     </span>
-                                    <CreatableSelect value={selectedSizes} onChange={(selectedOptions) => setSelectedSizes(selectedOptions)} required options={sizes} isMulti placeholder="Select sizes" className='z-20' />
+                                    <CreatableSelect value={singleProductData?.size || selectedSizes} onChange={(selectedOptions) => setSelectedSizes(selectedOptions)} required options={sizes} isMulti placeholder="Select sizes" className='z-20' />
                                 </div>
                             </div>
 
@@ -376,73 +335,38 @@ const page = () => {
                                 <JoditEditor
                                     className='max-h-[400px] overflow-y-auto'
                                     ref={editor}
-                                    value={content}
+                                    value={singleProductData?.description || content}
                                     tabIndex={1} // tabIndex of textarea
                                     onBlur={newContent => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
                                     onChange={newContent => { }}
                                 />
                             </div>
 
-                            {/* DRAG AND DROP IMAGE */}
-                            <div className='grid grid-cols-1 gap-3'>
-                                <div className="card">
-                                    <div className="top text-center">
-                                        <p>Media *</p>
+                            {/* varient / colors  */}
+                            <div className='card2 max-h-[400px] overflow-y-auto'>
+                                {imageURL.length != 0 ? <h4 className='text-center text-lg font-semibold text-[#0086fe]'>Enter photo wise color & size wise SKU:</h4>
+                                    : <h4 className='text-center text-lg font-semibold text-red-400'>No photo uploaded yet</h4>}
+                                {
+                                    imageURL.length == 0 && <img src='https://i.ibb.co/52VHTDD/folder.png' alt="no image uploaded yet" className='h-60 w-60 mx-auto' />
+                                }
+                                {singleProductData?.colors?.map((i, index) => <div key={index} className="grid grid-cols-4 gap-2 items-start justify-center my-3 bg-[#f4f3f9] p-2 rounded-md">
+                                    <div className='flex flex-col gap-2 justify-center items-center'>
+                                        <img src={i?.imageUrl} alt="img" className='w-full h-40 rounded-md' />
+                                        <CreatableSelect value={{ label: i?.name, value: i?.label }} isMulti={false} onChange={(selectedOptions) => handleColor(index, i, selectedOptions)} required options={colors} placeholder="Enter color" className=' !w-full' />
                                     </div>
-                                    <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
+                                    <div className="col-span-3 start-1 w-full grid grid-cols-3 gap-2 justify-center items-start my-3">
                                         {
-                                            isDragging ? <span className="select">
-                                                Drop images here
-                                            </span> : (
-                                                <>Drag & Drop image here or {" "}
-                                                    <span className="select" role='button' onClick={selectFiles}>Browse</span></>)
+                                            i?.allSKU?.map((ss, indexS) => <div key={indexS} className='w-full'>
+                                                <TextField onBlur={(e) => handleSKU(e.target.value, indexS, index)} type="text" name="color-wise-sku" id={ss?.value} className="rounded-md w-full border-2 my-2" label={`SKU for ${ss?.value}`} />
+
+                                            </div>)
                                         }
 
-                                        <input type="file" name="file" id="" className='file' multiple ref={fileInputRef} onChange={onFileSelect} />
                                     </div>
-                                    <div className="container">
-                                        {images?.map((image, index) => (
-                                            <div className="image" key={index}>
-                                                <span
-                                                    className="delete"
-                                                    onClick={() => deleteImage(index)}
-                                                >
-                                                    x
-                                                </span>
-                                                <img src={image.url} alt={image.name} />
-                                            </div>
-                                        ))}
 
-                                    </div>
-                                    <button disabled={images?.length == 0} onClick={handleUploadPhoto} className='!font-semibold hover:bg-opacity-80'>Upload</button>
-                                </div>
-
-                                {/* varient / colors  */}
-                                <div className='card2 max-h-[400px] overflow-y-auto'>
-                                    {imageURL.length != 0 ? <h4 className='text-center text-lg font-semibold text-[#0086fe]'>Enter photo wise color & size wise SKU:</h4>
-                                        : <h4 className='text-center text-lg font-semibold text-red-400'>No photo uploaded yet</h4>}
-                                    {
-                                        imageURL.length == 0 && <img src='https://i.ibb.co/52VHTDD/folder.png' alt="no image uploaded yet" className='h-60 w-60 mx-auto' />
-                                    }
-                                    {imageURL?.map((i, index) => <div key={index} className="grid grid-cols-4 gap-2 items-start justify-center my-3 bg-[#f4f3f9] p-2 rounded-md">
-                                        <div className='flex flex-col gap-2 justify-center items-center'>
-                                            <img src={i?.imageUrl} alt="img" className='w-full h-40 rounded-md' />
-                                            <CreatableSelect isMulti={false} onChange={(selectedOptions) => handleColor(index, i, selectedOptions)} required options={colors} placeholder="Enter color" className=' !w-full' />
-                                        </div>
-                                        <div className="col-span-3 start-1 w-full grid grid-cols-3 gap-2 justify-center items-start my-3">
-                                            {
-                                                selectedSizes?.map((ss, indexS) => <div key={indexS} className='w-full'>
-                                                    <TextField onBlur={(e) => handleSKU(e.target.value, indexS, index)} type="text" name="color-wise-sku" id={ss?.value} className="rounded-md w-full border-2 my-2" label={`SKU for ${ss?.value}`} />
-
-                                                </div>)
-                                            }
-
-                                        </div>
-
-                                    </div>)}
-
-                                </div>
+                                </div>)}
                             </div>
+
 
                             {/* Card images  */}
                             <div className="flex items-center gap-2 pt-5">
@@ -464,7 +388,7 @@ const page = () => {
                                         onChange={(selectedOptions) => setImg1(selectedOptions?.imageUrl)}
                                         placeholder="Select Card img-1"
                                     />
-                                    <img src={img1} alt="selected img-1" className="w-8 h-8 absolute bottom-[2px] left-[2px]" />
+                                    <img src={singleProductData?.imageUrl?.[0] || img1} alt="selected img-1" className="w-8 h-8 absolute bottom-[2px] left-[2px]" />
                                 </div>
                                 <div className='relative w-full space-y-2'>
                                     <p>
@@ -484,7 +408,7 @@ const page = () => {
                                         onChange={(selectedOptions) => setImg2(selectedOptions?.imageUrl)}
                                         placeholder="Select Card img-2"
                                     />
-                                    <img src={img2} alt="selected img-2" className="w-8 h-8 absolute bottom-[2px] left-[2px]" />
+                                    <img src={singleProductData?.imageUrl?.[1] || img2} alt="selected img-2" className="w-8 h-8 absolute bottom-[2px] left-[2px]" />
                                 </div>
 
 

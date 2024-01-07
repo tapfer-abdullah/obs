@@ -53,7 +53,7 @@ export const POST = async (request) => {
     try {
         const newProduct = new Products(productData);
         const result = await newProduct.save();
-        return NextResponse.json({ message: "Product added successfully", statue: true, data: result })
+        return NextResponse.json({ message: "Product added successfully", status: true, data: result })
     }
     catch (error) {
         console.log(error)

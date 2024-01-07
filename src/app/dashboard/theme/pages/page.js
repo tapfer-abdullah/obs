@@ -5,6 +5,7 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { IoMdAdd } from 'react-icons/io';
 import { IoEyeOutline } from "react-icons/io5";
+import { MdDeleteForever } from "react-icons/md";
 import { TiEdit } from "react-icons/ti";
 import Swal from 'sweetalert2';
 
@@ -107,7 +108,7 @@ const page = () => {
                                 <p>View page</p>
                             </Link>
                             <button onClick={() => { handleDelete(page?._id) }} className='py-2 px-4 font-semibold text-white bg-red-500 hover:bg-red-600 flex items-center gap-1 border-2 rounded-3xl transition-all duration-300'>
-                                <IoEyeOutline className='text-lg' />
+                                <MdDeleteForever className='text-lg' />
                                 <p>Delete</p>
                             </button>
                         </div>

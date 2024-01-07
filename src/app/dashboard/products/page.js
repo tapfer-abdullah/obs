@@ -1,67 +1,29 @@
 "use client"
 import DProductsCards from '@/Components/Pages/Dashboard/DProducts/DProductsCards';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import * as React from 'react';
+import Loader from '@/Hooks/Loader/Loader';
+import { axiosHttp } from '@/app/helper/axiosHttp';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
+import { FaRegEdit } from "react-icons/fa";
+import { FaArrowUpRightFromSquare } from "react-icons/fa6";
+import { IoMdAdd } from 'react-icons/io';
+import { MdDelete, MdEditSquare } from "react-icons/md";
+import "./products.css";
 
-const columns = [
-    { id: 'name', label: 'Name', minWidth: 170 },
-    { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-    {
-        id: 'population',
-        label: 'Population',
-        minWidth: 170,
-        align: 'right',
-        format: (value) => value.toLocaleString('en-US'),
-    },
-    {
-        id: 'size',
-        label: 'Size\u00a0(km\u00b2)',
-        minWidth: 170,
-        align: 'right',
-        format: (value) => value.toLocaleString('en-US'),
-    },
-    {
-        id: 'density',
-        label: 'Density',
-        minWidth: 170,
-        align: 'right',
-        format: (value) => value.toFixed(2),
-    },
-];
-
-function createData(name, code, population, size) {
-    const density = population / size;
-    return { name, code, population, size, density };
-}
-
-const rows = [
-    createData('India', 'IN', 1324171354, 3287263),
-    createData('China', 'CN', 1403500365, 9596961),
-    createData('Italy', 'IT', 60483973, 301340),
-    createData('United States', 'US', 327167434, 9833520),
-    createData('Canada', 'CA', 37602103, 9984670),
-    createData('Australia', 'AU', 25475400, 7692024),
-    createData('Germany', 'DE', 83019200, 357578),
-    createData('Ireland', 'IE', 4857000, 70273),
-    createData('Mexico', 'MX', 126577691, 1972550),
-    createData('Japan', 'JP', 126317000, 377973),
-    createData('France', 'FR', 67022000, 640679),
-    createData('United Kingdom', 'GB', 67545757, 242495),
-    createData('Russia', 'RU', 146793744, 17098246),
-    createData('Nigeria', 'NG', 200962417, 923768),
-    createData('Brazil', 'BR', 210147125, 8515767),
-];
 
 export default function page() {
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+    const [isLoading, setLoading] = useState(true);
+    const [allProducts, setAllProducts] = useState([]);
+
+    useEffect(() => {
+        axiosHttp.get(`/products`).then(res => {
+            setAllProducts(res.data);
+            setLoading(false);
+        })
+    }, [])
+
+    console.log(allProducts);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -73,69 +35,50 @@ export default function page() {
     };
 
     return (
-        <div className='px-5 pb-5'>
-            <div>
-                <h3 className='text-center text-3xl my-3'>All Products</h3>
-            </div>
-
+        <div className='px-5 pb-5 w-full'>
             <div className="grid grid-cols-4 gap-3 my-3">
                 <DProductsCards title={"Total Products"} amount={100} />
                 <DProductsCards title={"Active Products"} amount={95} />
                 <DProductsCards title={"Inactive Products"} amount={5} />
                 <DProductsCards title={"New Products"} amount={5} />
             </div>
+            <div className="mb-5 flex justify-between items-center px-3 py-2 bg-[#d5ddda] shadow-lg rounded-lg">
+                <Link href={"/dashboard/products"} className="text-xl font-semibold">All Products <span>({allProducts?.length})</span></Link>
+                <Link href={"/dashboard/products/add"} className="flex gap-2 items-center bg-white py-2 px-4 rounded-lg font-semibold cursor-pointer">
+                    <IoMdAdd className="text-xl" />
+                    <span>New Product</span>
+                </Link>
+            </div>
 
-            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                <TableContainer
-                    sx={{ maxHeight: 500 }}
-                >
-                    <Table stickyHeader aria-label="sticky table">
-                        <TableHead>
-                            <TableRow>
-                                {columns.map((column) => (
-                                    <TableCell
-                                        className='bg-green-300'
-                                        key={column.id}
-                                        align={column.align}
-                                        style={{ minWidth: column.minWidth }}
-                                    >
-                                        {column.label}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {rows
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row) => {
-                                    return (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                                            {columns.map((column) => {
-                                                const value = row[column.id];
-                                                return (
-                                                    <TableCell key={column.id} align={column.align}>
-                                                        {column.format && typeof value === 'number'
-                                                            ? column.format(value)
-                                                            : value}
-                                                    </TableCell>
-                                                );
-                                            })}
-                                        </TableRow>
-                                    );
-                                })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[10, 25, 100]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-            </Paper>
+            {isLoading ? <Loader /> :
+                <table className='products-table !w-full bg-white'>
+                    <tr>
+                        <th>Photo</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Sell Quantity</th>
+                        <th>Actions</th>
+                    </tr>
+                    {
+                        allProducts?.map(p => <tr key={p?._id}>
+                            <td><img src={p?.imageUrl?.[0]} alt="img" className='w-12 h-12 mx-auto' /></td>
+                            <td>{p?.title?.length > 20 ? <>{p?.title?.slice(0, 20)}..</> : <>{p?.title?.slice(0, 10)}</>}</td>
+                            <td>{p?.price}</td>
+                            <td>{p?.status?.label}</td>
+                            <td>{p?.sellQuantity}</td>
+                            <td className=''>
+                                <div className="!w-full !h-full flex items-center justify-center gap-2">
+                                    <MdDelete className='text-3xl font-bold bg-red-600 text-white rounded-md cursor-pointer p-1' />
+                                    <Link href={`/dashboard/products/${p?._id}`}><MdEditSquare className='text-3xl font-bold bg-[#FFC520] text-white rounded-md cursor-pointer p-1' /></Link>
+                                    <Link target='_blank' href={`/Collections/${p?.category?.[0]?.label.toLowerCase()}/${p?._id}`}><FaArrowUpRightFromSquare className='text-3xl font-bold bg-green-500 text-white rounded-md cursor-pointer p-1' /></Link>
+                                </div>
+                            </td>
+                        </tr>)
+                    }
+
+                </table>
+            }
         </div>
     );
 }
