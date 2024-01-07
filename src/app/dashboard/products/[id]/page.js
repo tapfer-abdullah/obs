@@ -1,6 +1,5 @@
 "use client"
 import { TextField, accordionSummaryClasses } from '@mui/material';
-// import ReactHtmlParser from 'react-html-parser';
 
 import Loader from '@/Hooks/Loader/Loader';
 import { axiosHttp } from '@/app/helper/axiosHttp';
@@ -10,11 +9,15 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
+import { RiImageEditLine } from "react-icons/ri";
+import { RxCross2 } from "react-icons/rx";
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import "./../add/AddProduct.css";
+
+
 
 
 const sizes = [
@@ -50,19 +53,15 @@ const page = () => {
     const [comparePrice, setComparePrice] = useState("");
     const [selectedType, setSelectedType] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState([]);
-    const [selectedSizes, setSelectedSizes] = useState(singleProductData?.selectedSizes || []);
+    const [selectedSizes, setSelectedSizes] = useState([]);
     const [img1, setImg1] = useState("https://i.ibb.co/KFjt6Mg/gallery-img.png");
     const [img2, setImg2] = useState("https://i.ibb.co/KFjt6Mg/gallery-img.png");
     const [selectedStatus, setSelectedStatus] = useState({});
-    const [images, setImages] = useState([]);
     const [imageURL, setImageURL] = useState([]);
     const [category, setCategory] = useState([]);
     const [types, setTypes] = useState([]);
     const [isLoading, setLoading] = useState(true);
 
-
-    const [isDragging, setDragging] = useState(false);
-    const fileInputRef = useRef(null);
     const router = useRouter();
     const pathname = usePathname()
     const resultArray = pathname.split("/").filter(Boolean);
@@ -73,6 +72,17 @@ const page = () => {
     useEffect(() => {
         axiosHttp.get(`/products/${resultArray[2]}`).then(res => {
             setSingleProductData(res.data);
+            setTitle(res.data?.title);
+            setContent(res.data?.description);
+            setPrice(res.data?.price);
+            setComparePrice(res.data?.comparePrice);
+            setSelectedType(res.data?.type);
+            setSelectedCategory(res.data?.category);
+            setSelectedSizes(res.data?.size);
+            setSelectedStatus(res.data?.status);
+            setImageURL(res.data?.colors);
+            setImg1(res.data?.imageUrl?.[0]);
+            setImg2(res.data?.imageUrl?.[1]);
         })
     }, [])
 
@@ -110,42 +120,6 @@ const page = () => {
     );
 
 
-    const handleUploadPhoto = async () => {
-        const apiKey = process.env.NEXT_PUBLIC_IMAGEBB_KEY;
-        const apiUrl = 'https://api.imgbb.com/1/upload';
-
-        try {
-
-            const formData = new FormData();
-            let imgURL = [];
-
-            for (let i = 0; i < images.length; i++) {
-                const response = await fetch(images[i].url);
-                const blob = await response.blob();
-
-                formData.append('image', blob, images[i].name);
-
-
-                const response2 = await axios.post(`${apiUrl}?key=${apiKey}`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
-
-                // console.log('Image uploaded successfully:', response2.data);
-                // console.log(response2.data)
-                imgURL.push({ name: "Default-color", label: response2.data?.data?.title, imageUrl: response2.data?.data?.url });
-            }
-
-            setImageURL(imgURL)
-            setImages([]);
-
-        } catch (error) {
-            console.error('Error uploading images to ImageBB:', error);
-            console.log('Error response:', error.response.data);
-        }
-    }
-
     const handleColor = (index, image, color) => {
 
         let updateColorArray = [];
@@ -153,7 +127,7 @@ const page = () => {
         for (let i = 0; i < imageURL.length; i++) {
             if (i == index) {
                 const allSKU = imageURL?.[index]?.allSKU || [];
-                updateColorArray.push({ name: color?.value, label: image?.label, imageUrl: image?.imageUrl, allSKU })
+                updateColorArray.push({ name: color?.value, label: image?.label || color?.value, imageUrl: image?.imageUrl, allSKU })
             }
             else {
                 updateColorArray.push(imageURL[i]);
@@ -203,15 +177,16 @@ const page = () => {
         }
 
         let productData = { title: title, price: price, comparePrice: comparePrice, status: selectedStatus, colors: imageURL, type: selectedType, category: selectedCategory, size: selectedSizes, description: content, imageUrl: [img1, img2] };
+        console.log("add coll", productData);
 
         try {
-            axiosHttp.post("/products", productData).then((res) => {
+            axiosHttp.put(`/products/${singleProductData?._id}`, productData).then((res) => {
                 console.log(res.data)
                 if (res.data.status) {
                     Swal.fire({
                         position: "top-center",
                         icon: "success",
-                        title: "Product added successfully",
+                        title: "Product Updated successfully",
                         showConfirmButton: false,
                         timer: 1500
                     });
@@ -219,7 +194,7 @@ const page = () => {
                 } else {
                     Swal.fire({
                         title: "Unable!",
-                        text: "Unable to add the product :(",
+                        text: "Unable to update the product :(",
                         icon: "error"
                     });
                 }
@@ -231,18 +206,51 @@ const page = () => {
     }
 
     const handleDiscard = () => {
-        setTitle("");
-        setContent("");
-        setPrice("");
-        setComparePrice("");
-        setSelectedType([]);
-        setSelectedCategory([]);
-        setSelectedSizes([]);
-        setSelectedStatus({});
-        setImageURL([]);
-        setImages([]);
-        setImg1("https://i.ibb.co/KFjt6Mg/gallery-img.png");
-        setImg2("https://i.ibb.co/KFjt6Mg/gallery-img.png");
+        setTitle(singleProductData?.title);
+        setContent(singleProductData?.description);
+        setPrice(singleProductData?.price);
+        setComparePrice(singleProductData?.comparePrice);
+        setSelectedType(singleProductData?.type);
+        setSelectedCategory(singleProductData?.category);
+        setSelectedSizes(singleProductData?.size);
+        setSelectedStatus(singleProductData?.status);
+        setImageURL(singleProductData?.colors);
+        setImg1(singleProductData?.imageUrl?.[0]);
+        setImg2(singleProductData?.imageUrl?.[1]);
+    }
+
+    const [isVariant, setVariant] = useState(false);
+    const [isChangeVariantImgBtn, setChangeVariantImgBtn] = useState(false);
+    const [variantIMG, setVariantIMG] = useState("" || "https://i.ibb.co/KFjt6Mg/gallery-img.png");
+    const [changeVariantIMG, setChangeVariantIMG] = useState("" || "https://i.ibb.co/KFjt6Mg/gallery-img.png");
+
+    const handleNewVariant = () => {
+        setImageURL([{ name: '', label: '', imageUrl: variantIMG, allSKU: [] }, ...imageURL]);
+        setVariant(false);
+    }
+    const handleDeleteVariant = (index) => {
+        let arr = [];
+        for (let i = 0; i < imageURL.length; i++) {
+            if (i != index) {
+                arr.push(imageURL[i])
+            }
+        }
+        setImageURL(arr);
+    }
+    const handleVariantIMGChange = (index) => {
+        let arr = [];
+        for (let i = 0; i < imageURL.length; i++) {
+            if (i == index) {
+                let obj = imageURL[i];
+                obj.imageUrl = changeVariantIMG;
+                arr.push(obj);
+            }
+            else {
+                arr.push(imageURL[i])
+            }
+        }
+        setImageURL(arr);
+        setChangeVariantImgBtn(false);
     }
 
     return (
@@ -254,7 +262,7 @@ const page = () => {
                             <div className='flex items-center gap-2'>
                                 <Link href={"/dashboard/products"} className="text-xl font-semibold">All Products</Link>
                                 <IoIosArrowForward />
-                                <h4 className="text-xl font-semibold">Add new product</h4>
+                                <h4 className="text-xl font-semibold">{singleProductData?.title || "Update"}</h4>
                             </div>
                             <div className='flex items-center gap-2'>
                                 <button disabled={title.length == 0} onClick={handleDiscard} className={`flex gap-2 items-center bg-[#FFC520] ${title.length == 0 ? "opacity-50" : "hover:bg-opacity-80"} py-2 px-4 rounded-lg font-semibold cursor-pointer`}>Discard</button>
@@ -263,7 +271,7 @@ const page = () => {
                         </div>
 
                         <div className="space-y-3 w-4/5 mx-auto bg-white p-5 rounded-xl shadow-xl">
-                            <img src="https://i.ibb.co/jW9MTfv/image.png" alt="box img" className='w-20 mx-auto' />
+                            <img src="https://i.ibb.co/jW9MTfv/image.png" alt="" className='w-20 mx-auto' />
                             <h4 className="text-xl font-semibold text-center">Update Product</h4>
 
                             <div className="flex items-center gap-2">
@@ -271,7 +279,7 @@ const page = () => {
                                     <span>
                                         Title * <small>( name )</small>
                                     </span>
-                                    <input value={singleProductData?.title || title} onChange={(e) => setTitle(e.target.value)} required type="text" name="name" id="name"
+                                    <input value={title} onChange={(e) => setTitle(e.target.value)} required type="text" name="name" id="name"
                                         className="rounded-md w-full border border-gray-300 px-2 py-[5px] outline-1 outline-[#0086fe]" placeholder='Enter title..' />
 
                                 </div>
@@ -279,7 +287,7 @@ const page = () => {
                                     <span>
                                         Status * <small>(Active, Draft)</small>
                                     </span>
-                                    <Select value={singleProductData?.status || selectedStatus} onChange={(selectedOptions) => setSelectedStatus(selectedOptions)} required options={status} isMulti={false}
+                                    <Select value={selectedStatus} onChange={(selectedOptions) => setSelectedStatus(selectedOptions)} required options={status} isMulti={false}
                                         isClearable={false} placeholder="Select status" className='z-20' />
                                 </div>
                             </div>
@@ -288,13 +296,13 @@ const page = () => {
                                     <span>
                                         Price * <small>( sell price )</small>
                                     </span>
-                                    <input value={singleProductData?.price || price} min={0} onChange={(e) => setPrice(e.target.value)} required type="number" name="price" id="price" className="rounded-md w-full border border-gray-300 px-2 py-[5px] outline-1 outline-[#0086fe]" placeholder="Price" />
+                                    <input value={price} min={0} onChange={(e) => setPrice(e.target.value)} required type="number" name="price" id="price" className="rounded-md w-full border border-gray-300 px-2 py-[5px] outline-1 outline-[#0086fe]" placeholder="Price" />
                                 </div>
                                 <div className="w-full space-y-1 md:max-w-full lg:max-w-md">
                                     <span>
                                         Compare price
                                     </span>
-                                    <input value={singleProductData?.comparePrice || comparePrice} min={0} onChange={(e) => setComparePrice(e.target.value)} type="number" name="price" id="price" className="rounded-md w-full border border-gray-300 px-2 py-[5px] outline-1 outline-[#0086fe]" placeholder="Compare price" />
+                                    <input value={comparePrice} min={0} onChange={(e) => setComparePrice(e.target.value)} type="number" name="price" id="price" className="rounded-md w-full border border-gray-300 px-2 py-[5px] outline-1 outline-[#0086fe]" placeholder="Compare price" />
                                 </div>
                             </div>
 
@@ -303,14 +311,14 @@ const page = () => {
                                     <span>
                                         Type <small>(Jewelry, Clothing etc)</small>
                                     </span>
-                                    <Select value={singleProductData?.type || selectedType} onChange={(selectedOptions) => setSelectedType(selectedOptions)} required options={types} isMulti={false}
+                                    <Select value={selectedType} onChange={(selectedOptions) => setSelectedType(selectedOptions)} required options={types} isMulti={false}
                                         isClearable={false} placeholder="Select type" className='z-20' />
                                 </div>
                                 <div className="w-full space-y-1 md:max-w-full lg:max-w-md">
                                     <span>
                                         Category <small>(choose category)</small>
                                     </span>
-                                    <Select value={singleProductData?.category || selectedCategory} onChange={(selectedOptions) => setSelectedCategory(selectedOptions)}
+                                    <Select value={selectedCategory} onChange={(selectedOptions) => setSelectedCategory(selectedOptions)}
                                         isMulti
                                         isClearable={false}
                                         name="category"
@@ -323,7 +331,7 @@ const page = () => {
                                     <span>
                                         Sizes * <small>(choose sizes)</small>
                                     </span>
-                                    <CreatableSelect value={singleProductData?.size || selectedSizes} onChange={(selectedOptions) => setSelectedSizes(selectedOptions)} required options={sizes} isMulti placeholder="Select sizes" className='z-20' />
+                                    <CreatableSelect value={selectedSizes} onChange={(selectedOptions) => setSelectedSizes(selectedOptions)} required options={sizes} isMulti placeholder="Select sizes" className='z-20' />
                                 </div>
                             </div>
 
@@ -335,38 +343,75 @@ const page = () => {
                                 <JoditEditor
                                     className='max-h-[400px] overflow-y-auto'
                                     ref={editor}
-                                    value={singleProductData?.description || content}
+                                    value={content}
                                     tabIndex={1} // tabIndex of textarea
                                     onBlur={newContent => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
                                     onChange={newContent => { }}
                                 />
                             </div>
 
-                            {/* varient / colors  */}
+                            {/* variant / colors  */}
                             <div className='card2 max-h-[400px] overflow-y-auto'>
-                                {imageURL.length != 0 ? <h4 className='text-center text-lg font-semibold text-[#0086fe]'>Enter photo wise color & size wise SKU:</h4>
-                                    : <h4 className='text-center text-lg font-semibold text-red-400'>No photo uploaded yet</h4>}
+                                {
+                                    imageURL.length != 0 ?
+                                        <div className='flex items-center justify-between'>
+                                            <h4 className='text-start text-lg font-semibold text-[#0086fe]'>Enter photo wise color & size wise SKU:</h4>
+                                            <button onClick={() => { setVariant(true) }} className='bg-[#0086fe] text-white py-1 px-3 rounded-lg font-semibold'>+ variant</button>
+                                        </div>
+
+                                        :
+                                        <div className='flex items-center justify-between'>
+                                            <h4 className='text-center text-lg font-semibold text-red-400'>No photo uploaded yet</h4>
+                                            <button onClick={() => { setVariant(true) }} className='bg-[#0086fe] text-white py-1 px-3 rounded-lg font-semibold'>+ variant</button>
+                                        </div>
+                                }
+                                {
+                                    isVariant && <div className='relative w-full flex items-center justify-center gap-2 my-3'>
+                                        <input placeholder='Enter image url..' onChange={(e) => setVariantIMG(e.target.value)}
+                                            type="text" name="variantImg" id="" className='border w-full pl-8 pr-2 py-2 outline-1' />
+                                        <button onClick={() => { setVariant(false) }} className='bg-red-600 text-white py-1 px-3 rounded-lg font-semibold'>Cancel</button>
+                                        <button onClick={handleNewVariant} className='bg-[#FFC520] py-1 px-3 rounded-lg font-semibold'>Add</button>
+                                        <img src={variantIMG} alt="selected img-2" className="w-8 h-8 absolute bottom-[2px] left-[2px]" />
+                                    </div>
+                                }
                                 {
                                     imageURL.length == 0 && <img src='https://i.ibb.co/52VHTDD/folder.png' alt="no image uploaded yet" className='h-60 w-60 mx-auto' />
                                 }
-                                {singleProductData?.colors?.map((i, index) => <div key={index} className="grid grid-cols-4 gap-2 items-start justify-center my-3 bg-[#f4f3f9] p-2 rounded-md">
-                                    <div className='flex flex-col gap-2 justify-center items-center'>
+                                {imageURL?.map((i, index) => <div key={index} className="grid grid-cols-4 gap-2 items-start justify-center my-3 bg-[#f4f3f9] p-2 rounded-md">
+                                    <div className='relative flex flex-col gap-2 justify-center items-center'>
                                         <img src={i?.imageUrl} alt="img" className='w-full h-40 rounded-md' />
-                                        <CreatableSelect value={{ label: i?.name, value: i?.label }} isMulti={false} onChange={(selectedOptions) => handleColor(index, i, selectedOptions)} required options={colors} placeholder="Enter color" className=' !w-full' />
-                                    </div>
-                                    <div className="col-span-3 start-1 w-full grid grid-cols-3 gap-2 justify-center items-start my-3">
+                                        <CreatableSelect defaultValue={{ label: i?.name, value: i?.label }} isMulti={false} onChange={(selectedOptions) => handleColor(index, i, selectedOptions)} required options={colors} placeholder="Enter color" className=' !w-full' />
+                                        <RiImageEditLine title='Change photo' onClick={() => { setChangeVariantImgBtn(true) }}
+                                            className='cursor-pointer absolute top-1 right-2 text-2xl p-1 bg-[#FFC520] hover:bg-opacity-80 rounded-full' />
+
                                         {
-                                            i?.allSKU?.map((ss, indexS) => <div key={indexS} className='w-full'>
-                                                <TextField onBlur={(e) => handleSKU(e.target.value, indexS, index)} type="text" name="color-wise-sku" id={ss?.value} className="rounded-md w-full border-2 my-2" label={`SKU for ${ss?.value}`} />
+                                            isChangeVariantImgBtn && <div className='!w-full !h-full rounded-md bg-black bg-opacity-70 absolute top-0 left-0 pt-14 px-1'>
+                                                <input onChange={(e) => setChangeVariantIMG(e.target.value)}
+                                                    placeholder='Enter url' type="text" name="variantImg" id="" className='border-2 rounded-lg w-full pl-8 pr-2 py-2 outline-1' />
+                                                <div className='w-full flex items-center justify-center gap-2 my-3'>
+                                                    <button onClick={() => { setChangeVariantImgBtn(false) }} className='bg-red-600 text-white py-1 px-3 rounded-lg font-semibold'>Cancel</button>
+                                                    <button onClick={() => handleVariantIMGChange(index)} className='bg-[#FFC520] py-1 px-3 rounded-lg font-semibold'>Add</button>
+                                                    <img src={variantIMG} alt="selected img-2" className="w-8 h-8 absolute top-[60px] left-[6px]" />
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </div>
+                                    <div className="relative col-span-3 start-1 w-full grid grid-cols-3 gap-2 justify-center items-start my-3">
+                                        {
+                                            selectedSizes?.map((ss, indexS) => <div key={indexS} className='w-full'>
+                                                <TextField defaultValue={i?.allSKU?.[indexS]?.sku} onBlur={(e) => handleSKU(e.target.value, indexS, index)} type="text" name="color-wise-sku" id={ss?.value} className="rounded-md w-full border-2 my-2" label={`SKU for ${ss?.value}`} />
 
                                             </div>)
                                         }
+                                        <RxCross2 title='Delete Variant' onClick={() => { handleDeleteVariant(index) }}
+                                            className='cursor-pointer absolute top-1 right-2 text-2xl p-1 bg-red-600 hover:bg-opacity-80 text-white rounded-full' />
 
                                     </div>
 
                                 </div>)}
-                            </div>
 
+                            </div>
 
                             {/* Card images  */}
                             <div className="flex items-center gap-2 pt-5">
@@ -388,7 +433,7 @@ const page = () => {
                                         onChange={(selectedOptions) => setImg1(selectedOptions?.imageUrl)}
                                         placeholder="Select Card img-1"
                                     />
-                                    <img src={singleProductData?.imageUrl?.[0] || img1} alt="selected img-1" className="w-8 h-8 absolute bottom-[2px] left-[2px]" />
+                                    <img src={img1} alt="selected img-1" className="w-8 h-8 absolute bottom-[2px] left-[2px]" />
                                 </div>
                                 <div className='relative w-full space-y-2'>
                                     <p>
@@ -408,7 +453,7 @@ const page = () => {
                                         onChange={(selectedOptions) => setImg2(selectedOptions?.imageUrl)}
                                         placeholder="Select Card img-2"
                                     />
-                                    <img src={singleProductData?.imageUrl?.[1] || img2} alt="selected img-2" className="w-8 h-8 absolute bottom-[2px] left-[2px]" />
+                                    <img src={img2} alt="selected img-2" className="w-8 h-8 absolute bottom-[2px] left-[2px]" />
                                 </div>
 
 
