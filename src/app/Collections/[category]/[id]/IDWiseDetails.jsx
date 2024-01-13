@@ -1,16 +1,55 @@
+import { OrderStateProvider } from "@/Components/State/OrderState";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 
 const IDWiseDetails = ({ singleProduct, selectedSKU, imgIndex, setImgIndex, handleSku, selectedSize, setSelectedSize }) => {
-  const { title, price, comparePrice, size } = singleProduct || {};
+  const { title, price, comparePrice, size, colors } = singleProduct || {};
   const [sizes, setSize] = React.useState(0);
+
+  const { changeCartData, setChangeCartData } = useContext(OrderStateProvider);
 
   const handleSize = (event, newSize) => {
     setSize(newSize);
   };
   const [selectedItems, setSelectedItems] = useState(1);
+
+  const handleAddToCart = (id) => {
+    let selectedColor = singleProduct?.colors?.[imgIndex]?.name;
+    let sku = selectedSKU || singleProduct?.colors?.[0]?.allSKU?.[0]?.sku;
+    let img = colors?.[imgIndex]?.imageUrl;
+
+    const data = { id: id, name: singleProduct?.title, price: price, color: selectedColor, size: selectedSize, quantity: selectedItems, sku: sku, img: img };
+
+    let storedData = JSON.parse(localStorage.getItem("obs-cart")) || [];
+
+    if (storedData.length > 0) {
+      let newData = [];
+      let item = 0;
+
+      for (let i = 0; i < storedData.length; i++) {
+        if (storedData?.[i]?.id == id && storedData?.[i]?.size == data.size && storedData?.[i]?.color == data.color) {
+          item++;
+          newData.push({ id: id, name: singleProduct?.title, price: price, color: selectedColor, size: selectedSize, quantity: selectedItems, sku: sku, img: img });
+        } else {
+          newData.push(storedData[i]);
+        }
+      }
+
+      if (item == 0) {
+        newData.push(data);
+        localStorage.setItem("obs-cart", [JSON.stringify(newData)]);
+      } else {
+        localStorage.setItem("obs-cart", [JSON.stringify(newData)]);
+      }
+    } else {
+      storedData.push(data);
+      localStorage.setItem("obs-cart", [JSON.stringify(storedData)]);
+    }
+
+    setChangeCartData(changeCartData + 1);
+  };
 
   return (
     <div>
@@ -90,7 +129,9 @@ const IDWiseDetails = ({ singleProduct, selectedSKU, imgIndex, setImgIndex, hand
             <div className="text-xl font-bold">
               <button
                 onClick={() => {
-                  setSelectedItems(selectedItems - 1);
+                  if (selectedItems != 1) {
+                    setSelectedItems(selectedItems - 1);
+                  }
                 }}
                 className="py-2 px-5 bg-slate-300 mx-[1px]"
               >
@@ -107,7 +148,12 @@ const IDWiseDetails = ({ singleProduct, selectedSKU, imgIndex, setImgIndex, hand
               </button>
             </div>
             <div className="flex-grow">
-              <button className="py-2 px-5 bg-black text-white hover:bg-[#363634] transition-all duration-300 hover:shadow-lg mx-[1px] uppercase w-full">Add to Cart</button>
+              <button
+                onClick={() => handleAddToCart(singleProduct?._id)}
+                className="py-2 px-5 bg-black text-white hover:bg-[#363634] transition-all duration-300 hover:shadow-lg mx-[1px] uppercase w-full"
+              >
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>

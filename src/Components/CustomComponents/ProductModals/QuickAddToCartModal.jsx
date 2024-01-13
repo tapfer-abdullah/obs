@@ -1,26 +1,62 @@
 "use client";
+import { OrderStateProvider } from "@/Components/State/OrderState";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import * as React from "react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import "../CustomComponents.css";
 
 const QuickAddToCartModal = ({ singleProduct, QuickShop, SetQuickShop }) => {
   const [selectedSize, setSelectedSize] = useState(singleProduct?.size?.[0]?.label || "One Size");
+  const [selectedColor, setSelectedColor] = useState(singleProduct?.colors?.[0]?.name);
   const [sizes, setSize] = React.useState(0);
+  const { price, size } = singleProduct;
+  const [imgIndex, setImgIndex] = useState(0);
 
-  const { price, size, colors } = singleProduct;
+  const { changeCartData, setChangeCartData } = useContext(OrderStateProvider);
 
   const handleSize = (event, newSize) => {
     setSize(newSize);
   };
 
-  const [selectedColor, setSelectedColor] = useState(singleProduct?.colors?.[0]?.name);
-
   const handleColorClick = (colorName) => {
     setSelectedColor(colorName);
+  };
+
+  const handleAddToCart = (id) => {
+    let sku = singleProduct?.colors?.[imgIndex]?.allSKU?.[0]?.sku;
+    let img = singleProduct?.colors?.[imgIndex]?.imageUrl;
+    const data = { id: id, name: singleProduct?.title, price: price, color: selectedColor, size: selectedSize, quantity: 1, sku: sku, img: img };
+
+    let storedData = JSON.parse(localStorage.getItem("obs-cart")) || [];
+
+    if (storedData.length > 0) {
+      let newData = [];
+      let item = 0;
+
+      for (let i = 0; i < storedData.length; i++) {
+        if (storedData?.[i]?.id == id && storedData?.[i]?.size == data.size && storedData?.[i]?.color == data.color) {
+          item++;
+          newData.push({ id: id, name: singleProduct?.title, price: price, color: selectedColor, size: selectedSize, quantity: storedData?.[i]?.quantity + 1, sku: sku, img: img });
+        } else {
+          newData.push(storedData[i]);
+        }
+      }
+
+      if (item == 0) {
+        newData.push(data);
+        localStorage.setItem("obs-cart", [JSON.stringify(newData)]);
+      } else {
+        localStorage.setItem("obs-cart", [JSON.stringify(newData)]);
+      }
+    } else {
+      storedData.push(data);
+      localStorage.setItem("obs-cart", [JSON.stringify(storedData)]);
+    }
+
+    setChangeCartData(changeCartData + 1);
   };
 
   return (
@@ -46,8 +82,14 @@ const QuickAddToCartModal = ({ singleProduct, QuickShop, SetQuickShop }) => {
               <h2>{selectedColor}</h2>
             </div>
             <div className="flex flex-wrap gap-2 justify-center">
-              {singleProduct.colors.map((color) => (
-                <div key={color._id} onClick={() => handleColorClick(color.name)}>
+              {singleProduct.colors.map((color, index) => (
+                <div
+                  key={color._id}
+                  onClick={() => {
+                    handleColorClick(color.name);
+                    setImgIndex(index);
+                  }}
+                >
                   <img src={color?.imageUrl} className="w-10 h-10 cursor-pointer" alt="color-wise-img" />
                 </div>
               ))}
@@ -83,7 +125,9 @@ const QuickAddToCartModal = ({ singleProduct, QuickShop, SetQuickShop }) => {
 
           <div className="my-5">
             <div className="flex-grow">
-              <button className="py-2 px-5 bg-black text-white mx-[1px] uppercase w-full">Add to Cart</button>
+              <button onClick={() => handleAddToCart(singleProduct?._id)} className="py-2 px-5 bg-black text-white mx-[1px] uppercase w-full">
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>

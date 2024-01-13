@@ -1,6 +1,7 @@
 "use client"
 import Footer from '@/Components/Shared-Pages/Footer'
 import NavBar from '@/Components/Shared-Pages/NavBar'
+import OrderState from '@/Components/State/OrderState'
 import { Inter } from 'next/font/google'
 import { usePathname } from 'next/navigation'
 import './globals.css'
@@ -18,16 +19,18 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.className} min-h-screen`}>
-        {
-          resultArray[0] != "dashboard" && <NavBar />
-        }
+        <OrderState>
+          {
+            resultArray[0] != "dashboard" && <NavBar />
+          }
 
-        <div className='min-h-[80vh]'>
-          {children}
-        </div>
-        {
-          resultArray[0] != "dashboard" && <Footer />
-        }
+          <div className='min-h-[80vh]'>
+            {children}
+          </div>
+          {
+            resultArray[0] != "dashboard" && <Footer />
+          }
+        </OrderState>
 
       </body>
     </html>

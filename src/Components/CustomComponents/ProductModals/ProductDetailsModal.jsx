@@ -1,8 +1,9 @@
 "use client";
+import { OrderStateProvider } from "@/Components/State/OrderState";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import Link from "next/link";
 import * as React from "react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ReactHtmlParser from "react-html-parser";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
@@ -14,6 +15,8 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
   const [sizes, setSize] = React.useState(0);
   const [imgIndex, setImgIndex] = useState(0);
 
+  const { changeCartData, setChangeCartData } = useContext(OrderStateProvider);
+
   const handleSize = (event, newSize) => {
     setSize(newSize);
   };
@@ -21,7 +24,6 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
   const [selectedSize, setSelectedSize] = useState(singleProduct?.size?.[0]?.label || "One Size");
   const [selectedSKU, setSelectedSKU] = useState(singleProduct?.colors?.[imgIndex]?.allSKU?.[0]?.sku);
   const handleSku = (size, imgIndex) => {
-    console.log(size, imgIndex);
     const sku = singleProduct?.colors?.[imgIndex]?.allSKU?.find((s) => s?.size == size);
     setSelectedSKU(sku?.sku);
   };
@@ -49,6 +51,42 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
   };
 
   const [selectedItems, setSelectedItems] = useState(1);
+
+  const handleAddToCart = (id) => {
+    let selectedColor = colors?.[imgIndex]?.name;
+    let sku = selectedSKU || colors?.[0]?.allSKU?.[0]?.sku;
+    let img = singleProduct?.colors?.[imgIndex]?.imageUrl;
+
+    const data = { id: id, name: singleProduct?.title, price: price, color: selectedColor, size: selectedSize, quantity: selectedItems, sku: sku, img: img };
+
+    let storedData = JSON.parse(localStorage.getItem("obs-cart")) || [];
+
+    if (storedData.length > 0) {
+      let newData = [];
+      let item = 0;
+
+      for (let i = 0; i < storedData.length; i++) {
+        if (storedData?.[i]?.id == id && storedData?.[i]?.size == data.size && storedData?.[i]?.color == data.color) {
+          item++;
+          newData.push({ id: id, name: singleProduct?.title, price: price, color: selectedColor, size: selectedSize, quantity: selectedItems, sku: sku, img: img });
+        } else {
+          newData.push(storedData[i]);
+        }
+      }
+
+      if (item == 0) {
+        newData.push(data);
+        localStorage.setItem("obs-cart", [JSON.stringify(newData)]);
+      } else {
+        localStorage.setItem("obs-cart", [JSON.stringify(newData)]);
+      }
+    } else {
+      storedData.push(data);
+      localStorage.setItem("obs-cart", [JSON.stringify(storedData)]);
+    }
+
+    setChangeCartData(changeCartData + 1);
+  };
 
   return (
     <div className="relative w-full mt-[7%] bg-white grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
@@ -141,7 +179,9 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
             <div className="text-xl font-bold">
               <button
                 onClick={() => {
-                  setSelectedItems(selectedItems - 1);
+                  if (selectedItems != 1) {
+                    setSelectedItems(selectedItems - 1);
+                  }
                 }}
                 className="py-2 px-5 bg-slate-300 mx-[1px]"
               >
@@ -158,7 +198,9 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
               </button>
             </div>
             <div className="flex-grow">
-              <button className="py-2 px-5 bg-black text-white mx-[1px] uppercase w-full">Add to Cart</button>
+              <button onClick={() => handleAddToCart(singleProduct?._id)} className="py-2 px-5 bg-black text-white mx-[1px] uppercase w-full">
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>

@@ -6,12 +6,18 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import * as React from "react";
 
-const CheckoutPersonalInfo = () => {
+const CheckoutPersonalInfo = ({ setTips }) => {
   const [tip, setTip] = React.useState(0);
 
   const handleTips = (event, newTip) => {
     setTip(newTip);
     console.log(newTip);
+  };
+
+  const handleCustomTips = (e) => {
+    e.preventDefault();
+    const tip = e.target.customTip.value;
+    console.log(tip);
   };
 
   return (
@@ -77,8 +83,8 @@ const CheckoutPersonalInfo = () => {
             </ToggleButton>
           </ToggleButtonGroup>
 
-          <form className="relative mt-7">
-            <input type="number" name="discount-code" id="" placeholder="Custom tip" className="border-2 border-[#e7e7e7] p-2 pr-20 w-full outline-[#e7e7e7] outline-4" />
+          <form onSubmit={handleCustomTips} className="relative mt-7">
+            <input min={1} type="number" name="customTip" id="" placeholder="Custom tip" className="border-2 border-[#e7e7e7] p-2 pr-20 w-full outline-[#e7e7e7] outline-4" />
             <button type="submit" className="absolute top-0 right-0 bg-[#d0d0d0] hover:bg-opacity-90 transition-all duration-300 text-black font-semibold p-2 border-2 border-[#d0d0d0]">
               Add tip
             </button>

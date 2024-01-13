@@ -1,10 +1,58 @@
 "use client";
-import React from "react";
+import { OrderStateProvider } from "@/Components/State/OrderState";
+import React, { useContext, useEffect, useState } from "react";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import SingleCartProduct from "./SingleCartProduct";
 
 const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
+  const { cartData, changeCartData, setChangeCartData } = useContext(OrderStateProvider);
+
+  const [subTotal, setSubtotal] = useState(0);
+
+  useEffect(() => {
+    let sum = 0;
+    for (let i = 0; i < cartData.length; i++) {
+      sum += cartData[i].price * cartData[i].quantity;
+    }
+    setSubtotal(sum);
+  }, [cartData]);
+
+  const handleQuantity = (id, size, img, quantity) => {
+    let sum = 0;
+    let newData = [];
+    let storedData = JSON.parse(localStorage.getItem("obs-cart")) || [];
+
+    for (let i = 0; i < storedData.length; i++) {
+      if (storedData?.[i]?.id == id && storedData?.[i]?.size == size && storedData?.[i]?.img == img) {
+        let data = storedData?.[i];
+        data.quantity = quantity;
+        newData.push(data);
+      } else {
+        newData.push(storedData[i]);
+      }
+      sum += newData[i].price * newData[i].quantity;
+    }
+    localStorage.setItem("obs-cart", [JSON.stringify(newData)]);
+    setChangeCartData(changeCartData + 1);
+    setSubtotal(sum);
+  };
+
+  const handleDelete = (id, size, img) => {
+    let newData = [];
+    let storedData = JSON.parse(localStorage.getItem("obs-cart")) || [];
+
+    for (let i = 0; i < storedData.length; i++) {
+      if (storedData?.[i]?.id == id && storedData?.[i]?.size == size && storedData?.[i]?.img == img) {
+        //noting to do
+      } else {
+        newData.push(storedData[i]);
+      }
+    }
+    localStorage.setItem("obs-cart", [JSON.stringify(newData)]);
+    setChangeCartData(changeCartData + 1);
+  };
+
   return (
     <div
       //   onClick={() => {
@@ -24,11 +72,9 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
         <div className="pt-12 relative h-full">
           {/* cart items  */}
           <div className="h-1/2 overflow-y-scroll">
-            <SingleCartProduct />
-            <SingleCartProduct />
-            <SingleCartProduct />
-            <SingleCartProduct />
-            <SingleCartProduct />
+            {cartData?.map((sp, index) => (
+              <SingleCartProduct handleQuantity={handleQuantity} handleDelete={handleDelete} key={index} data={sp} />
+            ))}
           </div>
           <div className="absolute bottom-6 w-full space-y-4 bg-white">
             <div className="border-b-2"></div>
@@ -36,7 +82,7 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
               <span>SUBTOTAL:</span>
               <p className="flex justify-end items-center gap-1">
                 <MdOutlineEuroSymbol />
-                <span>50.00</span>
+                <span>{subTotal}</span>
               </p>
             </div>
             <p className="text-base">USE DISCOUNT CODE HERE</p>
