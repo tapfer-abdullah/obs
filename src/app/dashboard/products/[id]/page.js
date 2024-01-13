@@ -8,7 +8,9 @@ import JoditEditor from 'jodit-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { FaArrowUpRightFromSquare } from 'react-icons/fa6';
 import { IoIosArrowForward } from 'react-icons/io';
+import { MdDeleteForever } from 'react-icons/md';
 import { RiImageEditLine } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
 import Select from 'react-select';
@@ -66,8 +68,8 @@ const page = () => {
     const pathname = usePathname()
     const resultArray = pathname.split("/").filter(Boolean);
 
-    console.log(resultArray?.[2]);
-    console.log(singleProductData)
+    // console.log(resultArray?.[2]);
+    // console.log(singleProductData)
 
     useEffect(() => {
         axiosHttp.get(`/products/${resultArray[2]}`).then(res => {
@@ -166,7 +168,7 @@ const page = () => {
     }
 
 
-    const handleAddProduct = () => {
+    const handleUpdateProduct = () => {
         if (!title || !price || !status || !img1 || !img2 || !imageURL || !sizes) {
             Swal.fire({
                 title: "Incomplete!",
@@ -177,7 +179,6 @@ const page = () => {
         }
 
         let productData = { title: title, price: price, comparePrice: comparePrice, status: selectedStatus, colors: imageURL, type: selectedType, category: selectedCategory, size: selectedSizes, description: content, imageUrl: [img1, img2] };
-        console.log("add coll", productData);
 
         try {
             axiosHttp.put(`/products/${singleProductData?._id}`, productData).then((res) => {
@@ -204,6 +205,38 @@ const page = () => {
             toast.error("Error ocurred!");
         }
     }
+
+    const handleDelete = (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axiosHttp.delete(`/products/${id}`).then((res) => {
+                    if (res.data?.status) {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Product has been deleted.",
+                            icon: "success",
+                        });
+                        router.push("/dashboard/products");
+                    } else {
+                        Swal.fire({
+                            title: "Unable!",
+                            text: "Unable to delete product!.",
+                            icon: "error",
+                        });
+                    }
+                });
+            }
+        })
+    }
+
 
     const handleDiscard = () => {
         setTitle(singleProductData?.title);
@@ -265,8 +298,16 @@ const page = () => {
                                 <h4 className="text-xl font-semibold">{singleProductData?.title || "Update"}</h4>
                             </div>
                             <div className='flex items-center gap-2'>
+                                <Link href={`/Collections/${singleProductData?.category?.[0]?.label.toLowerCase()}/${singleProductData?._id}`} target='_blank' className='py-2 px-4 font-semibold bg-white hover:bg-opacity-80 flex items-center gap-1 border-2 rounded-lg transition-all duration-300'>
+                                    <FaArrowUpRightFromSquare className='text-lg' />
+                                    <p>View</p>
+                                </Link>
+                                <button onClick={() => { handleDelete(singleProductData?._id) }} className='py-2 px-4 font-semibold text-white bg-red-500 hover:bg-opacity-80 flex items-center gap-1 border-2 border-red-500 rounded-lg transition-all duration-300'>
+                                    <MdDeleteForever className='text-lg font-bold' />
+                                    <p>Delete</p>
+                                </button>
                                 <button disabled={title.length == 0} onClick={handleDiscard} className={`flex gap-2 items-center bg-[#FFC520] ${title.length == 0 ? "opacity-50" : "hover:bg-opacity-80"} py-2 px-4 rounded-lg font-semibold cursor-pointer`}>Discard</button>
-                                <button disabled={title.length == 0} onClick={handleAddProduct} className={`flex gap-2 items-center bg-green-500 ${title.length == 0 ? "opacity-50" : "hover:bg-opacity-80"} py-2 px-4 rounded-lg font-semibold cursor-pointer`}>Save</button>
+                                <button disabled={title.length == 0} onClick={handleUpdateProduct} className={`flex gap-2 items-center bg-green-500 ${title.length == 0 ? "opacity-50" : "hover:bg-opacity-80"} py-2 px-4 rounded-lg font-semibold cursor-pointer`}>Save</button>
                             </div>
                         </div>
 
@@ -431,7 +472,7 @@ const page = () => {
                                         components={{ Option: CustomOption }}
                                         isMulti={false}
                                         onChange={(selectedOptions) => setImg1(selectedOptions?.imageUrl)}
-                                        placeholder="Select Card img-1"
+                                        placeholder={img1 || "Select Card img-1"}
                                     />
                                     <img src={img1} alt="selected img-1" className="w-8 h-8 absolute bottom-[2px] left-[2px]" />
                                 </div>
@@ -451,7 +492,7 @@ const page = () => {
                                         components={{ Option: CustomOption }}
                                         isMulti={false}
                                         onChange={(selectedOptions) => setImg2(selectedOptions?.imageUrl)}
-                                        placeholder="Select Card img-2"
+                                        placeholder={img2 || "Select Card img-2"}
                                     />
                                     <img src={img2} alt="selected img-2" className="w-8 h-8 absolute bottom-[2px] left-[2px]" />
                                 </div>
@@ -460,7 +501,7 @@ const page = () => {
                             </div>
                             <div className='w-full flex items-center gap-2'>
                                 <button disabled={title.length == 0} onClick={handleDiscard} className={`w-full flex gap-2 justify-center items-center bg-[#FFC520] ${title.length == 0 ? "opacity-50" : "hover:bg-opacity-80"} py-2 px-4 rounded-lg font-semibold cursor-pointer`}>Discard</button>
-                                <button disabled={title.length == 0} onClick={handleAddProduct} className={`w-full flex gap-2 justify-center items-center bg-green-500 ${title.length == 0 ? "opacity-50" : "hover:bg-opacity-80"} py-2 px-4 rounded-lg font-semibold cursor-pointer`}>Save</button>
+                                <button disabled={title.length == 0} onClick={handleUpdateProduct} className={`w-full flex gap-2 justify-center items-center bg-green-500 ${title.length == 0 ? "opacity-50" : "hover:bg-opacity-80"} py-2 px-4 rounded-lg font-semibold cursor-pointer`}>Save</button>
                             </div>
 
                         </div>

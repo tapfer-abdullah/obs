@@ -8,7 +8,7 @@ import { RxCross2 } from "react-icons/rx";
 import "../CustomComponents.css";
 
 const QuickAddToCartModal = ({ singleProduct, QuickShop, SetQuickShop }) => {
-  const [selectedSize, setSelectedSize] = useState("S");
+  const [selectedSize, setSelectedSize] = useState(singleProduct?.size?.[0]?.label || "One Size");
   const [sizes, setSize] = React.useState(0);
 
   const { price, size, colors } = singleProduct;

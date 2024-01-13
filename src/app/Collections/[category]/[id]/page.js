@@ -20,6 +20,7 @@ const page = () => {
     const [isLoading, setLoading] = useState(true);
 
     const [imgIndex, setImgIndex] = useState(0);
+    // console.log(singleProduct)
 
     useEffect(() => {
         setLoading(true);
@@ -36,12 +37,12 @@ const page = () => {
         });
     }, []);
 
-    const [selectedSize, setSelectedSize] = useState("S");
+    const [selectedSize, setSelectedSize] = useState(singleProduct?.size?.[0]?.label || "One Size");
     const [selectedSKU, setSelectedSKU] = useState(singleProduct?.colors?.[imgIndex]?.allSKU?.[0]?.sku);
     const handleSku = (size, imgIndex) => {
-        console.log(size, imgIndex)
         const sku = singleProduct?.colors?.[imgIndex]?.allSKU?.find((s) => s?.size == size);
         setSelectedSKU(sku?.sku);
+        // console.log(size, imgIndex, sku)
 
     };
 

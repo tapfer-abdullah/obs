@@ -18,7 +18,7 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
     setSize(newSize);
   };
 
-  const [selectedSize, setSelectedSize] = useState("S");
+  const [selectedSize, setSelectedSize] = useState(singleProduct?.size?.[0]?.label || "One Size");
   const [selectedSKU, setSelectedSKU] = useState(singleProduct?.colors?.[imgIndex]?.allSKU?.[0]?.sku);
   const handleSku = (size, imgIndex) => {
     console.log(size, imgIndex);

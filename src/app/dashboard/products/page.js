@@ -8,6 +8,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import { IoMdAdd } from 'react-icons/io';
 import { MdDelete, MdEditSquare } from "react-icons/md";
+import Swal from 'sweetalert2';
 import "./products.css";
 
 
@@ -15,29 +16,52 @@ export default function page() {
 
     const [isLoading, setLoading] = useState(true);
     const [allProducts, setAllProducts] = useState([]);
+    const [refetch, setRefetch] = useState(0);
 
     useEffect(() => {
         axiosHttp.get(`/products`).then(res => {
             setAllProducts(res.data);
             setLoading(false);
         })
-    }, [])
+    }, [refetch])
 
-    console.log(allProducts);
+    const handleDelete = (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axiosHttp.delete(`/products/${id}`).then((res) => {
+                    if (res.data?.status) {
+                        setRefetch(refetch + 1);
 
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Product has been deleted.",
+                            icon: "success",
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Unable!",
+                            text: "Unable to delete product!.",
+                            icon: "error",
+                        });
+                    }
+                });
+            }
+        })
+    }
 
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
-    };
 
     return (
         <div className='px-5 pb-5 w-full'>
             <div className="grid grid-cols-4 gap-3 my-3">
-                <DProductsCards title={"Total Products"} amount={100} />
+                <DProductsCards title={"Total Products"} amount={allProducts?.length} />
                 <DProductsCards title={"Active Products"} amount={95} />
                 <DProductsCards title={"Inactive Products"} amount={5} />
                 <DProductsCards title={"New Products"} amount={5} />
@@ -69,7 +93,7 @@ export default function page() {
                             <td>{p?.sellQuantity}</td>
                             <td className=''>
                                 <div className="!w-full !h-full flex items-center justify-center gap-2">
-                                    <MdDelete className='text-3xl font-bold bg-red-600 text-white rounded-md cursor-pointer p-1' />
+                                    <MdDelete onClick={() => { handleDelete(p?._id) }} className='text-3xl font-bold bg-red-600 text-white rounded-md cursor-pointer p-1' />
                                     <Link href={`/dashboard/products/${p?._id}`}><MdEditSquare className='text-3xl font-bold bg-[#FFC520] text-white rounded-md cursor-pointer p-1' /></Link>
                                     <Link target='_blank' href={`/Collections/${p?.category?.[0]?.label.toLowerCase()}/${p?._id}`}><FaArrowUpRightFromSquare className='text-3xl font-bold bg-green-500 text-white rounded-md cursor-pointer p-1' /></Link>
                                 </div>
