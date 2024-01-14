@@ -1,27 +1,36 @@
 "use client";
 import TextField from "@mui/material/TextField";
-import "./checkout.css";
+import "./Checkout.css";
 
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import * as React from "react";
+import { MdOutlineEuroSymbol } from "react-icons/md";
 
-const CheckoutPersonalInfo = ({ setTips }) => {
+const CheckoutPersonalInfo = ({ setTips, subTotal }) => {
   const [tip, setTip] = React.useState(0);
+  const [tipValue, setTipValue] = React.useState(0);
 
   const handleTips = (event, newTip) => {
     setTip(newTip);
-    console.log(newTip);
+    setTips((subTotal * newTip) / 100);
+  };
+  console.log(tipValue);
+
+  const handleCustomTips = () => {
+    if (tipValue > 0) {
+      setTips(parseFloat(tipValue));
+    }
   };
 
-  const handleCustomTips = (e) => {
-    e.preventDefault();
-    const tip = e.target.customTip.value;
-    console.log(tip);
-  };
+  // const handleCustomTips = (e) => {
+  //   // e.preventDefault();
+  //   // const tip = e.target.customTip.value || 0;
+  //   setTips(parseFloat(tip));
+  // };
 
   return (
-    <div className="px-8">
+    <form className="px-8 overflow-y-scroll max-h-[85vh] no-scrollbar">
       <div className="space-y-2">
         <div className="flex justify-between items-center my-2">
           <h4 className="text-xl font-semibold">Contact</h4>
@@ -83,18 +92,31 @@ const CheckoutPersonalInfo = ({ setTips }) => {
             </ToggleButton>
           </ToggleButtonGroup>
 
-          <form onSubmit={handleCustomTips} className="relative mt-7">
-            <input min={1} type="number" name="customTip" id="" placeholder="Custom tip" className="border-2 border-[#e7e7e7] p-2 pr-20 w-full outline-[#e7e7e7] outline-4" />
-            <button type="submit" className="absolute top-0 right-0 bg-[#d0d0d0] hover:bg-opacity-90 transition-all duration-300 text-black font-semibold p-2 border-2 border-[#d0d0d0]">
+          <div className="relative mt-7">
+            <MdOutlineEuroSymbol className="absolute left-2 top-[13px]" />
+            <input
+              onBlur={(e) => setTipValue(e.target.value || 0)}
+              min={1}
+              type="number"
+              name="customTip"
+              id=""
+              placeholder="Custom tip"
+              className="border-2 border-[#e7e7e7] p-2 pl-7 pr-20 w-full outline-[#e7e7e7] outline-4"
+            />
+            <button
+              type="button"
+              onClick={handleCustomTips}
+              className="absolute top-0 right-0 bg-[#d0d0d0] hover:bg-opacity-90 transition-all duration-300 text-black font-semibold p-2 border-2 border-[#d0d0d0]"
+            >
               Add tip
             </button>
-          </form>
+          </div>
 
           <p>Thank you, we appreciate it.</p>
         </div>
       </div>
       <button className="text-xl text-white font-semibold p-2 my-5 w-full bg-black rounded-md hover:bg-opacity-70 transition-all duration-300">Pay Now</button>
-    </div>
+    </form>
   );
 };
 

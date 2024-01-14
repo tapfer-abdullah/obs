@@ -67,7 +67,7 @@ const DashboardSidebar = () => {
             <FaUsers className="text-3xl" />
             <p>Customers</p>
           </Link>
-          <Link href={"/"} className="flex items-center gap-1 text-xl font-semibold text-white">
+          <Link href={"/dashboard/discount"} className="flex items-center gap-1 text-xl font-semibold text-white">
             <TbDiscount2 className="text-3xl" />
             <p>Discounts</p>
           </Link>

@@ -4,3 +4,20 @@
     background-color: #d0d0d0;
 
 }
+
+/* Add this CSS to hide the scrollbar */
+.no-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+
+/* For Webkit browsers like Chrome and Safari */
+.no-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    /* Set the width of the scrollbar */
+}
+
+.no-scrollbar::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    /* Set the color of the thumb */
+}

@@ -1,5 +1,6 @@
 "use client";
 import { OrderStateProvider } from "@/Components/State/OrderState";
+import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
@@ -55,9 +56,9 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
 
   return (
     <div
-      //   onClick={() => {
-      //     setPositionInfo({ right: "-right-[2000px]", customOpacity: 0 });
-      //   }}
+      // onClick={() => {
+      //   setPositionInfo({ right: "-right-[2000px]", customOpacity: 0 });
+      // }}
       className={`fixed z-30 top-16 ${positionInfo?.right} w-screen h-screen bg-[#f5f5f5] bg-opacity-70 transition-all duration-500`}
     >
       <div className={`absolute z-40 ${positionInfo?.right} w-[26%] h-full bg-white shadow-lg opacity-100 py-10 pr-5 pl-7 transition-all duration-500`}>
@@ -92,7 +93,16 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
                 Apply
               </button>
             </form>
-            <button className="bg-black text-white p-3 w-full font-semibold hover:bg-opacity-90 transition-all duration-300">CHECK OUT</button>
+            <Link
+              onClick={() => {
+                setPositionInfo({ right: "-right-[2000px]", customOpacity: 0 });
+              }}
+              href={"/checkout"}
+              type="button"
+              className="bg-black text-center text-white p-3 w-full font-semibold hover:bg-opacity-90 transition-all duration-300"
+            >
+              CHECK OUT
+            </Link>
           </div>
         </div>
       </div>
