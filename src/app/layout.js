@@ -6,6 +6,9 @@ import { Inter } from 'next/font/google'
 import { usePathname } from 'next/navigation'
 import './globals.css'
 
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+
 const inter = Inter({ subsets: ['latin'] })
 
 // export const metadata = {
@@ -19,18 +22,20 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.className} min-h-screen`}>
-        <OrderState>
-          {
-            resultArray[0] != "dashboard" && <NavBar />
-          }
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <OrderState>
+            {
+              resultArray[0] != "dashboard" && <NavBar />
+            }
 
-          <div className='min-h-[80vh]'>
-            {children}
-          </div>
-          {
-            resultArray[0] != "dashboard" && <Footer />
-          }
-        </OrderState>
+            <div className='min-h-[80vh]'>
+              {children}
+            </div>
+            {
+              resultArray[0] != "dashboard" && <Footer />
+            }
+          </OrderState>
+        </LocalizationProvider>
 
       </body>
     </html>
