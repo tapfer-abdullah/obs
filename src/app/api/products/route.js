@@ -14,9 +14,14 @@ export const GET = async (request) => {
     const searchParams = new URLSearchParams(query);
     const status = searchParams.get('status');
     const category = searchParams.get('category');
+    const title = searchParams.get('title');
 
     try {
-        if (status == null && category == null) {
+        if (title == "yes") {
+            const allProducts = await Products.find().select({ title: 1, _id: 1, imageUrl: 1 });
+            return NextResponse.json(allProducts);
+        }
+        else if (status == null && category == null) {
             const allProducts = await Products.find().select("-description");
             return NextResponse.json(allProducts);
         }

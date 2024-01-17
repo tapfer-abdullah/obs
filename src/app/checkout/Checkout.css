@@ -21,3 +21,7 @@
     background-color: transparent;
     /* Set the color of the thumb */
 }
+
+.checkout-country-div .MuiInputBase-root {
+    padding-left: 50px !important;
+}

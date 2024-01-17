@@ -27,10 +27,10 @@ export const POST = async (request) => {
         }
         const data = new PagesSchema(pageData);
         const result = await data.save();
-        return NextResponse.json({ message: "Collection created successfully", status: true, data: result })
+        return NextResponse.json({ message: "pages created successfully", status: true, data: result })
     }
     catch (error) {
         console.log(error)
-        return NextResponse.json({ message: "Failed to create collection!", status: false });
+        return NextResponse.json({ message: "Failed to create pages!", status: false });
     }
 }

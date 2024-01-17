@@ -1,27 +1,37 @@
 "use client";
 import TextField from "@mui/material/TextField";
+// import Select from "react-select";
 import "./Checkout.css";
 
+import { OrderStateProvider } from "@/Components/State/OrderState";
+import { Autocomplete, Avatar, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import * as React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 
 const CheckoutPersonalInfo = ({ setTips, subTotal }) => {
-  const [tip, setTip] = React.useState(0);
-  const [tipValue, setTipValue] = React.useState(0);
+  const { allCountryData } = useContext(OrderStateProvider);
+  const [tip, setTip] = useState(0);
+  const [tipValue, setTipValue] = useState(0);
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   const handleTips = (event, newTip) => {
     setTip(newTip);
     setTips((subTotal * newTip) / 100);
   };
-  console.log(tipValue);
 
   const handleCustomTips = () => {
     if (tipValue > 0) {
       setTips(parseFloat(tipValue));
     }
   };
+
+  const handleCountryChange = (event, value) => {
+    setSelectedCountry(value);
+  };
+
+  console.log(selectedCountry);
 
   // const handleCustomTips = (e) => {
   //   // e.preventDefault();
@@ -49,8 +59,24 @@ const CheckoutPersonalInfo = ({ setTips, subTotal }) => {
 
       <div className="space-y-3 mt-8">
         <h4 className="text-xl font-semibold">Delivery Information</h4>
+        <div className="relative checkout-country-div">
+          <Autocomplete
+            options={allCountryData}
+            getOptionLabel={(option) => option.label}
+            style={{ width: "100%" }}
+            value={selectedCountry}
+            onChange={handleCountryChange}
+            renderInput={(params) => <TextField {...params} label="Country / Region" variant="outlined" />}
+            renderOption={(props, option) => (
+              <MenuItem {...props}>
+                <Avatar src={option.imageUrl} alt={option.label} />
+                <span style={{ marginLeft: "8px" }}>{option.label}</span>
+              </MenuItem>
+            )}
+          />
+          {selectedCountry && <img src={selectedCountry?.imageUrl} alt="country-img" className="absolute top-4 left-2 w-10" />}
+        </div>
 
-        <TextField required type="text" name="country" id="country" className="rounded-md w-full border-2" label="Country / Region" />
         <div className="flex items-center gap-2">
           <TextField required type="text" name="firstName" id="firstName" className="rounded-md w-full border-2 " label="First name" />
           <TextField required type="text" name="lastName" id="lastName" className="rounded-md w-full border-2 " label="Last name" />

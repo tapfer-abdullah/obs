@@ -1,5 +1,5 @@
 "use client"
-import { TextField, accordionSummaryClasses } from '@mui/material';
+import { TextField } from '@mui/material';
 // import ReactHtmlParser from 'react-html-parser';
 
 import Loader from '@/Hooks/Loader/Loader';
@@ -143,13 +143,12 @@ const page = () => {
 
     const CustomOption = ({ innerProps, label, data }) => (
         <div {...innerProps}>
-            <div className="flex items-center gap-1">
-                <img src={data.imageUrl} alt={name} style={{ marginRight: '8px', width: '24px', height: '24px' }} />
+            <div className="flex items-center gap-1 py-1 cursor-pointer hover:bg-blue-200">
+                <img src={data.imageUrl} alt={"img"} style={{ marginRight: '8px', width: '24px', height: '24px' }} />
                 <p>{label?.length < 15 ? label : <>{label?.substring(0, 15)}..</>}</p>
             </div>
         </div>
     );
-
 
     const handleUploadPhoto = async () => {
         const apiKey = process.env.NEXT_PUBLIC_IMAGEBB_KEY;
@@ -290,7 +289,7 @@ const page = () => {
         <>
             {
                 isLoading ? <Loader /> :
-                    <div className='my-5'>
+                    <div className='my-5 mb-16'>
                         <div className="w-4/5 mx-auto mb-5 flex justify-between items-center px-3 py-2 bg-[#d5ddda] shadow-lg rounded-lg">
                             <div className='flex items-center gap-2'>
                                 <Link href={"/dashboard/products"} className="text-xl font-semibold">All Products</Link>

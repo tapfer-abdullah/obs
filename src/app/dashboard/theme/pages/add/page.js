@@ -43,7 +43,7 @@ const page = () => {
         const pageData = { title, url, visibility, position, column, content };
 
         axiosHttp.post("/theme/pages", pageData).then(res => {
-            console.log(res.data)
+            // console.log(res.data)
             if (res.data.status) {
                 Swal.fire({
                     position: "top-center",
