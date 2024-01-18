@@ -7,7 +7,8 @@ connectDB();
 
 export const GET = async (request) => {
     try {
-        const result = await DiscountSchema.find().select({ title: 1, _id: 1, used: 1, status: 1 });
+        // const result = await DiscountSchema.find().select({ title: 1, _id: 1, used: 1, status: 1 });
+        const result = await DiscountSchema.find();
         return NextResponse.json(result)
     }
     catch (error) {

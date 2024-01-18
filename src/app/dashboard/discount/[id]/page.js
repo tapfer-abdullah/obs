@@ -1,3 +1,4 @@
+
 "use client"
 import { Checkbox, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 import Link from 'next/link';
@@ -12,7 +13,8 @@ import { axiosHttp } from '@/app/helper/axiosHttp';
 import { TimePicker } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { MdDeleteForever } from 'react-icons/md';
 import Swal from 'sweetalert2';
 
 const statusOptions = [
@@ -28,17 +30,21 @@ const eligibilityList = [
 
 const page = () => {
     const router = useRouter();
+    const pathname = usePathname()
+    const resultArray = pathname.split("/").filter(Boolean);
 
     const { allCountryData } = useContext(OrderStateProvider);
     const [categoryData, setCategoryData] = useState([]);
     const [productsData, setProductsData] = useState([]);
-    const [defaultDateTime, setDefaultDateTime] = useState([]);
+    const [defaultDateTimeStart, setDefaultDateTimeStart] = useState([]);
+    const [defaultDateTimeEnd, setDefaultDateTimeEnd] = useState([]);
     const [isLoading, setLoading] = useState(true);
+    const [oldDisData, setOldDisData] = useState({});
+
 
     useEffect(() => {
         let cat = [];
         axiosHttp.get(`/collections`).then(res => {
-            // console.log(res.data)
             res?.data?.map(d => {
                 if (!cat.includes({ value: d?._id })) {
                     cat.push({ value: d?._id, label: d?.title, imageUrl: d?.img })
@@ -57,7 +63,6 @@ const page = () => {
                 }
             })
             setProductsData(cat);
-            setLoading(false);
         })
     }, []);
 
@@ -81,7 +86,7 @@ const page = () => {
     const [minPhrReqValue, setMinPhrReqValue] = useState(0);
 
     const [eligibilityOption, setEligibilityOption] = useState("all");
-    const [eligibilityValue, setEligibilityValue] = useState({});
+    const [eligibilityValue, setEligibilityValue] = useState({ value: "Select..", label: "Select.." },);
 
     const [limitDisOption, setLimitDisOption] = useState(false);
     const [limitDisValue, setLimitDisValue] = useState(0);
@@ -122,23 +127,67 @@ const page = () => {
     const [BxGyMaxUserOption, setBxGyMaxUserOption] = useState(false);
     const [BxGyMaxUserValue, setBxGyMaxUserValue] = useState(0);
 
-    useEffect(() => { // handle default time and date
-        let currentDate = new Date();
-        let year = currentDate.getFullYear();
-        let month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based, so we add 1
-        let day = String(currentDate.getDate()).padStart(2, '0');
-        let hour = String(currentDate.getHours()).padStart(2, '0');
-        let minutes = String(currentDate.getMinutes()).padStart(2, '0');
 
-        // 2024-01-17T15:30 this format is require for date & time picker
-        const defaultDate = `${year}-${month}-${day}T${hour}:${minutes}`;
-        setDefaultDateTime(defaultDate);
+    useEffect(() => {
+        axiosHttp.get(`/discount/${resultArray?.[2]}`).then(res => {
+            setOldDisData(res.data)
 
-        setStartTime({ hour: hour, min: minutes })
-        setEndTime({ hour: hour, min: minutes })
-        setStartDate({ year, month, Day: day })
-        setEndDate({ year, month, Day: day })
-    }, [])
+            const oldData = res.data;
+            const oldDataBxGy = res.data?.additionalData?.BxGy;
+            const oldDataAOffP = res.data?.additionalData?.AOffP;
+            const oldDataAOffO = res.data?.additionalData?.AOffO;
+            const oldDataFS = res.data?.additionalData?.FS;
+
+            // set common default data 
+            setDiscountType(oldData?.discountCodeType);
+            setTitle(oldData?.title);
+            setSelectedStatus(oldData?.status);
+            setMinPhrReqOption(oldData?.minPurRequirement?.option);
+            setMinPhrReqValue(oldData?.minPurRequirement?.value);
+            setEligibilityOption(oldData?.eligibility?.option);
+            setEligibilityValue({ value: oldData?.eligibility?.option, label: oldData?.eligibility?.option })
+            setLimitDisOnePerUse(oldData?.limitDisOnePerUse)
+            setLimitDisOption(oldData?.maxDisCodeUse?.option)
+            setLimitDisValue(oldData?.maxDisCodeUse?.value);
+            setIsEndTime(oldData?.isEndTime)
+
+            // 2024-01-17T15:30 this format is require for date & time picker
+            setDefaultDateTimeStart(`${oldData?.startDate?.year}-${oldData?.startDate?.month}-${oldData?.startDate?.Day}T${oldData?.startTime?.hour}:${oldData?.startTime?.min}`)
+            setDefaultDateTimeEnd(`${oldData?.EndDate?.year}-${oldData?.EndDate?.month}-${oldData?.EndDate?.Day}T${oldData?.EndTime?.hour}:${oldData?.EndTime?.min}`)
+            setStartTime({ hour: oldData?.startTime?.hour, min: oldData?.startTime?.min })
+            setEndTime({ hour: oldData?.EndTime?.hour, min: oldData?.EndTime?.min })
+            setStartDate({ year: oldData?.startDate?.year, month: oldData?.startDate?.month, Day: oldData?.startDate?.Day })
+            setEndDate({ year: oldData?.EndDate?.year, month: oldData?.EndDate?.month, Day: oldData?.EndDate?.Day })
+
+            // specific data BxGy
+            setSelectCatOrProdBuy({ value: oldDataBxGy?.Buy?.option, label: `Specific ${oldDataBxGy?.Buy?.option}` });
+            setSelectCatOrProdBuyArray(oldDataBxGy?.Buy?.value);
+            setSelectCatOrProdGet({ value: oldDataBxGy?.Get?.option, label: `Specific ${oldDataBxGy?.Get?.option}` });
+            setSelectCatOrProdGetArray(oldDataBxGy?.Get?.value);
+            setBxGyType(oldDataBxGy?.BxGyType);
+            setBxGyCusBuyAmount(oldDataBxGy?.CusBuyAmount);
+            setBxGyCusGetAmount(oldDataBxGy?.CusGetAmount);
+            setBxGyDiscountedOption(oldDataBxGy?.DiscountedType?.option);
+            setBxGyDiscountedValue(oldDataBxGy?.DiscountedType?.value);
+            setBxGyMaxUserOption(oldDataBxGy?.MaxUser?.option);
+            setBxGyMaxUserValue(oldDataBxGy?.MaxUser?.value);
+
+            // specific data of AOffP & AOffO
+            setDisCategoryOption({ value: oldDataAOffP?.DiscountedType?.option || oldDataAOffO?.DiscountedType?.option, label: oldDataAOffP?.DiscountedType?.option || oldDataAOffO?.DiscountedType?.option });
+            setDisCategoryValue(oldDataAOffP?.DiscountedType?.value || oldDataAOffO?.DiscountedType?.value);
+            setSelectCatOrProd({ value: oldDataAOffP?.ApplyTo?.option, label: `Specific ${oldDataAOffP?.ApplyTo?.option}` });
+            setSelectCatOrProdArray(oldDataAOffP?.ApplyTo?.value);
+
+            // specific data of free shipping
+            setFreeShipping(oldDataFS?.freeShipping?.option);
+            setFreeShippingCountries(oldDataFS?.freeShipping?.value);
+            setShippingRateOPOption(oldDataFS?.shippingRate?.option);
+            setShippingRateOPValue(oldDataFS?.shippingRate?.value);
+
+            setLoading(false);
+        })
+    }, []);
+
 
     // console.log(selectCatOrProdBuyArray)
 
@@ -230,13 +279,13 @@ const page = () => {
             }
         }
 
-        axiosHttp.post(`/discount`, discountCodeData).then(res => {
+        axiosHttp.put(`/discount/${resultArray[2]}`, discountCodeData).then(res => {
             // console.log(res.data)
             if (res.data.status) {
                 Swal.fire({
                     position: "top-center",
                     icon: "success",
-                    title: "Discount code created!",
+                    title: "Updated successfully!",
                     showConfirmButton: false,
                     timer: 1500
                 });
@@ -278,6 +327,37 @@ const page = () => {
 
     }
 
+    const handleDelete = (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axiosHttp.delete(`/discount/${id}`).then((res) => {
+                    if (res.data?.status) {
+                        router.push("/dashboard/discount");
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "discount code has been deleted.",
+                            icon: "success",
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Unable!",
+                            text: "Unable to delete!.",
+                            icon: "error",
+                        });
+                    }
+                });
+            }
+        })
+    }
+
     return (
         <div className='px-5 pb-16 w-full'>
             {isLoading ? <Loader /> :
@@ -286,12 +366,16 @@ const page = () => {
                         <div className='flex items-center gap-2'>
                             <Link href={"/dashboard/discount"} className="text-xl font-semibold">All Discount Codes</Link>
                             <IoIosArrowForward />
-                            <h4 className="text-xl font-semibold text-blue-500">Create discount code</h4>
+                            <h4 className="text-xl font-semibold text-blue-500">Update</h4>
                         </div>
 
                         <div className='flex items-center gap-2'>
-                            <button disabled={title.length == 0} onClick={() => { handleDiscard() }} className={`flex gap-2 items-center bg-[#FFC520] ${title.length == 0 ? "opacity-50" : "hover:bg-opacity-80"} py-2 px-4 rounded-lg font-semibold cursor-pointer`}>Discard</button>
-                            <button disabled={title.length == 0} onClick={handleSave} className={`flex gap-2 items-center bg-green-500 ${title.length == 0 ? "opacity-50" : "hover:bg-opacity-80"} py-2 px-4 rounded-lg font-semibold cursor-pointer`}>Save</button>
+                            <button onClick={() => { handleDelete(oldDisData?._id) }} className='py-2 px-4 font-semibold text-white bg-red-500 hover:bg-opacity-80 flex items-center gap-1 border-2 border-red-500 rounded-lg transition-all duration-300'>
+                                <MdDeleteForever className='text-lg font-bold' />
+                                <p>Delete</p>
+                            </button>
+                            <button disabled={title?.length == 0} onClick={() => { handleDiscard() }} className={`flex gap-2 items-center bg-[#FFC520] ${title?.length == 0 ? "opacity-50" : "hover:bg-opacity-80"} py-2 px-4 rounded-lg font-semibold cursor-pointer`}>Discard</button>
+                            <button disabled={title?.length == 0} onClick={handleSave} className={`flex gap-2 items-center bg-green-500 ${title?.length == 0 ? "opacity-50" : "hover:bg-opacity-80"} py-2 px-4 rounded-lg font-semibold cursor-pointer`}>Save</button>
                         </div>
                     </div>
 
@@ -307,6 +391,7 @@ const page = () => {
                             <h3 className='text-lg font-semibold'>Select Discount Code Type</h3>
                             {/* <div className='w-full border-b-2 border-black'></div> */}
                             <RadioGroup
+                                defaultValue={discountType}
                                 onChange={(e) => setDiscountType(e.target.value)}
                                 row
                                 aria-labelledby="demo-row-radio-buttons-group-label"
@@ -328,7 +413,7 @@ const page = () => {
                                     <span>
                                         Title * <small>( name )</small>
                                     </span>
-                                    <input value={title} onChange={(e) => setTitle(e.target.value)} required type="text" name="name" id="name"
+                                    <input defaultValue={title} onChange={(e) => setTitle(e.target.value)} required type="text" name="name" id="name"
                                         className="rounded-md w-full border border-gray-300 px-2 py-[5px] outline-1 outline-[#0086fe]" placeholder='Enter title..' />
 
                                 </div>
@@ -336,7 +421,8 @@ const page = () => {
                                     <span>
                                         Status * <small>(Active, Draft)</small>
                                     </span>
-                                    <Select onChange={(selectedOptions) => setSelectedStatus(selectedOptions)}
+                                    <Select defaultValue={selectedStatus}
+                                        onChange={(selectedOptions) => setSelectedStatus(selectedOptions)}
                                         className="basic-single"
                                         classNamePrefix="select"
                                         placeholder="Select status.."
@@ -351,7 +437,7 @@ const page = () => {
                             {//no:1 Buy x Get y
                                 discountType == "BxGy" && <div className='bg-white p-5 rounded-xl border border-[#d5ddda] shadow-md'>
                                     <h3 className='text-md font-semibold'>Customers {BxGyType}</h3>
-                                    <RadioGroup value={BxGyType}
+                                    <RadioGroup defaultValue={BxGyType}
                                         onChange={(e) => { setBxGyType(e.target.value); setMinPhrReqValue(0) }}
                                         aria-labelledby="demo-radio-buttons-group-label"
                                         name="radio-buttons-group"
@@ -365,7 +451,7 @@ const page = () => {
                                                     <span>
                                                         {BxGyType == "buys" ? "Quantity" : "Amount"}
                                                     </span>
-                                                    <input onChange={(e) => setBxGyCusBuyAmount(e.target.value)} required min={0} type="number" name="name" id="name"
+                                                    <input value={BxGyCusBuyAmount} onChange={(e) => setBxGyCusBuyAmount(e.target.value)} required min={0} type="number" name="name" id="name"
                                                         className="rounded-md w-full border border-gray-300 px-2 py-[5px] outline-1 outline-[#0086fe]" placeholder='Enter value..' />
 
                                                 </div>
@@ -374,6 +460,7 @@ const page = () => {
                                                         Any items from
                                                     </span>
                                                     <Select
+                                                        defaultValue={selectCatOrProdBuy}
                                                         onChange={(selectedOptions) => { setSelectCatOrProdBuy(selectedOptions); setSelectCatOrProdBuyArray([]) }}
                                                         className="basic-single z-30"
                                                         classNamePrefix="select"
@@ -390,7 +477,7 @@ const page = () => {
                                             </div>
                                             <div className="w-full">
                                                 <Select
-                                                    value={selectCatOrProdBuyArray}
+                                                    defaultValue={selectCatOrProdBuyArray}
                                                     onChange={(selectedOptions) => setSelectCatOrProdBuyArray(selectedOptions)}
                                                     isMulti
                                                     isClearable={false}
@@ -414,7 +501,7 @@ const page = () => {
                                                     <span>
                                                         Quantity
                                                     </span>
-                                                    <input onChange={(e) => setBxGyCusGetAmount(e.target.value)} required min={0} type="number" name="name" id="name"
+                                                    <input value={BxGyCusGetAmount} onChange={(e) => setBxGyCusGetAmount(e.target.value)} required min={0} type="number" name="name" id="name"
                                                         className="rounded-md w-full border border-gray-300 px-2 py-[5px] outline-1 outline-[#0086fe]" placeholder='Enter value..' />
 
                                                 </div>
@@ -423,6 +510,7 @@ const page = () => {
                                                         Any items from
                                                     </span>
                                                     <Select
+                                                        defaultValue={selectCatOrProdGet}
                                                         onChange={(selectedOptions) => { setSelectCatOrProdGet(selectedOptions); setSelectCatOrProdGetArray([]) }}
                                                         className="basic-single z-10"
                                                         classNamePrefix="select"
@@ -439,7 +527,7 @@ const page = () => {
                                             </div>
                                             <div className="w-full">
                                                 <Select
-                                                    value={selectCatOrProdGetArray}
+                                                    defaultValue={selectCatOrProdGetArray}
                                                     onChange={(selectedOptions) => setSelectCatOrProdGetArray(selectedOptions)}
                                                     isMulti
                                                     isClearable={false}
@@ -454,7 +542,7 @@ const page = () => {
 
                                         <div className='mt-5'>
                                             <h3 className='text-md font-medium'>At a discounted value</h3>
-                                            <RadioGroup value={BxGyDiscountedOption}
+                                            <RadioGroup defaultValue={BxGyDiscountedOption}
                                                 onChange={(e) => { setBxGyDiscountedOption(e.target.value) }}
                                                 aria-labelledby="demo-radio-buttons-group-label"
                                                 name="radio-buttons-group"
@@ -462,13 +550,13 @@ const page = () => {
                                                 <FormControlLabel value="percentage" control={<Radio />} label="Percentage" />
                                                 {
                                                     BxGyDiscountedOption == "percentage" && <div className='ml-7 space-y-1'>
-                                                        <input onBlur={(e) => setBxGyDiscountedValue(e.target.value)} min={0} type="number" name="" id="minPhrReqValue" placeholder={`Enter value..`} className='w-1/4 py-1 px-2 outline-1 outline-[#0086fe] border border-gray-300 rounded-md' />
+                                                        <input defaultValue={BxGyDiscountedValue} onBlur={(e) => setBxGyDiscountedValue(e.target.value)} min={0} type="number" name="" id="minPhrReqValue" placeholder={`Enter value..`} className='w-1/4 py-1 px-2 outline-1 outline-[#0086fe] border border-gray-300 rounded-md' />
                                                     </div>
                                                 }
                                                 <FormControlLabel value="amount" control={<Radio />} label="Amount off each" />
                                                 {
                                                     BxGyDiscountedOption == "amount" && <div className='ml-7 space-y-1'>
-                                                        <input onBlur={(e) => setBxGyDiscountedValue(e.target.value)} min={0} type="number" name="" id="minPhrReqValue" placeholder={`Enter value..`} className='w-1/4 py-1 px-2 outline-1 outline-[#0086fe] border border-gray-300 rounded-md' />
+                                                        <input defaultValue={BxGyDiscountedValue} onBlur={(e) => setBxGyDiscountedValue(e.target.value)} min={0} type="number" name="" id="minPhrReqValue" placeholder={`Enter value..`} className='w-1/4 py-1 px-2 outline-1 outline-[#0086fe] border border-gray-300 rounded-md' />
                                                     </div>
                                                 }
                                                 <FormControlLabel value="free" control={<Radio />} label="Free" />
@@ -478,10 +566,10 @@ const page = () => {
                                         <p className='border-t border-gray-300 w-full my-3'></p>
 
                                         <div>
-                                            <FormControlLabel className='block' control={<Checkbox onChange={(e) => { setBxGyMaxUserOption(e.target.checked) }} />} label="Set a maximum number of uses per order" />
+                                            <FormControlLabel className='block' control={<Checkbox defaultChecked={BxGyMaxUserOption} defaultValue={BxGyMaxUserOption} onChange={(e) => { setBxGyMaxUserOption(e.target.checked) }} />} label="Set a maximum number of uses per order" />
                                             {
                                                 BxGyMaxUserOption && <div className='ml-7'>
-                                                    <input onBlur={(e) => setBxGyMaxUserValue(e.target.value)} min={1} type="number" name="" id="minPhrReqValue" placeholder='Enter value..' className='w-1/4 py-1 px-2 outline-1 outline-[#0086fe] border border-gray-300 rounded-md' />
+                                                    <input defaultValue={BxGyMaxUserValue} onBlur={(e) => setBxGyMaxUserValue(e.target.value)} min={1} type="number" name="" id="minPhrReqValue" placeholder='Enter value..' className='w-1/4 py-1 px-2 outline-1 outline-[#0086fe] border border-gray-300 rounded-md' />
                                                 </div>
                                             }
                                         </div>
@@ -501,8 +589,9 @@ const page = () => {
                                                 Discount Type * <small>(Fixed / Percentage)</small>
                                             </span>
                                             <Select
+                                                defaultValue={disCategoryOption}
                                                 onChange={(selectedOptions) => setDisCategoryOption(selectedOptions)}
-                                                // value={disCategoryOption}
+                                                // defaultValue={disCategoryOption}
                                                 className="basic-single !z-20"
                                                 classNamePrefix="select"
                                                 placeholder="Select discount type.."
@@ -519,7 +608,7 @@ const page = () => {
                                             <span>
                                                 Amount * <small>(Fixed / Percentage)</small>
                                             </span>
-                                            <input onChange={(e) => setDisCategoryValue(e.target.value)} required type="number" name="Amount" id="Amount"
+                                            <input defaultValue={disCategoryValue} onChange={(e) => setDisCategoryValue(e.target.value)} required type="number" name="Amount" id="Amount"
                                                 className="rounded-md w-full border border-gray-300 px-2 py-[5px] outline-1 outline-[#0086fe]" placeholder='Enter discount amount..' />
 
                                         </div>
@@ -529,6 +618,7 @@ const page = () => {
                                         discountType == "AOffP" && <div className='mt-3 space-y-2'>
                                             <h3 className='text-md font-medium'>Applies to</h3>
                                             <Select
+                                                defaultValue={selectCatOrProd}
                                                 onChange={(selectedOptions) => { setSelectCatOrProd(selectedOptions); setSelectCatOrProdArray([]) }}
                                                 className="basic-single"
                                                 classNamePrefix="select"
@@ -543,7 +633,7 @@ const page = () => {
                                             />
 
                                             <Select
-                                                value={selectCatOrProdArray}
+                                                defaultValue={selectCatOrProdArray}
                                                 onChange={(selectedOptions) => setSelectCatOrProdArray(selectedOptions)}
                                                 isMulti
                                                 isClearable={false}
@@ -561,7 +651,7 @@ const page = () => {
                             { //no:4 | Free shipping
                                 discountType == "FS" && <div className='bg-white p-5 rounded-xl border border-[#d5ddda] shadow-md'>
                                     <h3 className='text-md font-semibold'>Countries</h3>
-                                    <RadioGroup value={freeShipping}
+                                    <RadioGroup defaultValue={freeShipping}
                                         onChange={(e) => { setFreeShipping(e.target.value) }}
                                         aria-labelledby="demo-radio-buttons-group-label"
                                         name="radio-buttons-group"
@@ -572,6 +662,7 @@ const page = () => {
                                     {freeShipping == "specific" &&
                                         <div className='mt-3 space-y-2'>
                                             <Select
+                                                defaultValue={freeShippingCountries}
                                                 isMulti
                                                 onChange={(selectedOptions) => setFreeShippingCountries(selectedOptions)}
                                                 className="basic-single z-20"
@@ -586,10 +677,10 @@ const page = () => {
                                         </div>
                                     }
                                     <h3 className='text-md font-medium mt-4'>Shipping rates</h3>
-                                    <FormControlLabel control={<Checkbox onChange={(e) => { setShippingRateOPOption(e.target.checked) }} />} label="Exclude shipping rates over a certain amount" />
+                                    <FormControlLabel control={<Checkbox defaultChecked={shippingRateOPOption} defaultValue={shippingRateOPOption} onChange={(e) => { setShippingRateOPOption(e.target.checked) }} />} label="Exclude shipping rates over a certain amount" />
                                     {
                                         shippingRateOPOption && <div className='ml-7 space-y-1'>
-                                            <input onBlur={(e) => setShippingRateOPValue(e.target.value)} min={0} type="number" name="" id="shippingRateOPValue" placeholder={`Enter amount..`} className='w-1/4 py-1 px-2 outline-1 outline-[#0086fe] border border-gray-300 rounded-md' />
+                                            <input defaultValue={shippingRateOPValue} onBlur={(e) => setShippingRateOPValue(e.target.value)} min={0} type="number" name="" id="shippingRateOPValue" placeholder={`Enter amount..`} className='w-1/4 py-1 px-2 outline-1 outline-[#0086fe] border border-gray-300 rounded-md' />
                                             <br />
                                             <label className='text-sm text-gray-500' htmlFor="minPhrReqValue">Over how much € discount code will apply.</label>
                                         </div>
@@ -600,7 +691,7 @@ const page = () => {
                             {/* common options: Minimum purchase requirement */}
                             <div className='bg-white p-5 rounded-xl border border-[#d5ddda] shadow-md'>
                                 <h3 className='text-md font-semibold'>Minimum purchase requirement</h3>
-                                <RadioGroup value={minPhrReqOption}
+                                <RadioGroup defaultValue={minPhrReqOption}
                                     onChange={(e) => { setMinPhrReqOption(e.target.value); setMinPhrReqValue(0) }}
                                     aria-labelledby="demo-radio-buttons-group-label"
                                     name="radio-buttons-group"
@@ -609,7 +700,7 @@ const page = () => {
                                     <FormControlLabel value="amount" control={<Radio />} label="Minimum purchase amount (€)" />
                                     {
                                         minPhrReqOption == "amount" && <div className='ml-7 space-y-1'>
-                                            <input onBlur={(e) => setMinPhrReqValue(e.target.value)} min={0} type="number" name="" id="minPhrReqValue" placeholder={`Enter ${minPhrReqOption}..`} className='w-1/4 py-1 px-2 outline-1 outline-[#0086fe] border border-gray-300 rounded-md' />
+                                            <input defaultValue={minPhrReqValue} onBlur={(e) => setMinPhrReqValue(e.target.value)} min={0} type="number" name="" id="minPhrReqValue" placeholder={`Enter ${minPhrReqOption}..`} className='w-1/4 py-1 px-2 outline-1 outline-[#0086fe] border border-gray-300 rounded-md' />
                                             <br />
                                             <label className='text-sm text-gray-500' htmlFor="minPhrReqValue">Applies only to selected collections.</label>
                                         </div>
@@ -617,7 +708,7 @@ const page = () => {
                                     <FormControlLabel value="items" control={<Radio />} label="Minimum quantity of items" />
                                     {
                                         minPhrReqOption == "items" && <div className='ml-7 space-y-1'>
-                                            <input onBlur={(e) => setMinPhrReqValue(e.target.value)} min={0} type="number" name="" id="minPhrReqValue" placeholder={`Enter ${minPhrReqOption}..`} className='w-1/4 py-1 px-2 outline-1 outline-[#0086fe] border border-gray-300 rounded-md' />
+                                            <input defaultValue={minPhrReqValue} onBlur={(e) => setMinPhrReqValue(e.target.value)} min={0} type="number" name="" id="minPhrReqValue" placeholder={`Enter ${minPhrReqOption}..`} className='w-1/4 py-1 px-2 outline-1 outline-[#0086fe] border border-gray-300 rounded-md' />
                                             <br />
                                             <label className='text-sm text-gray-400' htmlFor="minPhrReqValue">Applies only to selected collections.</label>
                                         </div>
@@ -629,7 +720,7 @@ const page = () => {
                             {/* Customer eligibility */}
                             <div className='bg-white p-5 rounded-xl border border-[#d5ddda] shadow-md'>
                                 <h3 className='text-md font-semibold'>Customer eligibility</h3>
-                                <RadioGroup value={eligibilityOption}
+                                <RadioGroup defaultValue={eligibilityOption}
                                     onChange={(e) => { setEligibilityOption(e.target.value) }}
                                     aria-labelledby="demo-radio-buttons-group-label"
                                     name="radio-buttons-group"
@@ -639,7 +730,8 @@ const page = () => {
                                 </RadioGroup>
                                 {
                                     eligibilityOption == "specific" && <div className="ml-7 space-y-1 w-full">
-                                        <Select onChange={(selectedOptions) => setEligibilityValue(selectedOptions)}
+                                        <Select defaultValue={eligibilityValue}
+                                            onChange={(selectedOptions) => setEligibilityValue(selectedOptions)}
                                             className="basic-single w-1/4 "
                                             classNamePrefix="select"
                                             placeholder="Select.."
@@ -657,15 +749,15 @@ const page = () => {
                             <div className='bg-white p-5 rounded-xl border border-[#d5ddda] shadow-md'>
                                 <h3 className='text-md font-semibold'>Maximum discount uses</h3>
                                 <div>
-                                    <FormControlLabel control={<Checkbox onChange={(e) => { setLimitDisOption(e.target.checked) }} />} label="Limit number of times this discount can be used in total" />
+                                    <FormControlLabel control={<Checkbox checked={limitDisOption} defaultValue={limitDisOption} onChange={(e) => { setLimitDisOption(e.target.checked) }} />} label="Limit number of times this discount can be used in total" />
                                 </div>
                                 {
                                     limitDisOption && <div className='ml-7'>
-                                        <input onBlur={(e) => setLimitDisValue(e.target.value || 0)} min={1} type="number" name="" id="minPhrReqValue" placeholder='Enter value..' className='w-1/4 py-1 px-2 outline-1 outline-[#0086fe] border border-gray-300 rounded-md' />
+                                        <input defaultValue={limitDisValue} onBlur={(e) => setLimitDisValue(e.target.value || 0)} min={1} type="number" name="" id="minPhrReqValue" placeholder='Enter value..' className='w-1/4 py-1 px-2 outline-1 outline-[#0086fe] border border-gray-300 rounded-md' />
                                     </div>
                                 }
                                 <div>
-                                    <FormControlLabel control={<Checkbox onChange={(e) => { setLimitDisOnePerUse(e.target.checked) }} />} label="Limit to one use per customer" />
+                                    <FormControlLabel defaultValue={limitDisOnePerUse} control={<Checkbox checked={limitDisOnePerUse} defaultValue={limitDisOnePerUse} onChange={(e) => { setLimitDisOnePerUse(e.target.checked) }} />} label="Limit to one use per customer" />
                                 </div>
                             </div>
 
@@ -673,14 +765,14 @@ const page = () => {
                             <div className='bg-white p-5 rounded-xl border border-[#d5ddda] shadow-md space-y-2'>
                                 <h3 className='text-md font-semibold mb-5'>Active dates</h3>
                                 <div className="w-full flex justify-center items-center gap-2">
-                                    <DatePicker format="DD/MM/YYYY" onChange={(newDate) => { setStartDate({ year: newDate?.$y, month: (newDate?.$M + 1), Day: newDate?.$D }) }} label="Start date" className='w-full' defaultValue={dayjs(defaultDateTime)} />
-                                    <TimePicker label="Start time (+06)" className='w-full' defaultValue={dayjs(defaultDateTime)} onChange={(newDate) => { setStartTime({ hour: newDate?.$H, min: newDate?.$m }) }} />
+                                    <DatePicker format="DD/MM/YYYY" onChange={(newDate) => { setStartDate({ year: newDate?.$y, month: (newDate?.$M + 1), Day: newDate?.$D }) }} label="Start date" className='w-full' defaultValue={dayjs(defaultDateTimeStart)} />
+                                    <TimePicker label="Start time (+06)" className='w-full' defaultValue={dayjs(defaultDateTimeStart)} onChange={(newDate) => { setStartTime({ hour: newDate?.$H, min: newDate?.$m }) }} />
                                 </div>
-                                <FormControlLabel control={<Checkbox onChange={(e) => { setIsEndTime(e.target.checked) }} />} label="Set end date" />
+                                <FormControlLabel control={<Checkbox checked={isEndTime} defaultValue={isEndTime} onChange={(e) => { setIsEndTime(e.target.checked) }} />} label="Set end date" />
                                 {
                                     isEndTime && <div className="w-full flex justify-center items-center gap-2 mt-3">
-                                        <DatePicker format="DD/MM/YYYY" label="End date" className='w-full' defaultValue={dayjs(defaultDateTime)} onChange={(newDate) => { setEndDate({ year: newDate?.$y, month: (newDate?.$M + 1), Day: newDate?.$D }) }} />
-                                        <TimePicker label="End time (+06)" className='w-full' defaultValue={dayjs(defaultDateTime)} onChange={(newDate) => { setEndTime({ hour: newDate?.$H, min: newDate?.$m }) }} />
+                                        <DatePicker format="DD/MM/YYYY" label="End date" className='w-full' defaultValue={dayjs(defaultDateTimeEnd)} onChange={(newDate) => { setEndDate({ year: newDate?.$y, month: (newDate?.$M + 1), Day: newDate?.$D }) }} />
+                                        <TimePicker label="End time (+06)" className='w-full' defaultValue={dayjs(defaultDateTimeEnd)} onChange={(newDate) => { setEndTime({ hour: newDate?.$H, min: newDate?.$m }) }} />
                                     </div>
                                 }
                             </div>

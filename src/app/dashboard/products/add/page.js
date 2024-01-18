@@ -246,7 +246,6 @@ const page = () => {
 
         try {
             axiosHttp.post("/products", productData).then((res) => {
-                console.log(res.data)
                 if (res.data.status) {
                     Swal.fire({
                         position: "top-center",

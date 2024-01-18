@@ -76,31 +76,34 @@ export default function page() {
 
             {isLoading ? <Loader /> :
                 <table className='products-table !w-full bg-white'>
-                    <tr>
-                        <th>Photo</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Status</th>
-                        <th>Sell Quantity</th>
-                        <th>Actions</th>
-                    </tr>
-                    {
-                        allProducts?.map(p => <tr key={p?._id}>
-                            <td><img src={p?.imageUrl?.[0]} alt="img" className='w-12 h-12 mx-auto' /></td>
-                            <td>{p?.title?.length > 20 ? <>{p?.title?.slice(0, 20)}..</> : <>{p?.title?.slice(0, 10)}</>}</td>
-                            <td>{p?.price}</td>
-                            <td>{p?.status?.label}</td>
-                            <td>{p?.sellQuantity}</td>
-                            <td className=''>
-                                <div className="!w-full !h-full flex items-center justify-center gap-2">
-                                    <MdDelete onClick={() => { handleDelete(p?._id) }} className='text-3xl font-bold bg-red-600 text-white rounded-md cursor-pointer p-1' />
-                                    <Link href={`/dashboard/products/${p?._id}`}><MdEditSquare className='text-3xl font-bold bg-[#FFC520] text-white rounded-md cursor-pointer p-1' /></Link>
-                                    <Link target='_blank' href={`/Collections/${p?.category?.[0]?.label.toLowerCase()}/${p?._id}`}><FaArrowUpRightFromSquare className='text-3xl font-bold bg-green-500 text-white rounded-md cursor-pointer p-1' /></Link>
-                                </div>
-                            </td>
-                        </tr>)
-                    }
-
+                    <thead className='bg-blue-300'>
+                        <tr>
+                            <th>Photo</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th className='!text-center'>Sell Quantity</th>
+                            <th className='!text-center'>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            allProducts?.map(p => <tr key={p?._id}>
+                                <td><Link href={`/dashboard/products/${p?._id}`}><img src={p?.imageUrl?.[0]} alt="img" className='w-12 h-12' /></Link></td>
+                                <td><Link href={`/dashboard/products/${p?._id}`}>{p?.title?.length > 20 ? <>{p?.title?.slice(0, 20)}..</> : <>{p?.title?.slice(0, 10)}</>}</Link></td>
+                                <td>{p?.price}</td>
+                                <td className={`${p?.status?.label == "Active" ? "text-green-500" : "text-red-500"} font-semibold`}>{p?.status?.label}</td>
+                                <td className='!text-center'>{p?.sellQuantity}</td>
+                                <td className='!text-center'>
+                                    <div className="!w-full !h-full flex items-center justify-center gap-2">
+                                        <MdDelete onClick={() => { handleDelete(p?._id) }} className='text-3xl font-bold bg-red-600 text-white rounded-md cursor-pointer p-1' />
+                                        <Link href={`/dashboard/products/${p?._id}`}><MdEditSquare className='text-3xl font-bold bg-[#FFC520] text-white rounded-md cursor-pointer p-1' /></Link>
+                                        <Link target='_blank' href={`/Collections/${p?.category?.[0]?.label.toLowerCase()}/${p?._id}`}><FaArrowUpRightFromSquare className='text-3xl font-bold bg-green-500 text-white rounded-md cursor-pointer p-1' /></Link>
+                                    </div>
+                                </td>
+                            </tr>)
+                        }
+                    </tbody>
                 </table>
             }
         </div>
