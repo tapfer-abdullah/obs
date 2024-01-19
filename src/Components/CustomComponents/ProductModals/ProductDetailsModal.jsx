@@ -57,7 +57,17 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
     let sku = selectedSKU || colors?.[0]?.allSKU?.[0]?.sku;
     let img = singleProduct?.colors?.[imgIndex]?.imageUrl;
 
-    const data = { id: id, name: singleProduct?.title, price: price, color: selectedColor, size: selectedSize, quantity: selectedItems, sku: sku, img: img };
+    const data = {
+      id: id,
+      name: singleProduct?.title,
+      category: singleProduct?.category?.[0]?.value,
+      price: price,
+      color: selectedColor,
+      size: selectedSize,
+      quantity: selectedItems,
+      sku: sku,
+      img: img,
+    };
 
     let storedData = JSON.parse(localStorage.getItem("obs-cart")) || [];
 
@@ -68,7 +78,17 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
       for (let i = 0; i < storedData.length; i++) {
         if (storedData?.[i]?.id == id && storedData?.[i]?.size == data.size && storedData?.[i]?.color == data.color) {
           item++;
-          newData.push({ id: id, name: singleProduct?.title, price: price, color: selectedColor, size: selectedSize, quantity: selectedItems, sku: sku, img: img });
+          newData.push({
+            id: id,
+            name: singleProduct?.title,
+            category: singleProduct?.category?.[0]?.value,
+            price: price,
+            color: selectedColor,
+            size: selectedSize,
+            quantity: selectedItems,
+            sku: sku,
+            img: img,
+          });
         } else {
           newData.push(storedData[i]);
         }

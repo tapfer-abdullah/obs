@@ -1,5 +1,6 @@
 "use client";
 import { OrderStateProvider } from "@/Components/State/OrderState";
+import { axiosHttp } from "@/app/helper/axiosHttp";
 import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 import { MdOutlineEuroSymbol } from "react-icons/md";
@@ -9,11 +10,12 @@ import SingleCartProduct from "./SingleCartProduct";
 const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
   const { cartData, changeCartData, setChangeCartData } = useContext(OrderStateProvider);
 
+  const [disError, setDisError] = useState("");
   const [subTotal, setSubtotal] = useState(0);
 
   useEffect(() => {
     let sum = 0;
-    for (let i = 0; i < cartData.length; i++) {
+    for (let i = 0; i < cartData?.length; i++) {
       sum += cartData[i].price * cartData[i].quantity;
     }
     setSubtotal(sum);
@@ -54,6 +56,45 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
     setChangeCartData(changeCartData + 1);
   };
 
+  const handleDiscountCode = (event) => {
+    event.preventDefault();
+    const code = event.target.discountCode.value;
+
+    axiosHttp.patch(`/discount`, { title: code }).then((res) => {
+      const response = res.data;
+
+      if (response?.status) {
+        setDisError("");
+        const validCode = res.data?.data;
+        console.log(validCode);
+
+        const type = validCode?.discountCodeType;
+
+        switch (type) {
+          case "BxGy": {
+            console.log("type bxgy");
+            break;
+          }
+
+          case "AOffP": {
+            console.log("type AOffP");
+            break;
+          }
+          case "AOffO": {
+            console.log("type AOffO");
+            break;
+          }
+          case "FS": {
+            console.log("type FS");
+            break;
+          }
+        }
+      } else {
+        setDisError(response?.message);
+      }
+    });
+  };
+
   return (
     <div
       // onClick={() => {
@@ -87,11 +128,12 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
               </p>
             </div>
             <p className="text-base">USE DISCOUNT CODE HERE</p>
-            <form className="relative">
-              <input type="text" name="discount-code" id="" placeholder="Discount code" className="border-2 border-black p-2 w-full" />
+            <form onSubmit={handleDiscountCode} className="relative">
+              <input type="text" name="discountCode" id="" placeholder="Discount code" className={`border-2 ${disError ? "border-red-600" : "border-black"} p-2 w-full`} />
               <button type="submit" className="absolute top-0 right-0 bg-black hover:bg-opacity-90 transition-all duration-300 text-white p-2 border-2 border-black">
                 Apply
               </button>
+              {disError && <p className="text-red-600 text-sm">{disError}</p>}
             </form>
             <Link
               onClick={() => {

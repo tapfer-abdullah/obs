@@ -145,7 +145,7 @@ const page = () => {
             setMinPhrReqOption(oldData?.minPurRequirement?.option);
             setMinPhrReqValue(oldData?.minPurRequirement?.value);
             setEligibilityOption(oldData?.eligibility?.option);
-            setEligibilityValue({ value: oldData?.eligibility?.option, label: oldData?.eligibility?.option })
+            setEligibilityValue({ value: oldData?.eligibility?.option, label: oldData?.eligibility?.value })
             setLimitDisOnePerUse(oldData?.limitDisOnePerUse)
             setLimitDisOption(oldData?.maxDisCodeUse?.option)
             setLimitDisValue(oldData?.maxDisCodeUse?.value);

@@ -34,6 +34,7 @@ const DetailsModalImage = ({ singleProduct, rightSlider, leftSlider, imgIndex, s
         <div className="flex items-center gap-2 flex-wrap">
           {imageData?.map((i, index) => (
             <img
+              key={index}
               onClick={() => {
                 setImgIndex(index);
                 handleSku(selectedSize, index);

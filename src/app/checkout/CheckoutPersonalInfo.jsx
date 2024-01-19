@@ -10,11 +10,10 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import React, { useContext, useEffect, useState } from "react";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 
-const CheckoutPersonalInfo = ({ setTips, subTotal }) => {
+const CheckoutPersonalInfo = ({ setTips, subTotal, selectedCountry, setSelectedCountry, setEmail }) => {
   const { allCountryData } = useContext(OrderStateProvider);
   const [tip, setTip] = useState(0);
   const [tipValue, setTipValue] = useState(0);
-  const [selectedCountry, setSelectedCountry] = useState(null);
 
   const handleTips = (event, newTip) => {
     setTip(newTip);
@@ -30,8 +29,6 @@ const CheckoutPersonalInfo = ({ setTips, subTotal }) => {
   const handleCountryChange = (event, value) => {
     setSelectedCountry(value);
   };
-
-  console.log(selectedCountry);
 
   // const handleCustomTips = (e) => {
   //   // e.preventDefault();
@@ -50,9 +47,19 @@ const CheckoutPersonalInfo = ({ setTips, subTotal }) => {
           </div>
         </div>
 
-        <TextField required type="email" name="email" id="email" className="rounded-md w-full border-2 h-auto" label="Email" />
+        <TextField
+          onBlur={(e) => {
+            setEmail(e.target.value);
+          }}
+          required
+          type="email"
+          name="email"
+          id="email"
+          className="rounded-md w-full border-2 h-auto"
+          label="Email"
+        />
         <div className="flex items-center gap-2">
-          <input type="checkbox" name="checkedEmail" id="checkedEmail" />
+          <input defaultChecked={true} type="checkbox" name="checkedEmail" id="checkedEmail" />
           <label htmlFor="checkedEmail">Email me with news and offers</label>
         </div>
       </div>
