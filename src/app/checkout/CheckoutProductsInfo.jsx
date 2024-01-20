@@ -3,12 +3,28 @@ import SingleCartProduct from "@/Components/CustomComponents/ShoppingCart/Single
 import { OrderStateProvider } from "@/Components/State/OrderState";
 import React, { useContext, useEffect, useState } from "react";
 import { MdDiscount, MdOutlineEuroSymbol } from "react-icons/md";
+import { CheckoutCardDiscount, CheckoutCardPrice } from "./CheckoutCardComponent/CheckoutCardPrice";
 
-const CheckoutProductsInfo = ({ actionOfDis, discountType, discountTypeValue, tip, subTotal, setQuantity, setSubtotal, handleDiscountCode, disError, amountToBeReduce, discountCode }) => {
-  const { cartData, changeCartData, setChangeCartData } = useContext(OrderStateProvider);
+const CheckoutProductsInfo = ({
+  minusAmount,
+  setMinusAmount,
+  actionOfDis,
+  discountType,
+  discountTypeValue,
+  tip,
+  subTotal,
+  setQuantity,
+  setSubtotal,
+  handleDiscountCode,
+  disError,
+  amountToBeReduce,
+  discountCode,
+  disAdditionalType,
+}) => {
+  const { cartData } = useContext(OrderStateProvider);
   const [discountInput, setDiscountInput] = useState("");
 
-  console.log("d", actionOfDis);
+  console.log("d", actionOfDis, amountToBeReduce);
 
   useEffect(() => {
     let sum = 0;
@@ -21,58 +37,114 @@ const CheckoutProductsInfo = ({ actionOfDis, discountType, discountTypeValue, ti
     setQuantity(quantity);
   }, [cartData]);
 
+  // const myCheckoutCard = () => {
+  //   <div key={index} className="relative flex justify-between items-center space-x-4 my-4">
+  //     <div className="flex justify-start items-center gap-2">
+  //       <div className="relative">
+  //         <img src={sp?.img} alt="product img" className="w-16 h-16 rounded-md" />
+  //         <p className="absolute -top-3 -right-2 text-white text-sm bg-gray-500 rounded-full px-[8px] py-[2px]">{sp?.quantity}</p>
+  //       </div>
+  //       <div>
+  //         <div>
+  //           <h4 className="text-md">{sp?.name}</h4>
+  //           <p className="text-sm text-gray-500 py-1 capitalize">
+  //             {sp?.color} / {sp?.size}
+  //           </p>
+  //         </div>
+  //         {actionOfDis == "Percentage" && discountType == "category" && discountTypeValue.includes(sp?.category?.toLowerCase()) && (
+  //           <div className="flex justify-between items-center text-base font-normal text-green-600">
+  //             <div className="flex items-center gap-1">
+  //               <MdDiscount />
+  //               <span className="font-semibold">{discountCode}:</span>
+  //             </div>
+  //             <p className="flex justify-end items-center gap-1">
+  //               - <MdOutlineEuroSymbol />
+  //               <span>
+  //                 {parseInt(sp?.quantity)} x {(parseInt(sp?.price) * amountToBeReduce) / 100}
+  //               </span>
+  //             </p>
+  //           </div>
+  //         )}
+  //         {actionOfDis == "Percentage" && discountType == "products" && discountTypeValue.includes(sp?.id) && (
+  //           <div className="flex justify-between items-center text-base font-normal text-green-600">
+  //             <div className="flex items-center gap-1">
+  //               <MdDiscount />
+  //               <span className="font-semibold">{discountCode}:</span>
+  //             </div>
+  //             <p className="flex justify-end items-center gap-1">
+  //               - <MdOutlineEuroSymbol />
+  //               <span>
+  //                 {parseInt(sp?.quantity)} x {(parseInt(sp?.price) * amountToBeReduce) / 100}
+  //               </span>
+  //             </p>
+  //           </div>
+  //         )}
+  //       </div>
+  //     </div>
+  //     <div className="flex justify-end items-center gap-1 pr-2">
+  //       {/* <MdOutlineEuroSymbol /> */}
+  //       {actionOfDis == "Percentage" && discountType == "products" && discountTypeValue.includes(sp?.id) && (
+  //         <div className="">
+  //           <p className="line-through text-lg text-red-700 font-semibold">€ {parseInt(sp?.price) * parseInt(sp?.quantity)}</p>
+  //           <p>€ {(sp?.price - (parseInt(sp?.price) * amountToBeReduce) / 100) * parseInt(sp?.quantity)}</p>
+  //         </div>
+  //       )}
+  //       {actionOfDis == "Percentage" && discountType == "category" && discountTypeValue.includes(sp?.category?.toLowerCase()) && (
+  //         <div className="">
+  //           <p className="line-through text-lg text-red-700 font-semibold">€ {parseInt(sp?.price) * parseInt(sp?.quantity)}</p>
+  //           <p>€ {(sp?.price - (parseInt(sp?.price) * amountToBeReduce) / 100) * parseInt(sp?.quantity)}</p>
+  //         </div>
+  //       )}
+  //       {!discountTypeValue.includes(sp?.id) && !discountTypeValue.includes(sp?.category?.toLowerCase()) && <p>€ {parseInt(sp?.price) * parseInt(sp?.quantity)}</p>}
+  //       {actionOfDis == "Fixed" && <p>€ {parseInt(sp?.price) * parseInt(sp?.quantity)}</p>}
+  //     </div>
+  //   </div>;
+  // };
+
   return (
     <div className="bg-[#f5f5f5] -mt-5 p-10 border-l-2">
       {cartData?.map((sp, index) => (
-        // <SingleCartProduct handleQuantity={handleQuantity} handleDelete={handleDelete} key={index} data={sp} />
-        <div key={index} className="relative flex justify-between items-center space-x-4 my-4">
-          <div className="flex justify-start items-center gap-2">
-            <div className="relative">
-              <img src={sp?.img} alt="product img" className="w-16 h-16 rounded-md" />
-              <p className="absolute -top-3 -right-2 text-white text-sm bg-gray-500 rounded-full px-[8px] py-[2px]">{sp?.quantity}</p>
+        <div key={index}>
+          <div className={`relative flex justify-between items-center space-x-4 my-4`}>
+            <div className="flex justify-start items-center gap-2">
+              <div className="relative">
+                <img src={sp?.img} alt="product img" className="w-16 h-16 rounded-md" />
+                <p className="absolute -top-3 -right-2 text-white text-sm bg-gray-500 rounded-full px-[8px] py-[2px]">{sp?.quantity}</p>
+              </div>
+              <div>
+                <div>
+                  <h4 className="text-md">{sp?.name}</h4>
+                  <p className="text-sm text-gray-500 py-1 capitalize">
+                    {sp?.color} / {sp?.size}
+                  </p>
+                </div>
+                <CheckoutCardDiscount
+                  sp={sp}
+                  discountType={discountType}
+                  discountTypeValue={discountTypeValue}
+                  amountToBeReduce={amountToBeReduce}
+                  actionOfDis={actionOfDis}
+                  discountCode={discountCode}
+                  disAdditionalType={disAdditionalType}
+                ></CheckoutCardDiscount>
+              </div>
             </div>
-            <div>
-              <h4 className="text-md">{sp?.name}</h4>
-              {actionOfDis == "Percentage" && discountType == "category" && discountTypeValue.includes(sp?.category?.toLowerCase()) && (
-                <div className="flex justify-between items-center text-base font-normal text-green-600">
-                  <div className="flex items-center gap-1">
-                    <MdDiscount />
-                    <span className="font-semibold">{discountCode}:</span>
-                  </div>
-                  <p className="flex justify-end items-center gap-1">
-                    - <MdOutlineEuroSymbol />
-                    <span>
-                      {parseInt(sp?.quantity)} x {(parseInt(sp?.price) * amountToBeReduce) / 100}
-                    </span>
-                  </p>
-                </div>
-              )}
-              {actionOfDis == "Percentage" && discountType == "products" && discountTypeValue.includes(sp?.id) && (
-                <div className="flex justify-between items-center text-base font-normal text-green-600">
-                  <div className="flex items-center gap-1">
-                    <MdDiscount />
-                    <span className="font-semibold">{discountCode}:</span>
-                  </div>
-                  <p className="flex justify-end items-center gap-1">
-                    - <MdOutlineEuroSymbol />
-                    <span>
-                      {parseInt(sp?.quantity)} x {(parseInt(sp?.price) * amountToBeReduce) / 100}
-                    </span>
-                  </p>
-                </div>
-              )}
+            <div className="flex justify-end items-center gap-1 pr-2">
+              <CheckoutCardPrice
+                disAdditionalType={disAdditionalType}
+                minusAmount={minusAmount}
+                setMinusAmount={setMinusAmount}
+                sp={sp}
+                discountType={discountType}
+                discountTypeValue={discountTypeValue}
+                amountToBeReduce={amountToBeReduce}
+                actionOfDis={actionOfDis}
+                discountCode={discountCode}
+                cardSize={cartData?.length}
+              ></CheckoutCardPrice>
             </div>
           </div>
-          <p className="flex justify-end items-center gap-1 pr-2">
-            <MdOutlineEuroSymbol />
-            {actionOfDis == "Percentage" && discountType == "products" && discountTypeValue.includes(sp?.id) && (
-              <p>{(sp?.price - (parseInt(sp?.price) * amountToBeReduce) / 100) * parseInt(sp?.quantity)}</p>
-            )}
-            {actionOfDis == "Percentage" && discountType == "category" && discountTypeValue.includes(sp?.category?.toLowerCase()) && (
-              <p>{(sp?.price - (parseInt(sp?.price) * amountToBeReduce) / 100) * parseInt(sp?.quantity)}</p>
-            )}
-            {!discountTypeValue.includes(sp?.id) && !discountTypeValue.includes(sp?.category?.toLowerCase()) && <p>{parseInt(sp?.price) * parseInt(sp?.quantity)}</p>}
-          </p>
+          <div className={`border-b-2 my-1 ${cartData?.length - 1 == index ? "hidden" : "block"}`}></div>
         </div>
       ))}
 
@@ -89,6 +161,7 @@ const CheckoutProductsInfo = ({ actionOfDis, discountType, discountTypeValue, ti
         />
         <button
           onClick={() => {
+            setMinusAmount(0);
             handleDiscountCode(discountInput);
           }}
           className="absolute top-0 right-0 bg-[#d0d0d0] hover:bg-opacity-90 transition-all duration-300 text-black font-semibold p-2 border-2 border-[#d0d0d0]"
@@ -127,7 +200,8 @@ const CheckoutProductsInfo = ({ actionOfDis, discountType, discountTypeValue, ti
             </div>
             <p className="flex justify-end items-center gap-1">
               - <MdOutlineEuroSymbol />
-              <span>{amountToBeReduce}</span>
+              {disAdditionalType != "AOffO" && <span>{minusAmount}</span>}
+              {disAdditionalType == "AOffO" && (actionOfDis == "Fixed" ? <span>{amountToBeReduce}</span> : <span>{(subTotal * parseInt(amountToBeReduce)) / 100}</span>)}
             </p>
           </div>
         )}
@@ -135,7 +209,9 @@ const CheckoutProductsInfo = ({ actionOfDis, discountType, discountTypeValue, ti
           <span>Total:</span>
           <p className="flex justify-end items-center gap-1">
             <MdOutlineEuroSymbol />
-            <span>{subTotal + tip - amountToBeReduce}</span>
+            {disAdditionalType != "AOffO" && <span>{subTotal + tip - minusAmount}</span>}
+            {disAdditionalType == "AOffO" &&
+              (actionOfDis == "Fixed" ? <span>{subTotal + tip - amountToBeReduce}</span> : <span>{subTotal + tip - (subTotal * parseInt(amountToBeReduce)) / 100}</span>)}
           </p>
         </div>
       </div>

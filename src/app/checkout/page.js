@@ -18,7 +18,9 @@ const page = () => {
     const [discountTypeValue, setDiscountTypeValue] = useState([]);
     const [totalAfterDis, setTotalAfterDis] = useState(0);
     const [amountToBeReduce, setAmountToBeReduce] = useState(0);
+    const [minusAmount, setMinusAmount] = useState(0);
     const [actionOfDis, setActionOfDis] = useState("");
+    const [disAdditionalType, setDisAdditionalType] = useState("");
 
     // console.log(quantity, email, selectedCountry)
     console.log("Amount: ", amountToBeReduce)
@@ -68,6 +70,7 @@ const page = () => {
 
                 console.log(validCode);
                 const type = validCode?.discountCodeType;
+                setDisAdditionalType(type);
 
                 switch (type) {
                     case "BxGy": {
@@ -151,6 +154,9 @@ const page = () => {
                     discountType={discountType}
                     discountTypeValue={discountTypeValue}
                     actionOfDis={actionOfDis}
+                    minusAmount={minusAmount}
+                    setMinusAmount={setMinusAmount}
+                    disAdditionalType={disAdditionalType}
                 />
             </div>
             <div className="bg-[#f5f5f5] -mt-5"></div>
