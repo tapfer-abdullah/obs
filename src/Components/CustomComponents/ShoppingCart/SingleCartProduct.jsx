@@ -4,7 +4,7 @@ import { MdOutlineEuroSymbol } from "react-icons/md";
 import { useState } from "react";
 import { RxCross2 } from "react-icons/rx";
 
-const SingleCartProduct = ({ data, handleQuantity, handleDelete }) => {
+const SingleCartProduct = ({ index, data, handleQuantity, handleDelete, setAction }) => {
   const [selectedItems, setSelectedItems] = useState(data?.quantity || 1);
   return (
     <div className="relative flex justify-between items-center space-x-4 my-3 shadow-md">
@@ -16,8 +16,9 @@ const SingleCartProduct = ({ data, handleQuantity, handleDelete }) => {
             <button
               onClick={() => {
                 if (selectedItems > 1) {
-                  handleQuantity(data?.id, data?.size, data?.img, selectedItems - 1);
+                  handleQuantity(data?.id, data?.size, data?.img, selectedItems - 1, index);
                   setSelectedItems(selectedItems - 1);
+                  setAction(-1);
                 }
               }}
               className="py-1 px-2 bg-slate-300 mx-[1px]"
@@ -27,8 +28,9 @@ const SingleCartProduct = ({ data, handleQuantity, handleDelete }) => {
             <button className="py-1 px-2 bg-slate-300 mx-[1px]">{selectedItems}</button>
             <button
               onClick={() => {
-                handleQuantity(data?.id, data?.size, data?.img, selectedItems + 1);
+                handleQuantity(data?.id, data?.size, data?.img, selectedItems + 1, index);
                 setSelectedItems(selectedItems + 1);
+                setAction(1);
               }}
               className="py-1 px-2 bg-slate-300 mx-[1px]"
             >

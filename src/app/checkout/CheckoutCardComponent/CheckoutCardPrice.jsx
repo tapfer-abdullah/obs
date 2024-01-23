@@ -4,11 +4,9 @@ import { MdDiscount } from "react-icons/md";
 
 import React, { useEffect } from "react";
 
-export const CheckoutCardPrice = ({ disAdditionalType, discountCode, cardSize, setMinusAmount, sp, discountType, discountTypeValue, amountToBeReduce, actionOfDis }) => {
+export const CheckoutCardPrice = ({ disAdditionalType, discountCode, cardSize, setMinusAmount, sp, discountOn, discountOnValue, amountToBeReduce, discountType }) => {
   const price = parseInt(sp?.price);
   const quantity = parseInt(sp?.quantity);
-
-  console.log(disAdditionalType);
 
   useEffect(() => {
     switch (disAdditionalType) {
@@ -18,18 +16,18 @@ export const CheckoutCardPrice = ({ disAdditionalType, discountCode, cardSize, s
       }
       //AOffO -> amount off on product or category
       case "AOffP": {
-        if (discountType === "products") {
-          if (discountTypeValue.includes(sp?.id)) {
-            if (actionOfDis === "Percentage") {
+        if (discountOn === "products") {
+          if (discountOnValue.includes(sp?.id)) {
+            if (discountType === "Percentage") {
               const discountedPrice = ((price * amountToBeReduce) / 100) * quantity;
               setMinusAmount((prevAmount) => prevAmount + discountedPrice);
             } else {
               setMinusAmount((prevAmount) => prevAmount + amountToBeReduce * quantity);
             }
           }
-        } else if (discountType === "category") {
-          if (discountTypeValue.includes(sp?.category?.toLowerCase())) {
-            if (actionOfDis === "Percentage") {
+        } else if (discountOn === "category") {
+          if (discountOnValue.includes(sp?.category?.toLowerCase())) {
+            if (discountType === "Percentage") {
               const discountedPrice = ((price * amountToBeReduce) / 100) * quantity;
               setMinusAmount((prevAmount) => prevAmount + discountedPrice);
             } else {
@@ -40,8 +38,8 @@ export const CheckoutCardPrice = ({ disAdditionalType, discountCode, cardSize, s
         break;
       }
       case "AOffO": {
-        console.log(disAdditionalType, actionOfDis);
-        // if (actionOfDis === "Percentage") {
+        console.log(disAdditionalType, discountType);
+        // if (discountType === "Percentage") {
         //   const discountedPrice = ((price * amountToBeReduce) / 100) * quantity;
         //   setMinusAmount((prevAmount) => prevAmount + discountedPrice);
         // } else {
@@ -50,10 +48,10 @@ export const CheckoutCardPrice = ({ disAdditionalType, discountCode, cardSize, s
         break;
       }
     }
-  }, [setMinusAmount, actionOfDis, discountType, discountTypeValue, sp?.id, sp?.category?.toLowerCase(), price, amountToBeReduce, discountCode, cardSize, quantity]);
+  }, [setMinusAmount, discountType, discountOn, discountOnValue, sp?.id, sp?.category?.toLowerCase(), price, amountToBeReduce, discountCode, cardSize, quantity]);
 
-  //   if (actionOfDis == "Percentage" && discountType == "products") {
-  //     if (discountTypeValue.includes(sp?.id)) {
+  //   if (discountType == "Percentage" && discountOn == "products") {
+  //     if (discountOnValue.includes(sp?.id)) {
   //       return (
   //         <div className="">
   //           <p className="line-through text-lg text-red-700 font-semibold">€ {price * quantity}</p>
@@ -63,8 +61,8 @@ export const CheckoutCardPrice = ({ disAdditionalType, discountCode, cardSize, s
   //     } else {
   //       return <p>€ {price * quantity}</p>;
   //     }
-  //   } else if (actionOfDis == "Percentage" && discountType == "category") {
-  //     if (discountTypeValue.includes(sp?.category?.toLowerCase())) {
+  //   } else if (discountType == "Percentage" && discountOn == "category") {
+  //     if (discountOnValue.includes(sp?.category?.toLowerCase())) {
   //       return (
   //         <div className="">
   //           <p className="line-through text-lg text-red-700 font-semibold">€ {price * quantity}</p>
@@ -79,16 +77,16 @@ export const CheckoutCardPrice = ({ disAdditionalType, discountCode, cardSize, s
   //   }
 
   // amount off on product or category
-  if (discountType === "products") {
-    if (discountTypeValue.includes(sp?.id)) {
-      if (actionOfDis === "Percentage") {
+  if (discountOn === "products") {
+    if (discountOnValue.includes(sp?.id)) {
+      if (discountType === "Percentage") {
         return (
           <div className="">
             <p className="line-through text-lg text-red-700 font-semibold">€ {price * quantity}</p>
             <p>€ {(price - (price * amountToBeReduce) / 100) * quantity}</p>
           </div>
         );
-      } else if (actionOfDis === "Fixed") {
+      } else if (discountType === "Fixed") {
         return (
           <div className="">
             <p className="line-through text-lg text-red-700 font-semibold">€ {price * quantity}</p>
@@ -101,16 +99,16 @@ export const CheckoutCardPrice = ({ disAdditionalType, discountCode, cardSize, s
     } else {
       return <p>€ {price * quantity}</p>;
     }
-  } else if (discountType === "category") {
-    if (discountTypeValue.includes(sp?.category?.toLowerCase())) {
-      if (actionOfDis === "Percentage") {
+  } else if (discountOn === "category") {
+    if (discountOnValue.includes(sp?.category?.toLowerCase())) {
+      if (discountType === "Percentage") {
         return (
           <div className="">
             <p className="line-through text-lg text-red-700 font-semibold">€ {price * quantity}</p>
             <p>€ {(price - (price * amountToBeReduce) / 100) * quantity}</p>
           </div>
         );
-      } else if (actionOfDis === "Fixed") {
+      } else if (discountType === "Fixed") {
         return (
           <div className="">
             <p className="line-through text-lg text-red-700 font-semibold">€ {price * quantity}</p>
@@ -128,9 +126,9 @@ export const CheckoutCardPrice = ({ disAdditionalType, discountCode, cardSize, s
   }
 };
 
-export const CheckoutCardDiscount = ({ disAdditionalType, sp, discountType, discountTypeValue, amountToBeReduce, actionOfDis, discountCode }) => {
-  if (actionOfDis == "Percentage" && discountType == "category") {
-    if (discountTypeValue.includes(sp?.category?.toLowerCase())) {
+export const CheckoutCardDiscount = ({ disAdditionalType, sp, discountOn, discountOnValue, amountToBeReduce, discountType, discountCode }) => {
+  if (discountType == "Percentage" && discountOn == "category") {
+    if (discountOnValue.includes(sp?.category?.toLowerCase())) {
       return (
         <div className="flex justify-between items-center text-base font-normal text-green-600">
           <div className="flex items-center gap-1">
@@ -143,7 +141,7 @@ export const CheckoutCardDiscount = ({ disAdditionalType, sp, discountType, disc
         </div>
       );
     }
-  } else if (actionOfDis == "Percentage" && discountType == "products" && discountTypeValue.includes(sp?.id)) {
+  } else if (discountType == "Percentage" && discountOn == "products" && discountOnValue.includes(sp?.id)) {
     return (
       <div className="flex justify-between items-center text-base font-normal text-green-600">
         <div className="flex items-center gap-1">
@@ -157,43 +155,72 @@ export const CheckoutCardDiscount = ({ disAdditionalType, sp, discountType, disc
     );
   }
 
-  //   <div>
-  //     <div>
-  //       <h4 className="text-md">{sp?.name}</h4>
-  //       <p className="text-sm text-gray-500 py-1 capitalize">
-  //         {sp?.color} / {sp?.size}
-  //       </p>
-  //     </div>
-
-  {
-    /* {actionOfDis == "Percentage" && discountType == "category" && discountTypeValue.includes(sp?.category?.toLowerCase()) && (
-      <div className="flex justify-between items-center text-base font-normal text-green-600">
-        <div className="flex items-center gap-1">
-          <MdDiscount />
-          <span className="font-semibold">{discountCode}:</span>
-        </div>
-        <p className="flex justify-end items-center gap-1">
-          - <MdOutlineEuroSymbol />
-          <span>
-            {parseInt(sp?.quantity)} x {(parseInt(sp?.price) * amountToBeReduce) / 100}
-          </span>
-        </p>
-      </div>
-    )} */
+  // 2222222222222
+  if (discountOn === "products") {
+    if (discountOnValue.includes(sp?.id)) {
+      if (discountType === "Percentage") {
+        return (
+          <div className="flex justify-between items-center text-base font-normal text-green-600">
+            <div className="flex items-center gap-1">
+              <MdDiscount />
+              <span className="font-semibold">{discountCode}:</span>
+            </div>
+            <p>
+              € {parseInt(sp?.quantity)} x {(parseInt(sp?.price) * amountToBeReduce) / 100}
+            </p>
+          </div>
+        );
+      } else if (discountType === "Fixed") {
+        return (
+          <div className="flex justify-between items-center text-base font-normal text-green-600">
+            <div className="flex items-center gap-1">
+              <MdDiscount />
+              <span className="font-semibold">{discountCode}:</span>
+            </div>
+            <p>
+              € {parseInt(sp?.quantity)} x {amountToBeReduce}
+            </p>
+          </div>
+        );
+      } else {
+        // return <p>€ {price * quantity}</p>;
+      }
+    } else {
+      // return <p>€ {price * quantity}</p>;
+    }
+  } else if (discountOn === "category") {
+    if (discountOnValue.includes(sp?.category?.toLowerCase())) {
+      if (discountType === "Percentage") {
+        return (
+          <div className="flex justify-between items-center text-base font-normal text-green-600">
+            <div className="flex items-center gap-1">
+              <MdDiscount />
+              <span className="font-semibold">{discountCode}:</span>
+            </div>
+            <p>
+              € {parseInt(sp?.quantity)} x {(parseInt(sp?.price) * amountToBeReduce) / 100}
+            </p>
+          </div>
+        );
+      } else if (discountType === "Fixed") {
+        return (
+          <div className="flex justify-between items-center text-base font-normal text-green-600">
+            <div className="flex items-center gap-1">
+              <MdDiscount />
+              <span className="font-semibold">{discountCode}:</span>
+            </div>
+            <p>
+              € {parseInt(sp?.quantity)} x {amountToBeReduce}
+            </p>
+          </div>
+        );
+      } else {
+        // return <p>€ {price * quantity}</p>;
+      }
+    } else {
+      // return <p>€ {price * quantity}</p>;
+    }
+  } else {
+    // return <p>€ {price * quantity}</p>;
   }
-  // {actionOfDis == "Percentage" && discountType == "products" && discountTypeValue.includes(sp?.id) && (
-  //   <div className="flex justify-between items-center text-base font-normal text-green-600">
-  //     <div className="flex items-center gap-1">
-  //       <MdDiscount />
-  //       <span className="font-semibold">{discountCode}:</span>
-  //     </div>
-  //     <p className="flex justify-end items-center gap-1">
-  //       - <MdOutlineEuroSymbol />
-  //       <span>
-  //         {parseInt(sp?.quantity)} x {(parseInt(sp?.price) * amountToBeReduce) / 100}
-  //       </span>
-  //     </p>
-  //   </div>
-  // )}
-  //   </div>;
 };

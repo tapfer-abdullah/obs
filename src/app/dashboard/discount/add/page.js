@@ -73,7 +73,7 @@ const page = () => {
 
 
 
-    const [discountType, setDiscountType] = useState("");
+    const [discountOn, setDiscountOn] = useState("");
     const [title, setTitle] = useState("");
     const [selectedStatus, setSelectedStatus] = useState({ value: "Deactive", label: "Deactive" });
 
@@ -145,7 +145,7 @@ const page = () => {
     const handleSave = () => {
         //common data form all discount code
         let commonData = {
-            discountCodeType: discountType,
+            discountCodeType: discountOn,
             title: title, status: selectedStatus,
             minPurRequirement: { option: minPhrReqOption, value: minPhrReqValue },
             eligibility: { option: eligibilityOption, value: eligibilityValue?.value || "" },
@@ -182,7 +182,7 @@ const page = () => {
 
         let discountCodeData = {};
 
-        switch (discountType) {
+        switch (discountOn) {
             case "BxGy": {
                 discountCodeData = {
                     ...commonData, additionalData: {
@@ -307,7 +307,7 @@ const page = () => {
                             <h3 className='text-lg font-semibold'>Select Discount Code Type</h3>
                             {/* <div className='w-full border-b-2 border-black'></div> */}
                             <RadioGroup
-                                onChange={(e) => setDiscountType(e.target.value)}
+                                onChange={(e) => setDiscountOn(e.target.value)}
                                 row
                                 aria-labelledby="demo-row-radio-buttons-group-label"
                                 name="row-radio-buttons-group"
@@ -321,7 +321,7 @@ const page = () => {
                     </div>
 
                     {
-                        discountType && <div className="mt-5 space-y-5 w-4/5 mx-auto">
+                        discountOn && <div className="mt-5 space-y-5 w-4/5 mx-auto">
                             {/* Title & status */}
                             <div className="bg-white p-5 rounded-xl border border-[#d5ddda] shadow-md flex items-center gap-2">
                                 <div className="w-full space-y-1 md:max-w-full lg:max-w-md">
@@ -349,7 +349,7 @@ const page = () => {
                             </div>
 
                             {//no:1 Buy x Get y
-                                discountType == "BxGy" && <div className='bg-white p-5 rounded-xl border border-[#d5ddda] shadow-md'>
+                                discountOn == "BxGy" && <div className='bg-white p-5 rounded-xl border border-[#d5ddda] shadow-md'>
                                     <h3 className='text-md font-semibold'>Customers {BxGyType}</h3>
                                     <RadioGroup value={BxGyType}
                                         onChange={(e) => { setBxGyType(e.target.value); setMinPhrReqValue(0) }}
@@ -493,7 +493,7 @@ const page = () => {
                             }
 
                             { //no:2 & 3 amount off on product/order
-                                (discountType == "AOffP" || discountType == "AOffO") && <div className='bg-white p-5 rounded-xl border border-[#d5ddda] shadow-md'>
+                                (discountOn == "AOffP" || discountOn == "AOffO") && <div className='bg-white p-5 rounded-xl border border-[#d5ddda] shadow-md'>
                                     {/* common field */}
                                     <div className="flex items-center gap-2">
                                         <div className="w-full space-y-1 md:max-w-full lg:max-w-md">
@@ -526,7 +526,7 @@ const page = () => {
                                     </div>
                                     {/* field for order 2 */}
                                     {
-                                        discountType == "AOffP" && <div className='mt-3 space-y-2'>
+                                        discountOn == "AOffP" && <div className='mt-3 space-y-2'>
                                             <h3 className='text-md font-medium'>Applies to</h3>
                                             <Select
                                                 onChange={(selectedOptions) => { setSelectCatOrProd(selectedOptions); setSelectCatOrProdArray([]) }}
@@ -559,7 +559,7 @@ const page = () => {
                             }
 
                             { //no:4 | Free shipping
-                                discountType == "FS" && <div className='bg-white p-5 rounded-xl border border-[#d5ddda] shadow-md'>
+                                discountOn == "FS" && <div className='bg-white p-5 rounded-xl border border-[#d5ddda] shadow-md'>
                                     <h3 className='text-md font-semibold'>Countries</h3>
                                     <RadioGroup value={freeShipping}
                                         onChange={(e) => { setFreeShipping(e.target.value) }}

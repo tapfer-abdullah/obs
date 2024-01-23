@@ -33,6 +33,9 @@ const IDWiseDetails = ({ singleProduct, selectedSKU, imgIndex, setImgIndex, hand
     };
 
     let storedData = JSON.parse(localStorage.getItem("obs-cart")) || [];
+    let storedDataXY = JSON.parse(localStorage.getItem("obs-cart-xy")) || [];
+    const newDataXY = [...storedDataXY, data];
+    localStorage.setItem("obs-cart-xy", [JSON.stringify(newDataXY)]);
 
     if (storedData.length > 0) {
       let newData = [];

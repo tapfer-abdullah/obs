@@ -37,7 +37,8 @@ const CheckoutPersonalInfo = ({ setTips, subTotal, selectedCountry, setSelectedC
   // };
 
   return (
-    <form className="px-8 overflow-y-scroll max-h-[85vh] no-scrollbar">
+    // <form className="px-8 overflow-y-scroll max-h-[100vh] no-scrollbar">
+    <form className="px-8 ">
       <div className="space-y-2">
         <div className="flex justify-between items-center my-2">
           <h4 className="text-xl font-semibold">Contact</h4>

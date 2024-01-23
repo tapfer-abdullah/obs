@@ -10,10 +10,28 @@ const OrderState = ({ children }) => {
   const [cartData, setCartData] = useState([]);
   const [category, setCategory] = useState([]);
   const [allCountryData, setAllCountryData] = useState([]);
+  const [dataForBxGy, setDataForBxGy] = useState([]);
 
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("obs-cart"));
+    let storedDataXY = JSON.parse(localStorage.getItem("obs-cart-xy")) || [];
     setCartData(cart);
+    setDataForBxGy(storedDataXY);
+
+    // let dataArray = [];
+    // cartData?.forEach((sp) => {
+    //   console.log(sp?.quantity);
+    //   if (sp?.quantity > 1) {
+    //     for (let i = 0; i < sp?.quantity; i++) {
+    //       let obj = sp;
+    //       obj.quantity = 1;
+    //       dataArray.push(obj);
+    //     }
+    //   } else {
+    //     dataArray.push(sp);
+    //   }
+    // });
+    // setDataForBxGy(dataArray);
   }, [changeCartData]);
 
   useEffect(() => {
@@ -42,7 +60,7 @@ const OrderState = ({ children }) => {
     });
   }, []);
 
-  const info = { cartData, setCartData, changeCartData, setChangeCartData, category, allCountryData };
+  const info = { cartData, dataForBxGy, setCartData, changeCartData, setChangeCartData, category, allCountryData };
   return <OrderStateProvider.Provider value={info}>{children}</OrderStateProvider.Provider>;
 };
 
