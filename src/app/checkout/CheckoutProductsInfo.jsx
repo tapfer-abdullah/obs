@@ -25,9 +25,15 @@ const CheckoutProductsInfo = ({
   BuyOnValue,
   BxGyType,
   BxGyCartArray,
+  discountInput,
+  setDiscountInput,
+  isLoading,
+  setLoading,
+  shipping,
+  shippingAmount,
+  shippingReqAmount,
 }) => {
   const { cartData } = useContext(OrderStateProvider);
-  const [discountInput, setDiscountInput] = useState("");
 
   useEffect(() => {
     let sum = 0;
@@ -42,28 +48,28 @@ const CheckoutProductsInfo = ({
 
   return (
     <div className="bg-[#f5f5f5] -mt-5 p-10 border-l-2">
-      {cartData
-        ?.sort((a, b) => b.price - a.price)
-        ?.map((sp, index) => (
-          <div key={index}>
-            <CheckoutPageCart
-              disAdditionalType={disAdditionalType}
-              minusAmount={minusAmount}
-              setMinusAmount={setMinusAmount}
-              sp={sp}
-              discountOn={discountOn}
-              discountOnValue={discountOnValue}
-              amountToBeReduce={amountToBeReduce}
-              discountType={discountType}
-              discountCode={discountCode}
-              BuyOnOption={BuyOnOption}
-              BuyOnValue={BuyOnValue}
-              BxGyType={BxGyType}
-            ></CheckoutPageCart>
-
-            <div className={`border-b-2 my-1 ${cartData?.length - 1 == index ? "hidden" : "block"}`}></div>
-          </div>
-        ))}
+      {disAdditionalType !== "BxGy" &&
+        cartData
+          ?.sort((a, b) => b.price - a.price)
+          ?.map((sp, index) => (
+            <div key={index}>
+              <CheckoutPageCart
+                disAdditionalType={disAdditionalType}
+                minusAmount={minusAmount}
+                setMinusAmount={setMinusAmount}
+                sp={sp}
+                discountOn={discountOn}
+                discountOnValue={discountOnValue}
+                amountToBeReduce={amountToBeReduce}
+                discountType={discountType}
+                discountCode={discountCode}
+                BuyOnOption={BuyOnOption}
+                BuyOnValue={BuyOnValue}
+                BxGyType={BxGyType}
+              ></CheckoutPageCart>
+              <div className={`border-b-2 my-1 ${cartData?.length - 1 == index ? "hidden" : "block"}`}></div>
+            </div>
+          ))}
 
       {disAdditionalType == "BxGy" &&
         BxGyCartArray?.map((sp, index) => (
@@ -79,9 +85,10 @@ const CheckoutProductsInfo = ({
 
       <div className="relative mt-7">
         <input
-          onBlur={(e) => {
+          onChange={(e) => {
             setDiscountInput(e.target.value);
           }}
+          value={discountInput}
           type="text"
           name="discount-code"
           id=""
@@ -93,14 +100,15 @@ const CheckoutProductsInfo = ({
             setMinusAmount(0);
             handleDiscountCode(discountInput);
           }}
-          className="absolute top-0 right-0 bg-[#d0d0d0] hover:bg-opacity-90 transition-all duration-300 text-black font-semibold p-2 border-2 border-[#d0d0d0]"
+          className={`absolute top-0 right-0 bg-[#d0d0d0] hover:bg-opacity-90 transition-all duration-300 text-black font-semibold p-2 border-2 border-[#d0d0d0]`}
         >
-          Apply
+          {isLoading ? "Apply.." : "Apply"}
         </button>
         {disError && <p className="text-red-600 text-sm py-1">{disError}</p>}
+        {shipping == "not-free" && shippingReqAmount > subTotal && <p className="text-red-600 text-sm py-1">Free shipping over €{shippingReqAmount}</p>}
       </div>
 
-      <div className="space-y-2 mt-5">
+      <div className="space-y-2 mt-3">
         <div className="flex justify-between items-center text-base font-normal">
           <span>SUBTOTAL:</span>
           <p className="flex justify-end items-center gap-1">
@@ -108,10 +116,20 @@ const CheckoutProductsInfo = ({
             <span>{subTotal}</span>
           </p>
         </div>
-        <div className="flex justify-between items-center text-base font-normal">
-          <span>Shipping:</span>
-          <p>Free</p>
-        </div>
+        {disAdditionalType != "FS" && shipping == "free" ? (
+          <div className="flex justify-between items-center text-base font-normal">
+            <span>Shipping:</span>
+            <p>Free</p>
+          </div>
+        ) : (
+          <div className="flex justify-between items-center text-base font-normal">
+            <span>Shipping:</span>
+            <div className="flex justify-end items-center gap-1">
+              <MdOutlineEuroSymbol />
+              <p>{shippingAmount}</p>
+            </div>
+          </div>
+        )}
         {tip > 0 && (
           <div className="flex justify-between items-center text-base font-normal">
             <span>Tip:</span>
@@ -138,9 +156,9 @@ const CheckoutProductsInfo = ({
           <span>Total:</span>
           <p className="flex justify-end items-center gap-1">
             <MdOutlineEuroSymbol />
-            {disAdditionalType != "AOffO" && <span>{subTotal + tip - minusAmount}</span>}
+            {disAdditionalType != "AOffO" && <span>{subTotal + shippingAmount + tip - minusAmount}</span>}
             {disAdditionalType == "AOffO" &&
-              (discountType == "Fixed" ? <span>{subTotal + tip - amountToBeReduce}</span> : <span>{subTotal + tip - (subTotal * parseInt(amountToBeReduce)) / 100}</span>)}
+              (discountType == "Fixed" ? <span>{subTotal + shippingAmount + tip - amountToBeReduce}</span> : <span>{subTotal + tip - (subTotal * parseInt(amountToBeReduce)) / 100}</span>)}
           </p>
         </div>
       </div>

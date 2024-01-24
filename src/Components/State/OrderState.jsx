@@ -11,27 +11,13 @@ const OrderState = ({ children }) => {
   const [category, setCategory] = useState([]);
   const [allCountryData, setAllCountryData] = useState([]);
   const [dataForBxGy, setDataForBxGy] = useState([]);
+  const [promoCode, setPromoCode] = useState("");
 
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("obs-cart"));
     let storedDataXY = JSON.parse(localStorage.getItem("obs-cart-xy")) || [];
     setCartData(cart);
     setDataForBxGy(storedDataXY);
-
-    // let dataArray = [];
-    // cartData?.forEach((sp) => {
-    //   console.log(sp?.quantity);
-    //   if (sp?.quantity > 1) {
-    //     for (let i = 0; i < sp?.quantity; i++) {
-    //       let obj = sp;
-    //       obj.quantity = 1;
-    //       dataArray.push(obj);
-    //     }
-    //   } else {
-    //     dataArray.push(sp);
-    //   }
-    // });
-    // setDataForBxGy(dataArray);
   }, [changeCartData]);
 
   useEffect(() => {
@@ -52,7 +38,7 @@ const OrderState = ({ children }) => {
 
       for (let i = 0; i < res.data.length; i++) {
         if (!countryData.includes({ value: res.data?.[i]?.cca2 })) {
-          let data = { label: res.data?.[i]?.name?.common, imageUrl: res.data?.[i]?.flags?.png, value: res.data?.[i]?.cca2 };
+          let data = { id: `AK-${i}`, label: res.data?.[i]?.name?.common, imageUrl: res.data?.[i]?.flags?.png, value: res.data?.[i]?.cca2 };
           countryData.push(data);
         }
       }
@@ -60,7 +46,7 @@ const OrderState = ({ children }) => {
     });
   }, []);
 
-  const info = { cartData, dataForBxGy, setCartData, changeCartData, setChangeCartData, category, allCountryData };
+  const info = { promoCode, setPromoCode, cartData, dataForBxGy, setCartData, changeCartData, setChangeCartData, category, allCountryData };
   return <OrderStateProvider.Provider value={info}>{children}</OrderStateProvider.Provider>;
 };
 

@@ -43,7 +43,9 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
     }
   }, [BxGyType, BuyOnOption, BuyOnValue, discountCode, discountType, discountOn, discountOnValue, sp?.id, sp?.category?.toLowerCase(), price, amountToBeReduce, quantity]);
 
-  if (disAdditionalType === "AOffP") {
+  if (disAdditionalType === "BxGy") {
+    return <p className="hidden"></p>;
+  } else if (disAdditionalType === "AOffP") {
     if (discountOn === "products") {
       if (discountOnValue.includes(sp?.id)) {
         if (discountType === "Percentage") {
@@ -67,17 +69,14 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
                       <span className="font-semibold">{discountCode}:</span>
                     </div>
                     <p className="flex items-center gap-1">
-                      <FiMinus />{" "}
-                      <span>
-                        €{parseInt(sp?.quantity)}x{(parseInt(sp?.price) * amountToBeReduce) / 100}
-                      </span>
+                      (- €{parseInt(sp?.quantity)}x{(parseInt(sp?.price) * amountToBeReduce) / 100})
                     </p>
                   </div>
                 </div>
               </div>
               <div className="pr-2">
                 <p className="line-through text-lg text-red-700 font-semibold">€ {price * quantity}</p>
-                <p>€ {(price - (price * amountToBeReduce) / 100) * quantity}</p>
+                <p className="text-right">€{(price - (price * amountToBeReduce) / 100) * quantity}</p>
               </div>
             </div>
           );
@@ -102,10 +101,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
                       <span className="font-semibold">{discountCode}:</span>
                     </div>
                     <p className="flex items-center gap-1">
-                      <FiMinus />{" "}
-                      <span>
-                        €{parseInt(sp?.quantity)}x{amountToBeReduce}
-                      </span>
+                      (- €{parseInt(sp?.quantity)}x{amountToBeReduce})
                     </p>
                   </div>
                 </div>
@@ -113,7 +109,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
               <div className="flex justify-end items-center gap-1 pr-2">
                 <div className="">
                   <p className="line-through text-lg text-red-700 font-semibold">€ {price * quantity}</p>
-                  <p>€ {(price - amountToBeReduce) * quantity}</p>
+                  <p className="text-right">€{(price - amountToBeReduce) * quantity}</p>
                 </div>
               </div>
             </div>
@@ -134,7 +130,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
                 </div>
               </div>
               <div className="flex justify-end items-center gap-1 pr-2">
-                <p>€ {price * quantity}</p>
+                <p className="text-right">€{price * quantity}</p>
               </div>
             </div>
           );
@@ -155,7 +151,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
               </div>
             </div>
             <div className="flex justify-end items-center gap-1 pr-2">
-              <p>€ {price * quantity}</p>
+              <p className="text-right">€{price * quantity}</p>
             </div>
           </div>
         );
@@ -183,10 +179,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
                       <span className="font-semibold">{discountCode}:</span>
                     </div>
                     <p className="flex items-center gap-1">
-                      <FiMinus />{" "}
-                      <span>
-                        €{parseInt(sp?.quantity)}x{(parseInt(sp?.price) * amountToBeReduce) / 100}
-                      </span>
+                      (- €{parseInt(sp?.quantity)}x{(parseInt(sp?.price) * amountToBeReduce) / 100})
                     </p>
                   </div>
                 </div>
@@ -194,7 +187,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
               <div className="flex justify-end items-center gap-1 pr-2">
                 <div className="">
                   <p className="line-through text-lg text-red-700 font-semibold">€ {price * quantity}</p>
-                  <p>€ {(price - (price * amountToBeReduce) / 100) * quantity}</p>
+                  <p className="text-right">€{(price - (price * amountToBeReduce) / 100) * quantity}</p>
                 </div>
               </div>
             </div>
@@ -220,10 +213,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
                       <span className="font-semibold">{discountCode}:</span>
                     </div>
                     <p className="flex items-center gap-1">
-                      <FiMinus />{" "}
-                      <span>
-                        €{parseInt(sp?.quantity)}x{amountToBeReduce}
-                      </span>
+                      (- €{parseInt(sp?.quantity)}x{amountToBeReduce})
                     </p>
                   </div>
                 </div>
@@ -231,7 +221,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
               <div className="flex justify-end items-center gap-1 pr-2">
                 <div className="">
                   <p className="line-through text-lg text-red-700 font-semibold">€ {price * quantity}</p>
-                  <p>€ {(price - amountToBeReduce) * quantity}</p>
+                  <p className="text-right">€{(price - amountToBeReduce) * quantity}</p>
                 </div>
               </div>
             </div>
@@ -252,7 +242,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
                 </div>
               </div>
               <div className="flex justify-end items-center gap-1 pr-2">
-                <p>€ {price * quantity}</p>
+                <p className="text-right">€{price * quantity}</p>
               </div>
             </div>
           );
@@ -273,7 +263,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
               </div>
             </div>
             <div className="flex justify-end items-center gap-1 pr-2">
-              <p>€ {price * quantity}</p>
+              <p className="text-right">€{price * quantity}</p>
             </div>
           </div>
         );
@@ -294,7 +284,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
             </div>
           </div>
           <div className="flex justify-end items-center gap-1 pr-2">
-            <p>€ {price * quantity}</p>
+            <p className="text-right">€{price * quantity}</p>
           </div>
         </div>
       );
@@ -315,7 +305,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
             </p>
           </div>
         </div>
-        <p className="">€ {price * quantity}</p>
+        <p className="text-right">€{price * quantity}</p>
       </div>
     );
   }

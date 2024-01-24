@@ -7,10 +7,13 @@ import { RxCross2 } from "react-icons/rx";
 const SingleCartProduct = ({ index, data, handleQuantity, handleDelete, setAction }) => {
   const [selectedItems, setSelectedItems] = useState(data?.quantity || 1);
   return (
-    <div className="relative flex justify-between items-center space-x-4 my-3 shadow-md">
+    <div className="relative flex justify-between items-center space-x-4 my-3">
       <img src={data?.img} alt="product img" className="w-20 h-24" />
-      <div className="flex flex-col gap-2 items-start flex-grow">
+      <div className="flex flex-col gap-1 items-start flex-grow">
         <h4 className="text-md">{data?.name}</h4>
+        <p className="text-sm text-gray-500 capitalize">
+          {data?.color} / {data?.size}
+        </p>
         <div className="flex justify-between items-center space-x-3 pb-1">
           <div className="text-xl font-bold">
             <button
@@ -21,18 +24,18 @@ const SingleCartProduct = ({ index, data, handleQuantity, handleDelete, setActio
                   setAction(-1);
                 }
               }}
-              className="py-1 px-2 bg-slate-300 mx-[1px]"
+              className="py-[2px] px-2 bg-slate-300 mx-[1px]"
             >
               -
             </button>
-            <button className="py-1 px-2 bg-slate-300 mx-[1px]">{selectedItems}</button>
+            <button className="py-[2px] px-2 bg-slate-300 mx-[1px]">{data?.quantity}</button>
             <button
               onClick={() => {
                 handleQuantity(data?.id, data?.size, data?.img, selectedItems + 1, index);
                 setSelectedItems(selectedItems + 1);
                 setAction(1);
               }}
-              className="py-1 px-2 bg-slate-300 mx-[1px]"
+              className="py-[2px] px-2 bg-slate-300 mx-[1px]"
             >
               +
             </button>

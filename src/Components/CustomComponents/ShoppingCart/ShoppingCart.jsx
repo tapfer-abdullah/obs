@@ -8,9 +8,8 @@ import { RxCross2 } from "react-icons/rx";
 import SingleCartProduct from "./SingleCartProduct";
 
 const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
-  const { cartData, changeCartData, setChangeCartData } = useContext(OrderStateProvider);
+  const { cartData, changeCartData, setChangeCartData, promoCode, setPromoCode } = useContext(OrderStateProvider);
 
-  const [disError, setDisError] = useState("");
   const [subTotal, setSubtotal] = useState(0);
   const [action, setAction] = useState(0);
 
@@ -82,45 +81,6 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
     setChangeCartData(changeCartData + 1);
   };
 
-  const handleDiscountCode = (event) => {
-    event.preventDefault();
-    const code = event.target.discountCode.value;
-
-    axiosHttp.patch(`/discount`, { title: code }).then((res) => {
-      const response = res.data;
-
-      if (response?.status) {
-        setDisError("");
-        const validCode = res.data?.data;
-        console.log(validCode);
-
-        const type = validCode?.discountCodeType;
-
-        switch (type) {
-          case "BxGy": {
-            console.log("type bxgy");
-            break;
-          }
-
-          case "AOffP": {
-            console.log("type AOffP");
-            break;
-          }
-          case "AOffO": {
-            console.log("type AOffO");
-            break;
-          }
-          case "FS": {
-            console.log("type FS");
-            break;
-          }
-        }
-      } else {
-        setDisError(response?.message);
-      }
-    });
-  };
-
   return (
     <div
       // onClick={() => {
@@ -128,7 +88,7 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
       // }}
       className={`fixed z-30 top-16 ${positionInfo?.right} w-screen h-screen bg-[#f5f5f5] bg-opacity-70 transition-all duration-500`}
     >
-      <div className={`absolute z-40 ${positionInfo?.right} w-[26%] h-full bg-white shadow-lg opacity-100 py-10 pr-5 pl-7 transition-all duration-500`}>
+      <div className={`absolute z-40 ${positionInfo?.right} w-[28%] h-full bg-white shadow-lg opacity-100 py-10 pr-5 pl-7 transition-all duration-500`}>
         <RxCross2
           onClick={() => {
             setPositionInfo({ right: "-right-[2000px]", customOpacity: 0 });
@@ -140,10 +100,19 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
         <div className="pt-12 relative h-full">
           {/* cart items  */}
           <div className="h-1/2 overflow-y-scroll">
+            {cartData?.length == 0 && (
+              <div className="flex flex-col items-center justify-center">
+                <img className="w-3/4" src="https://i.ibb.co/Nmm2QxV/empty-cart.png" alt="cart-empty" />
+                <p className="text-red-600">Cart is empty!</p>
+              </div>
+            )}
             {cartData
               ?.sort((a, b) => b.price - a.price)
               ?.map((sp, index) => (
-                <SingleCartProduct setAction={setAction} index={index} handleQuantity={handleQuantity} handleDelete={handleDelete} key={index} data={sp} />
+                <div key={index}>
+                  <SingleCartProduct setAction={setAction} index={index} handleQuantity={handleQuantity} handleDelete={handleDelete} data={sp} />
+                  <div className={`border-b-2 my-1 ${cartData?.length - 1 == index ? "hidden" : "block"}`}></div>
+                </div>
               ))}
           </div>
           <div className="absolute bottom-6 w-full space-y-4 bg-white">
@@ -156,19 +125,23 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
               </p>
             </div>
             <p className="text-base">USE DISCOUNT CODE HERE</p>
-            <form onSubmit={handleDiscountCode} className="relative">
-              <input type="text" name="discountCode" id="" placeholder="Discount code" className={`border-2 ${disError ? "border-red-600" : "border-black"} p-2 w-full`} />
-              <button type="submit" className="absolute top-0 right-0 bg-black hover:bg-opacity-90 transition-all duration-300 text-white p-2 border-2 border-black">
-                Apply
-              </button>
-              {disError && <p className="text-red-600 text-sm">{disError}</p>}
+            <form className="relative">
+              <input
+                onBlur={(e) => setPromoCode(e.target.value)}
+                // defaultValue={promoCode}
+                type="text"
+                name="discountCode"
+                id=""
+                placeholder="Discount code"
+                className={`border-2 border-black p-2 w-full`}
+              />
             </form>
             <Link
               onClick={() => {
                 setPositionInfo({ right: "-right-[2000px]", customOpacity: 0 });
               }}
               href={"/checkout"}
-              type="button"
+              type="submit"
               className="bg-black text-center text-white p-3 w-full font-semibold hover:bg-opacity-90 transition-all duration-300"
             >
               CHECK OUT

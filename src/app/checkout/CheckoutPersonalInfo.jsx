@@ -10,7 +10,7 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import React, { useContext, useEffect, useState } from "react";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 
-const CheckoutPersonalInfo = ({ setTips, subTotal, selectedCountry, setSelectedCountry, setEmail }) => {
+const CheckoutPersonalInfo = ({ setTips, subTotal, selectedCountry, setSelectedCountry, setEmail, email }) => {
   const { allCountryData } = useContext(OrderStateProvider);
   const [tip, setTip] = useState(0);
   const [tipValue, setTipValue] = useState(0);
@@ -48,17 +48,22 @@ const CheckoutPersonalInfo = ({ setTips, subTotal, selectedCountry, setSelectedC
           </div>
         </div>
 
-        <TextField
-          onBlur={(e) => {
-            setEmail(e.target.value);
-          }}
-          required
-          type="email"
-          name="email"
-          id="email"
-          className="rounded-md w-full border-2 h-auto"
-          label="Email"
-        />
+        <div className="relative">
+          <TextField
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+            required
+            type="email"
+            name="email"
+            id="email"
+            className="rounded-md w-full border-2 h-auto"
+            // label={!email && "Email"}
+            placeholder="Email"
+          />
+          {email && <p className="absolute -top-[10px] left-4 px-1 text-sm bg-white text-gray-500">Email *</p>}
+        </div>
         <div className="flex items-center gap-2">
           <input defaultChecked={true} type="checkbox" name="checkedEmail" id="checkedEmail" />
           <label htmlFor="checkedEmail">Email me with news and offers</label>
@@ -76,7 +81,7 @@ const CheckoutPersonalInfo = ({ setTips, subTotal, selectedCountry, setSelectedC
             onChange={handleCountryChange}
             renderInput={(params) => <TextField {...params} label="Country / Region" variant="outlined" />}
             renderOption={(props, option) => (
-              <MenuItem {...props}>
+              <MenuItem key={option?.id} {...props}>
                 <Avatar src={option.imageUrl} alt={option.label} />
                 <span style={{ marginLeft: "8px" }}>{option.label}</span>
               </MenuItem>

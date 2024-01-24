@@ -116,8 +116,8 @@ const page = () => {
                                             }
                                         </>}
 
-                                        {d?.discountCodeType == "AOffP" && <>{d?.additionalData?.AOffP?.DiscountedType?.value} {d?.additionalData?.AOffP?.DiscountedType?.option == "Fixed" ? "amount" : "%"} off ( specific {d?.additionalData?.AOffP?.ApplyTo?.option} )</>}
-                                        {d?.discountCodeType == "AOffO" && <>{d?.additionalData?.AOffO?.DiscountedType?.value} {d?.additionalData?.AOffO?.DiscountedType?.option == "Fixed" ? "amount" : "%"} off</>}
+                                        {d?.discountCodeType == "AOffP" && <>{d?.additionalData?.AOffP?.DiscountedType?.value} {d?.additionalData?.AOffP?.DiscountedType?.option == "Fixed" ? "amount" : "%"} off ( on specific {d?.additionalData?.AOffP?.ApplyTo?.option} )</>}
+                                        {d?.discountCodeType == "AOffO" && <>{d?.additionalData?.AOffO?.DiscountedType?.value} {d?.additionalData?.AOffO?.DiscountedType?.option == "Fixed" ? "amount" : "%"} off on order</>}
                                         {d?.discountCodeType == "FS" && <>Free shipping ( {d?.additionalData?.FS?.freeShipping?.option} country )</>}
                                     </td>
                                     <td className='capitalize'>{d?.eligibility?.value || "All"}</td>
