@@ -25,6 +25,8 @@ const page = () => {
     const [disAdditionalType, setDisAdditionalType] = useState("");
 
     // buy x get y 
+    const [BxGyCartArray, setBxGyCartArray] = useState([]);
+
     const [BuyOnOption, setBuyOnOption] = useState("");
     const [BuyOnValue, setBuyOnValue] = useState([]);
 
@@ -40,54 +42,6 @@ const page = () => {
 
     const [discountTypeValue, setDiscountTypeValue] = useState(0);
     const [cusShouldGet, setCusShouldGet] = useState(0);
-
-    useEffect(() => {
-        let reduce = 0;
-        let newArray = dataForBxGy?.sort((a, b) => a.price - b.price);
-
-        if (disAdditionalType === "BxGy") {
-            if (discountType === "free") {
-                if (approvedGetCount < cusShouldGet) {
-                    for (let i = 0; i < approvedGetCount && i < BxGyMaxUsesPerOrder; i++) {
-                        reduce += newArray[i]?.price;
-                    }
-                }
-                else {
-                    for (let i = 0; i < cusShouldGet && i < BxGyMaxUsesPerOrder; i++) {
-                        reduce += newArray[i]?.price;
-                    }
-                }
-            }
-            else if (discountType == "percentage") {
-                if (approvedGetCount < cusShouldGet) {
-                    for (let i = 0; i < approvedGetCount && i < BxGyMaxUsesPerOrder; i++) {
-                        reduce += (newArray[i]?.price * discountTypeValue) / 100;
-                    }
-                }
-                else {
-                    for (let i = 0; i < cusShouldGet && i < BxGyMaxUsesPerOrder; i++) {
-                        reduce += (newArray[i]?.price * discountTypeValue) / 100;
-                    }
-                }
-            }
-            else if (discountType == "amount") {
-                if (approvedGetCount < cusShouldGet) {
-                    for (let i = 0; i < approvedGetCount && i < BxGyMaxUsesPerOrder; i++) {
-                        reduce += (discountTypeValue);
-                    }
-                }
-                else {
-                    for (let i = 0; i < cusShouldGet && i < BxGyMaxUsesPerOrder; i++) {
-                        reduce += (discountTypeValue);
-                    }
-                }
-            }
-            setMinusAmount(reduce);
-        }
-
-    }, [discountCode, subTotal, cusShouldGet])
-
-    console.log("kkkkkkkkkkkkkkkk", { cusShouldGet })
 
     const handleDiscountCode = (code) => {
         if (!code) {
@@ -146,11 +100,14 @@ const page = () => {
                         setCusGetAmount(parseInt(data?.CusGetAmount));
                         setBxGyType(data?.BxGyType);
 
+                        let BxGyMaxUsesPerOrder2 = 0;
                         if (data?.MaxUser?.option) {
                             setBxGyMaxUsesPerOrder(parseInt(data?.MaxUser?.value))
+                            BxGyMaxUsesPerOrder2 = parseInt(data?.MaxUser?.value);
                         }
                         else {
                             setBxGyMaxUsesPerOrder(1000);
+                            BxGyMaxUsesPerOrder2 = parseInt(1000);
                         }
 
                         console.log(data?.MaxUser?.value)
@@ -179,11 +136,119 @@ const page = () => {
                             }
                         }
 
+
+                        // new work -----------------------------------------
+
+                        let approvedGetArray2 = [];
+                        let approvedBuyCount2 = 0;
+
+                        dataForBxGy?.sort((a, b) => a.price - b.price)?.map(sp => {
+                            if (data?.Get?.option === "products") {
+                                if (selectedArrayGet.includes(sp?.id)) {
+                                    setApprovedGetArray((p) => [...p, sp?.id]);
+                                    approvedGetArray2.push(sp?.id);
+                                }
+                            } else if (data?.Get?.option === "category") {
+                                if (selectedArrayGet.includes(sp?.category?.toLowerCase())) {
+                                    setApprovedGetArray((p) => [...p, sp?.id]);
+                                    approvedGetArray2.push(sp?.id);
+                                }
+                            }
+
+                            //buy
+                            if (data?.Buy?.option === "products") {
+                                if (selectedArrayBuy.includes(sp?.id)) {
+                                    setApprovedBuyCount((p) => p + sp?.quantity);
+                                    approvedBuyCount2 += sp?.quantity;
+                                }
+                            } else if (data?.Buy?.option === "category") {
+                                if (selectedArrayBuy.includes(sp?.category?.toLowerCase())) {
+                                    setApprovedBuyCount((p) => p + sp?.quantity);
+                                    approvedBuyCount2 += sp?.quantity;
+                                }
+                            }
+                        })
+
+
+                        let cusShouldGet = 0;
+                        const Br = parseInt(data?.CusBuyAmount);
+                        const Gr = parseInt(data?.CusGetAmount);
+
+                        if (Br >= Gr) {
+                            let s = Math.floor((approvedBuyCount2) / (Br + Gr));
+                            cusShouldGet = s;
+                        }
+                        else {
+                            let s = Math.ceil((approvedBuyCount2) / (Br + Gr));
+                            cusShouldGet = approvedBuyCount2 - s;
+                        }
+
+
+                        let reduce = 0;
+                        let updatedBxByArray = [];
+                        if (data?.DiscountedType.option === "free") {
+                            for (let i = 0, j = 0; i < dataForBxGy.length; i++) {
+                                if (approvedGetArray2?.includes(dataForBxGy?.[i]?.id) && j < cusShouldGet && j < BxGyMaxUsesPerOrder2) {
+                                    j++;
+                                    reduce += dataForBxGy[i]?.price;
+                                    let arrayObj = { ...dataForBxGy[i] };
+                                    arrayObj.discountCode = code;
+                                    arrayObj.reducedAmount = dataForBxGy[i]?.price;
+                                    updatedBxByArray.push(arrayObj);
+                                }
+                                else {
+                                    let arrayObj = { ...dataForBxGy[i] };
+                                    updatedBxByArray.push(arrayObj);
+                                }
+                            }
+                        }
+                        else if (data?.DiscountedType.option == "percentage") {
+                            for (let i = 0, j = 0; i < dataForBxGy.length; i++) {
+                                if (approvedGetArray2?.includes(dataForBxGy?.[i]?.id) && j < cusShouldGet && j < BxGyMaxUsesPerOrder2) {
+                                    j++;
+                                    reduce += (dataForBxGy[i]?.price * parseInt(data?.DiscountedType.value)) / 100;
+                                    let arrayObj = { ...dataForBxGy[i] };
+                                    arrayObj.discountCode = code;
+                                    arrayObj.reducedAmount = (dataForBxGy[i]?.price * parseInt(data?.DiscountedType.value)) / 100;
+                                    updatedBxByArray.push(arrayObj);
+                                }
+                                else {
+                                    let arrayObj = { ...dataForBxGy[i] };
+                                    updatedBxByArray.push(arrayObj);
+                                }
+                            }
+                        }
+                        else if (data?.DiscountedType.option == "amount") {
+                            for (let i = 0, j = 0; i < dataForBxGy.length; i++) {
+                                if (approvedGetArray2?.includes(dataForBxGy?.[i]?.id) && j < cusShouldGet && j < BxGyMaxUsesPerOrder2) {
+                                    j++;
+                                    reduce += (parseInt(data?.DiscountedType.value));
+                                    let arrayObj = { ...dataForBxGy[i] };
+                                    arrayObj.discountCode = code;
+                                    arrayObj.reducedAmount = parseInt(data?.DiscountedType.value);
+                                    updatedBxByArray.push(arrayObj);
+                                }
+                                else {
+                                    let arrayObj = { ...dataForBxGy[i] };
+                                    updatedBxByArray.push(arrayObj);
+                                }
+                            }
+                        }
+
+                        setMinusAmount(reduce);
+                        setBxGyCartArray(updatedBxByArray);
+                        console.log({ updatedBxByArray, reduce })
+
+
+                        // new work -----------------------------------------
+
+
                         setDiscountCode(code);
                         setDiscountOnValue(selectedArrayGet);
                         setBuyOnValue(selectedArrayBuy);
                         break;
                     }
+
 
                     case "AOffP": {
                         const data = validCode?.additionalData?.AOffP;
@@ -266,14 +331,12 @@ const page = () => {
                     disAdditionalType={disAdditionalType}
 
                     BuyOnOption={BuyOnOption} BuyOnValue={BuyOnValue}
-                    CusBuyAmount={CusBuyAmount} CusGetAmount={CusGetAmount} BxGyType={BxGyType}
 
-                    approvedBuyCount={approvedBuyCount} setApprovedBuyCount={setApprovedBuyCount}
-                    approvedGetCount={approvedGetCount} setApprovedGetCount={setApprovedGetCount}
-                    approvedGetArray={approvedGetArray} setApprovedGetArray={setApprovedGetArray}
                     setCusShouldGet={setCusShouldGet}
                     discountTypeValue={discountTypeValue}
                     BxGyMaxUsesPerOrder={BxGyMaxUsesPerOrder}
+
+                    BxGyCartArray={BxGyCartArray}
                 />
             </div>
             <div className="bg-[#f5f5f5] -mt-5"></div>

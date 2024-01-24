@@ -3,58 +3,12 @@ import React, { useEffect } from "react";
 import { FiMinus } from "react-icons/fi";
 import { MdDiscount } from "react-icons/md";
 
-const CheckoutPageCart = ({
-  BuyOnOption,
-  BuyOnValue,
-  CusBuyAmount,
-  CusGetAmount,
-  BxGyType,
-  disAdditionalType,
-  discountCode,
-  cardSize,
-  setMinusAmount,
-  sp,
-  discountOn,
-  discountOnValue,
-  amountToBeReduce,
-  discountType,
-  setApprovedBuyCount,
-  setApprovedGetCount,
-  setApprovedGetArray,
-}) => {
+const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType, discountCode, setMinusAmount, sp, discountOn, discountOnValue, amountToBeReduce, discountType }) => {
   const price = parseInt(sp?.price);
   const quantity = parseInt(sp?.quantity);
-  // console.log(disAdditionalType);
 
   useEffect(() => {
     switch (disAdditionalType) {
-      case "BxGy": {
-        // Free
-        if (discountOn === "products") {
-          if (discountOnValue.includes(sp?.id)) {
-            setApprovedGetCount((p) => p + sp?.quantity);
-            setApprovedGetArray((p) => [...p, sp?.id]);
-          }
-        } else if (discountOn === "category") {
-          if (discountOnValue.includes(sp?.category?.toLowerCase())) {
-            setApprovedGetCount((p) => p + sp?.quantity);
-            setApprovedGetArray((p) => [...p, sp?.id]);
-          }
-        }
-
-        //buy
-        if (BuyOnOption === "products") {
-          if (BuyOnValue.includes(sp?.id)) {
-            setApprovedBuyCount((p) => p + sp?.quantity);
-          }
-        } else if (BuyOnOption === "category") {
-          if (BuyOnValue.includes(sp?.category?.toLowerCase())) {
-            setApprovedBuyCount((p) => p + sp?.quantity);
-          }
-        }
-
-        break;
-      }
       //AOffO -> amount off on product or category
       case "AOffP": {
         if (discountOn === "products") {
@@ -89,27 +43,7 @@ const CheckoutPageCart = ({
     }
   }, [BxGyType, BuyOnOption, BuyOnValue, discountCode, discountType, discountOn, discountOnValue, sp?.id, sp?.category?.toLowerCase(), price, amountToBeReduce, quantity]);
 
-  if (disAdditionalType === "BxGy") {
-    return (
-      <></>
-      // <div className={`relative flex justify-between items-center space-x-4 my-4`}>
-      //   <div className="flex justify-start items-center gap-2">
-      //     <div className="relative">
-      //       <img src={sp?.img} alt="product img" className="w-16 h-16 rounded-md" />
-      //       <p className="absolute -top-3 -right-2 text-white text-sm bg-gray-500 rounded-full px-[8px] py-[2px]">{sp?.quantity}</p>
-      //     </div>
-
-      //     <div>
-      //       <h4 className="text-md">{sp?.name}</h4>
-      //       <p className="text-sm text-gray-500 py-1 capitalize">
-      //         {sp?.color} / {sp?.size}
-      //       </p>
-      //     </div>
-      //   </div>
-      //   <p className="">€ {price * quantity}</p>
-      // </div>
-    );
-  } else if (disAdditionalType === "AOffP") {
+  if (disAdditionalType === "AOffP") {
     if (discountOn === "products") {
       if (discountOnValue.includes(sp?.id)) {
         if (discountType === "Percentage") {
