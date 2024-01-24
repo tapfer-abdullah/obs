@@ -12,6 +12,7 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
 
   const [disError, setDisError] = useState("");
   const [subTotal, setSubtotal] = useState(0);
+  const [action, setAction] = useState(0);
 
   useEffect(() => {
     let sum = 0;
@@ -21,7 +22,7 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
     setSubtotal(sum);
   }, [cartData]);
 
-  const handleQuantity = (id, size, img, quantity) => {
+  const handleQuantity = (id, size, img, quantity, index) => {
     let sum = 0;
     let newData = [];
     let storedData = JSON.parse(localStorage.getItem("obs-cart")) || [];
@@ -41,9 +42,24 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
     setSubtotal(sum);
   };
 
+  useEffect(() => {
+    let storedData = JSON.parse(localStorage.getItem("obs-cart")) || [];
+    let newArray = [];
+
+    for (let item of storedData) {
+      let newItem = { ...item };
+      for (let i = 1; i <= item?.quantity; i++) {
+        newItem.quantity = 1;
+        newArray.push(newItem);
+      }
+    }
+    localStorage.setItem("obs-cart-xy", [JSON.stringify(newArray)]);
+  }, [changeCartData]);
+
   const handleDelete = (id, size, img) => {
     let newData = [];
     let storedData = JSON.parse(localStorage.getItem("obs-cart")) || [];
+    let storedDataXY = JSON.parse(localStorage.getItem("obs-cart-xy")) || [];
 
     for (let i = 0; i < storedData.length; i++) {
       if (storedData?.[i]?.id == id && storedData?.[i]?.size == size && storedData?.[i]?.img == img) {
@@ -52,6 +68,16 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
         newData.push(storedData[i]);
       }
     }
+
+    let newArray = [];
+    for (let item of storedDataXY) {
+      if (item?.id == id && item?.size == size && item?.img == img) {
+      } else {
+        newArray.push(item);
+      }
+    }
+
+    localStorage.setItem("obs-cart-xy", [JSON.stringify(newArray)]);
     localStorage.setItem("obs-cart", [JSON.stringify(newData)]);
     setChangeCartData(changeCartData + 1);
   };
@@ -114,9 +140,11 @@ const ShoppingCart = ({ positionInfo, setPositionInfo }) => {
         <div className="pt-12 relative h-full">
           {/* cart items  */}
           <div className="h-1/2 overflow-y-scroll">
-            {cartData?.map((sp, index) => (
-              <SingleCartProduct handleQuantity={handleQuantity} handleDelete={handleDelete} key={index} data={sp} />
-            ))}
+            {cartData
+              ?.sort((a, b) => b.price - a.price)
+              ?.map((sp, index) => (
+                <SingleCartProduct setAction={setAction} index={index} handleQuantity={handleQuantity} handleDelete={handleDelete} key={index} data={sp} />
+              ))}
           </div>
           <div className="absolute bottom-6 w-full space-y-4 bg-white">
             <div className="border-b-2"></div>

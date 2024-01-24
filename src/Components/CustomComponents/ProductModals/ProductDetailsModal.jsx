@@ -60,7 +60,7 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
     const data = {
       id: id,
       name: singleProduct?.title,
-      category: singleProduct?.category?.[0]?.value,
+      category: singleProduct?.category?.[0]?.value.toLowerCase(),
       price: price,
       color: selectedColor,
       size: selectedSize,
@@ -81,7 +81,7 @@ const ProductDetailsModal = ({ singleProduct, handleClose }) => {
           newData.push({
             id: id,
             name: singleProduct?.title,
-            category: singleProduct?.category?.[0]?.value,
+            category: singleProduct?.category?.[0]?.value.toLowerCase(),
             price: price,
             color: selectedColor,
             size: selectedSize,

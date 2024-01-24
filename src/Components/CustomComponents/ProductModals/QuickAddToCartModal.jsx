@@ -28,10 +28,23 @@ const QuickAddToCartModal = ({ singleProduct, QuickShop, SetQuickShop }) => {
   const handleAddToCart = (id) => {
     let sku = singleProduct?.colors?.[imgIndex]?.allSKU?.[0]?.sku;
     let img = singleProduct?.colors?.[imgIndex]?.imageUrl;
-    const data = { id: id, name: singleProduct?.title, category: singleProduct?.category?.[0]?.value, price: price, color: selectedColor, size: selectedSize, quantity: 1, sku: sku, img: img };
+    const data = {
+      id: id,
+      name: singleProduct?.title,
+      category: singleProduct?.category?.[0]?.value?.toLowerCase(),
+      price: price,
+      color: selectedColor,
+      size: selectedSize,
+      quantity: 1,
+      sku: sku,
+      img: img,
+    };
     // console.log(data, singleProduct);
 
     let storedData = JSON.parse(localStorage.getItem("obs-cart")) || [];
+    let storedDataXY = JSON.parse(localStorage.getItem("obs-cart-xy")) || [];
+    const newDataXY = [...storedDataXY, data];
+    localStorage.setItem("obs-cart-xy", [JSON.stringify(newDataXY)]);
 
     if (storedData.length > 0) {
       let newData = [];
@@ -43,7 +56,7 @@ const QuickAddToCartModal = ({ singleProduct, QuickShop, SetQuickShop }) => {
           newData.push({
             id: id,
             name: singleProduct?.title,
-            category: singleProduct?.category?.[0]?.value,
+            category: singleProduct?.category?.[0]?.value.toLowerCase(),
             price: price,
             color: selectedColor,
             size: selectedSize,
