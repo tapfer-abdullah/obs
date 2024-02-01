@@ -114,7 +114,7 @@ const QuickAddToCartModal = ({ singleProduct, QuickShop, SetQuickShop }) => {
                     setImgIndex(index);
                   }}
                 >
-                  <img src={color?.imageUrl} className="w-10 h-10 cursor-pointer" alt="color-wise-img" />
+                  <img src={color?.imageUrl} className={`w-10 h-10 cursor-pointer border-[3px] ${index == imgIndex ? " border-white" : "border-transparent"}`} alt="color-wise-img" />
                 </div>
               ))}
             </div>

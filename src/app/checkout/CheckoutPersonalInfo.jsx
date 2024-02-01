@@ -9,19 +9,23 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import React, { useContext, useEffect, useState } from "react";
 import { MdOutlineEuroSymbol } from "react-icons/md";
+import Payment from "./Payment/Payment";
+import PreviewPage from "./Payment/Payment2";
 
 const CheckoutPersonalInfo = ({ setTips, subTotal, selectedCountry, setSelectedCountry, setEmail, email }) => {
   const { allCountryData } = useContext(OrderStateProvider);
-  const [tip, setTip] = useState(0);
-  const [tipValue, setTipValue] = useState(0);
+  const [tip, setTip] = useState(null);
+  const [tipValue, setTipValue] = useState(null);
 
   const handleTips = (event, newTip) => {
     setTip(newTip);
     setTips((subTotal * newTip) / 100);
+    setTipValue("");
   };
 
   const handleCustomTips = () => {
     if (tipValue > 0) {
+      setTip(null);
       setTips(parseFloat(tipValue));
     }
   };
@@ -112,21 +116,23 @@ const CheckoutPersonalInfo = ({ setTips, subTotal, selectedCountry, setSelectedC
         <p>Free</p>
       </div>
 
+      <Payment />
+
       <h4 className="text-xl font-semibold mt-7 mb-2 ">Add tip</h4>
       <div className="border border-[#d0d0d0] rounded-md ">
         <p className="p-3 border-b border-[#d0d0d0]">Show your support for the team at ODBHOOTSTORE</p>
         <div className="bg-[#f5f5f5] p-4 space-y-3">
-          <ToggleButtonGroup value={tip} exclusive onChange={handleTips} aria-label="tips" className="w-full mx-auto space-x-2">
-            <ToggleButton className="bg-white w-1/4 text-xl font-medium text-black" value="5" aria-label="tip5">
+          <ToggleButtonGroup value={tip} exclusive onChange={handleTips} aria-label="tips" className="w-full mx-auto font-semibold">
+            <ToggleButton className={`${tip == 5 ? "!bg-black !text-white" : ""} w-1/4 !text-lg !font-medium !text-black`} value="5" aria-label="tip5">
               5%
             </ToggleButton>
-            <ToggleButton className="bg-white w-1/4 text-xl font-medium text-black" value="10" aria-label="tip10">
+            <ToggleButton className={`${tip == 10 ? "!bg-black !text-white" : ""} w-1/4 !text-lg !font-medium !text-black`} value="10" aria-label="tip10">
               10%
             </ToggleButton>
-            <ToggleButton className="bg-white w-1/4 text-xl font-medium text-black" value="15" aria-label="tip15">
+            <ToggleButton className={`${tip == 15 ? "!bg-black !text-white" : ""} w-1/4 !text-lg !font-medium !text-black`} value="15" aria-label="tip15">
               15%
             </ToggleButton>
-            <ToggleButton className="bg-white w-1/4 text-xl font-medium text-black" value="0" aria-label="tip0">
+            <ToggleButton className={`${tip == 0 ? "!bg-black !text-white" : ""} w-1/4 !text-lg !font-medium !text-black`} value="0" aria-label="tip0">
               None
             </ToggleButton>
           </ToggleButtonGroup>
@@ -134,7 +140,8 @@ const CheckoutPersonalInfo = ({ setTips, subTotal, selectedCountry, setSelectedC
           <div className="relative mt-7">
             <MdOutlineEuroSymbol className="absolute left-2 top-[13px]" />
             <input
-              onBlur={(e) => setTipValue(e.target.value || 0)}
+              onChange={(e) => setTipValue(e.target.value || 0)}
+              value={tipValue}
               min={1}
               type="number"
               name="customTip"

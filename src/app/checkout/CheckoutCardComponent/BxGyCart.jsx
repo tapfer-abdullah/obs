@@ -20,7 +20,7 @@ const BxGyCart = ({ data }) => {
           {sp?.discountCode && (
             <div className="flex justify-start items-center gap-1 text-base font-normal text-green-600">
               <MdDiscount />
-              <span className="font-semibold">{sp?.discountCode} </span>
+              <span className="font-semibold uppercase">{sp?.discountCode} </span>
               {sp?.reducedAmount !== sp?.price ? <span>(- €{sp?.reducedAmount})</span> : <span>(Free)</span>}
             </div>
           )}

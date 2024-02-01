@@ -154,7 +154,7 @@ const page = () => {
 
                         console.log({ data })
 
-                        // if(data?.BxGyType == "buys"){}
+
 
                         let BxGyMaxUsesPerOrder2 = 0;
                         if (data?.MaxUser?.option) {
@@ -192,6 +192,7 @@ const page = () => {
 
                         // BxGy shopping cart all calculation and data-----------------------------------------
                         let approvedGetArray2 = [];
+                        let approvedBuyArray2 = [];
                         let approvedBuyCount2 = 0;
 
                         dataForBxGy?.sort((a, b) => a.price - b.price)?.map(sp => {
@@ -208,82 +209,139 @@ const page = () => {
                             //buy
                             if (data?.Buy?.option === "products") {
                                 if (selectedArrayBuy.includes(sp?.id)) {
+                                    approvedBuyArray2.push(sp?.id);
                                     approvedBuyCount2 += sp?.quantity;
                                 }
                             } else if (data?.Buy?.option === "category") {
                                 if (selectedArrayBuy.includes(sp?.category?.toLowerCase())) {
+                                    approvedBuyArray2.push(sp?.id);
                                     approvedBuyCount2 += sp?.quantity;
                                 }
                             }
                         })
 
+                        function findCommonValues(array1, array2) {
+                            let commonValues = [];
+                            for (let i = 0; i < array1.length; i++) {
+                                if (array2.includes(array1[i])) {
+                                    commonValues.push(array1[i]);
+                                }
+                            }
+                            return commonValues;
+                        }
 
-                        let cusShouldGet = 0;
-                        const Br = parseInt(data?.CusBuyAmount);
-                        const Gr = parseInt(data?.CusGetAmount);
+                        let reqBuy = parseInt(data?.CusBuyAmount), reqGet = parseInt(data?.CusGetAmount),
+                            aBuy = approvedBuyArray2?.length, aGet = approvedGetArray2?.length,
+                            common = 0, total = 0, i = 0;
 
-                        if (Br >= Gr) {
-                            let s = Math.floor((approvedBuyCount2) / (Br + Gr));
-                            cusShouldGet = s;
+                        common = findCommonValues(approvedGetArray2, approvedBuyArray2);
+                        total = approvedBuyArray2?.length + approvedGetArray2?.length - common?.length;
+
+
+
+
+                        let Buy = 0, Free = 0;
+
+                        for (i = 1; i <= total && (i * reqBuy <= aBuy) && (i * reqGet <= aGet); i++) {
+                            if ((i * reqBuy + i * reqGet) <= total) {
+                                Free = i * reqGet;
+                                Buy = i * reqBuy;
+                            } else {
+                                break;
+                            }
+                        }
+
+                        if (reqGet > reqBuy && Buy < aBuy && Free < aGet) {
+                            console.log("if-1", { Free });
+                            // aGet -= Math.ceil(common?.length / 2);
+                            if (aGet < (i * reqGet) && ((i * reqBuy + i * reqGet) - (aGet - Free)) < total) {
+                                console.log("if-2", { Free });
+                                Free = aGet;
+                                Buy = total - Free;
+                            }
+                        } else {
+                            console.log("else", { Free });
+                            Buy = total - Free;
+                        }
+
+                        console.log("Buy: " + Buy + " Free: " + Free);
+                        console.log({ aGet, Get2: approvedGetArray2?.length, common: common?.length, aBuy })
+
+
+
+
+
+                        if (data?.BxGyType == "buys") {
+                            let cusShouldGet = Free;
+                            // const Br = parseInt(data?.CusBuyAmount);
+                            // const Gr = parseInt(data?.CusGetAmount);
+
+                            // if (Br >= Gr) {
+                            //     let s = Math.floor((approvedBuyCount2) / (Br + Gr));
+                            //     cusShouldGet = s;
+                            // }
+                            // else {
+                            //     let s = Math.ceil((approvedBuyCount2) / (Br + Gr));
+                            //     cusShouldGet = approvedBuyCount2 - s;
+                            // }
+
+                            let reduce = 0;
+                            let updatedBxByArray = [];
+                            if (data?.DiscountedType.option === "free") {
+                                for (let i = 0, j = 0; i < dataForBxGy.length; i++) {
+                                    if (approvedGetArray2?.includes(dataForBxGy?.[i]?.id) && j < cusShouldGet && j < BxGyMaxUsesPerOrder2) {
+                                        j++;
+                                        reduce += dataForBxGy[i]?.price;
+                                        let arrayObj = { ...dataForBxGy[i] };
+                                        arrayObj.discountCode = code;
+                                        arrayObj.reducedAmount = dataForBxGy[i]?.price;
+                                        updatedBxByArray.push(arrayObj);
+                                    }
+                                    else {
+                                        let arrayObj = { ...dataForBxGy[i] };
+                                        updatedBxByArray.push(arrayObj);
+                                    }
+                                }
+                            }
+                            else if (data?.DiscountedType.option == "percentage") {
+                                for (let i = 0, j = 0; i < dataForBxGy.length; i++) {
+                                    if (approvedGetArray2?.includes(dataForBxGy?.[i]?.id) && j < cusShouldGet && j < BxGyMaxUsesPerOrder2) {
+                                        j++;
+                                        reduce += (dataForBxGy[i]?.price * parseInt(data?.DiscountedType.value)) / 100;
+                                        let arrayObj = { ...dataForBxGy[i] };
+                                        arrayObj.discountCode = code;
+                                        arrayObj.reducedAmount = (dataForBxGy[i]?.price * parseInt(data?.DiscountedType.value)) / 100;
+                                        updatedBxByArray.push(arrayObj);
+                                    }
+                                    else {
+                                        let arrayObj = { ...dataForBxGy[i] };
+                                        updatedBxByArray.push(arrayObj);
+                                    }
+                                }
+                            }
+                            else if (data?.DiscountedType.option == "amount") {
+                                for (let i = 0, j = 0; i < dataForBxGy.length; i++) {
+                                    if (approvedGetArray2?.includes(dataForBxGy?.[i]?.id) && j < cusShouldGet && j < BxGyMaxUsesPerOrder2) {
+                                        j++;
+                                        reduce += (parseInt(data?.DiscountedType.value));
+                                        let arrayObj = { ...dataForBxGy[i] };
+                                        arrayObj.discountCode = code;
+                                        arrayObj.reducedAmount = parseInt(data?.DiscountedType.value);
+                                        updatedBxByArray.push(arrayObj);
+                                    }
+                                    else {
+                                        let arrayObj = { ...dataForBxGy[i] };
+                                        updatedBxByArray.push(arrayObj);
+                                    }
+                                }
+                            }
+
+                            setMinusAmount(reduce);
+                            setBxGyCartArray(updatedBxByArray);
                         }
                         else {
-                            let s = Math.ceil((approvedBuyCount2) / (Br + Gr));
-                            cusShouldGet = approvedBuyCount2 - s;
-                        }
 
-                        let reduce = 0;
-                        let updatedBxByArray = [];
-                        if (data?.DiscountedType.option === "free") {
-                            for (let i = 0, j = 0; i < dataForBxGy.length; i++) {
-                                if (approvedGetArray2?.includes(dataForBxGy?.[i]?.id) && j < cusShouldGet && j < BxGyMaxUsesPerOrder2) {
-                                    j++;
-                                    reduce += dataForBxGy[i]?.price;
-                                    let arrayObj = { ...dataForBxGy[i] };
-                                    arrayObj.discountCode = code;
-                                    arrayObj.reducedAmount = dataForBxGy[i]?.price;
-                                    updatedBxByArray.push(arrayObj);
-                                }
-                                else {
-                                    let arrayObj = { ...dataForBxGy[i] };
-                                    updatedBxByArray.push(arrayObj);
-                                }
-                            }
                         }
-                        else if (data?.DiscountedType.option == "percentage") {
-                            for (let i = 0, j = 0; i < dataForBxGy.length; i++) {
-                                if (approvedGetArray2?.includes(dataForBxGy?.[i]?.id) && j < cusShouldGet && j < BxGyMaxUsesPerOrder2) {
-                                    j++;
-                                    reduce += (dataForBxGy[i]?.price * parseInt(data?.DiscountedType.value)) / 100;
-                                    let arrayObj = { ...dataForBxGy[i] };
-                                    arrayObj.discountCode = code;
-                                    arrayObj.reducedAmount = (dataForBxGy[i]?.price * parseInt(data?.DiscountedType.value)) / 100;
-                                    updatedBxByArray.push(arrayObj);
-                                }
-                                else {
-                                    let arrayObj = { ...dataForBxGy[i] };
-                                    updatedBxByArray.push(arrayObj);
-                                }
-                            }
-                        }
-                        else if (data?.DiscountedType.option == "amount") {
-                            for (let i = 0, j = 0; i < dataForBxGy.length; i++) {
-                                if (approvedGetArray2?.includes(dataForBxGy?.[i]?.id) && j < cusShouldGet && j < BxGyMaxUsesPerOrder2) {
-                                    j++;
-                                    reduce += (parseInt(data?.DiscountedType.value));
-                                    let arrayObj = { ...dataForBxGy[i] };
-                                    arrayObj.discountCode = code;
-                                    arrayObj.reducedAmount = parseInt(data?.DiscountedType.value);
-                                    updatedBxByArray.push(arrayObj);
-                                }
-                                else {
-                                    let arrayObj = { ...dataForBxGy[i] };
-                                    updatedBxByArray.push(arrayObj);
-                                }
-                            }
-                        }
-
-                        setMinusAmount(reduce);
-                        setBxGyCartArray(updatedBxByArray);
                         setDiscountCode(code);
                         setDiscountOnValue(selectedArrayGet);
                         setBuyOnValue(selectedArrayBuy);

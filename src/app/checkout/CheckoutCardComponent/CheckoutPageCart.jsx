@@ -66,7 +66,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
                   <div className="flex justify-between items-center gap-1 text-base font-normal text-green-600">
                     <div className="flex items-center gap-1">
                       <MdDiscount />
-                      <span className="font-semibold">{discountCode}:</span>
+                      <span className="font-semibold uppercase">{discountCode}:</span>
                     </div>
                     <p className="flex items-center gap-1">
                       (- €{parseInt(sp?.quantity)}x{(parseInt(sp?.price) * amountToBeReduce) / 100})
@@ -98,7 +98,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
                   <div className="flex justify-between items-center gap-1 text-base font-normal text-green-600">
                     <div className="flex items-center gap-1">
                       <MdDiscount />
-                      <span className="font-semibold">{discountCode}:</span>
+                      <span className="font-semibold uppercase">{discountCode}:</span>
                     </div>
                     <p className="flex items-center gap-1">
                       (- €{parseInt(sp?.quantity)}x{amountToBeReduce})
@@ -176,7 +176,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
                   <div className="flex justify-between items-center gap-1 text-base font-normal text-green-600">
                     <div className="flex items-center gap-1">
                       <MdDiscount />
-                      <span className="font-semibold">{discountCode}:</span>
+                      <span className="font-semibold uppercase">{discountCode}:</span>
                     </div>
                     <p className="flex items-center gap-1">
                       (- €{parseInt(sp?.quantity)}x{(parseInt(sp?.price) * amountToBeReduce) / 100})
@@ -210,7 +210,7 @@ const CheckoutPageCart = ({ BuyOnOption, BuyOnValue, BxGyType, disAdditionalType
                   <div className="flex justify-between items-center gap-1 text-base font-normal text-green-600">
                     <div className="flex items-center gap-1">
                       <MdDiscount />
-                      <span className="font-semibold">{discountCode}:</span>
+                      <span className="font-semibold uppercase">{discountCode}:</span>
                     </div>
                     <p className="flex items-center gap-1">
                       (- €{parseInt(sp?.quantity)}x{amountToBeReduce})

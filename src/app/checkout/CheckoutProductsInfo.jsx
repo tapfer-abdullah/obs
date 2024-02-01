@@ -143,7 +143,7 @@ const CheckoutProductsInfo = ({
           <div className="flex justify-between items-center text-base font-normal text-green-600">
             <div className="flex items-center gap-1">
               <MdDiscount />
-              <span className="font-semibold">{discountCode}:</span>
+              <span className="font-semibold uppercase">{discountCode}:</span>
             </div>
             <p className="flex justify-end items-center gap-1">
               <FiMinus /> <MdOutlineEuroSymbol />

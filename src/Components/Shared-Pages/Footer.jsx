@@ -86,10 +86,14 @@ const Footer = () => {
           <span> 2023 Odbhootstore</span>
         </p>
         <div className="flex gap-2 items-center text-3xl text-black">
-          <FaCcPaypal />
+          {/* <FaCcPaypal />
           <FaCcVisa />
           <FaCcMastercard />
-          <SiAmericanexpress />
+          <SiAmericanexpress /> */}
+          <img src={"https://i.ibb.co/smfbCX7/paypal.png"} alt="PayPal Icon" className="w-20 px-[2px] py-[1px] bg-white " />
+          <img src={"https://i.ibb.co/mBxkzz4/visa.png"} alt="Visa Icon" className="w-10 h-auto px-[2px] py-[1px] bg-white " />
+          <img src={"https://i.ibb.co/QprC3LG/master.webp"} alt="Master Icon" className="w-10 h-auto px-[2px] py-[1px] bg-white " />
+          <img src={"https://i.ibb.co/2kCgmpH/amex5.png"} alt="Amex Icon" className="w-10 h-auto px-[2px] py-[1px] bg-white rounded-md" />
         </div>
       </div>
     </div>
